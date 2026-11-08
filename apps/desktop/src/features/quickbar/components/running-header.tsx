@@ -1,10 +1,9 @@
 import { formatElapsed } from '@ttime/core';
 
+import { useElapsed } from '../../../shared/hooks/use-elapsed';
+import { clockOf, FALLBACK_COLOR } from '../../../shared/lib/display';
 import { useVaultStore } from '../../../shared/store/vault-store';
-import { useElapsed } from '../hooks/use-elapsed';
-import { clockOf } from '../lib/clock-input';
-import { FALLBACK_COLOR } from '../lib/running-summary';
-import { ProjectDot } from './project-dot';
+import { ProjectDot } from '../../../shared/ui/project-dot';
 
 /** The running entry with its elapsed time, or "Not tracking". */
 export const RunningHeader = () => {

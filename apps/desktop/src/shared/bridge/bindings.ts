@@ -33,13 +33,21 @@ export const commands = {
 	quickbarHide: () => typedError<null, AppError>(__TAURI_INVOKE("quickbar_hide")),
 	/**  Opens (or focuses) the main window. */
 	mainWindowShow: () => typedError<null, AppError>(__TAURI_INVOKE("main_window_show")),
-	/**  The agent webview reports the running entry (or `null`) after any running-state change. */
-	setRunning: (summary: RunningSummary | null) => typedError<null, AppError>(__TAURI_INVOKE("set_running", { summary })),
+	/**
+	 *  The agent webview reports the running entry (or `null`) after any running-state change, and
+	 *  the label of what Resume would continue (`null` when there is nothing to resume).
+	 */
+	setRunning: (summary: RunningSummary | null, resume: string | null) => typedError<null, AppError>(__TAURI_INVOKE("set_running", { summary, resume })),
+	/**  Hides the menu bar popover. */
+	popoverHide: () => typedError<null, AppError>(__TAURI_INVOKE("popover_hide")),
+	/**  Quits the app. */
+	appQuit: () => typedError<null, AppError>(__TAURI_INVOKE("app_quit")),
 };
 
 /** Events */
 export const events = {
 	quickbarShown: makeEvent<QuickbarShown, QuickbarShown>("quickbar:shown"),
+	trayAction: makeEvent<TrayAction, TrayAction>("tray:action"),
 	vaultChanged: makeEvent<VaultChanged, VaultChanged>("vault:changed"),
 };
 
@@ -83,12 +91,20 @@ export type QuickbarShown = {
  *  Rust never reads vault files for this.
  */
 export type RunningSummary = {
-	/**  Vault timestamp of the start. */
-	start: string,
+	/**  Start of the running entry, in seconds since the Unix epoch. */
+	startEpochSeconds: number | null,
 	projectName: string,
 	/**  `#RRGGBB`. */
 	color: string,
 };
+
+/**  The tray menu asks the agent to act on the running entry. */
+export type TrayAction = {
+	action: TrayActionKind,
+};
+
+/**  A timer action chosen in the tray menu, carried out by the agent webview through the core. */
+export type TrayActionKind = "stop" | "resume";
 
 /**
  *  Files in the vault changed on disk (by this app, the CLI, a sync tool or a hand edit).

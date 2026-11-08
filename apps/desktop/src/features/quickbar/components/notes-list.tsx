@@ -1,5 +1,5 @@
+import { clockOf } from '../../../shared/lib/display';
 import { useVaultStore } from '../../../shared/store/vault-store';
-import { clockOf } from '../lib/clock-input';
 
 /** The running entry's notes, oldest first, for note mode. */
 export const NotesList = () => {

@@ -16,3 +16,18 @@ pub struct VaultChanged {
 pub struct QuickbarShown {
     pub mode: crate::services::quickbar::QuickbarMode,
 }
+
+/// A timer action chosen in the tray menu, carried out by the agent webview through the core.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, specta::Type)]
+#[serde(rename_all = "kebab-case")]
+pub enum TrayActionKind {
+    Stop,
+    Resume,
+}
+
+/// The tray menu asks the agent to act on the running entry.
+#[derive(Debug, Clone, Serialize, Deserialize, specta::Type, tauri_specta::Event)]
+#[tauri_specta(event_name = "tray:action")]
+pub struct TrayAction {
+    pub action: TrayActionKind,
+}

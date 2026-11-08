@@ -9,7 +9,7 @@ use tauri_specta::Event;
 use crate::{
     AppError,
     events::QuickbarShown,
-    services::panels::{self, WindowKind},
+    services::panels::{self, Area, WindowKind},
 };
 
 /// Default global shortcut (PRD 6.1). Configurable in Settings later.
@@ -25,15 +25,6 @@ pub enum QuickbarMode {
     New,
     Note,
     EditRunning,
-}
-
-/// A screen area in logical points.
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Area {
-    pub x: f64,
-    pub y: f64,
-    pub width: f64,
-    pub height: f64,
 }
 
 /// Top-left corner for a panel of `size` on `area`: centered horizontally, its top a fifth of
@@ -112,41 +103,12 @@ pub fn show(app: &AppHandle, mode: QuickbarMode) -> Result<(), AppError> {
     let window = window(app)?;
     place(app, &window)?;
     QuickbarShown { mode }.emit_to(app, WindowKind::Quickbar.label())?;
-    #[cfg(target_os = "macos")]
-    {
-        let handle = app.clone();
-        app.run_on_main_thread(move || {
-            if let Err(err) =
-                crate::platform::macos::panel::show(&handle, WindowKind::Quickbar.label())
-            {
-                log::error!("Could not show the quick bar: {err}");
-            }
-        })?;
-    }
-    #[cfg(not(target_os = "macos"))]
-    {
-        window.show()?;
-        window.set_focus()?;
-    }
-    Ok(())
+    panels::show_panel(app, WindowKind::Quickbar)
 }
 
 /// Hides the quick bar. On macOS the previous app keeps (and regains) keyboard focus.
 pub fn hide(app: &AppHandle) -> Result<(), AppError> {
-    #[cfg(target_os = "macos")]
-    {
-        let handle = app.clone();
-        app.run_on_main_thread(move || {
-            if let Err(err) =
-                crate::platform::macos::panel::hide(&handle, WindowKind::Quickbar.label())
-            {
-                log::error!("Could not hide the quick bar: {err}");
-            }
-        })?;
-    }
-    #[cfg(not(target_os = "macos"))]
-    window(app)?.hide()?;
-    Ok(())
+    panels::hide_panel(app, WindowKind::Quickbar)
 }
 
 /// Hides the quick bar if it is visible, otherwise shows it in `new` mode.

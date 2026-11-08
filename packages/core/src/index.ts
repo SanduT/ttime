@@ -10,6 +10,7 @@ export { parseJson, stringifyStable, tryParseJson } from './lib/json';
 export { slugify, uniqueSlug } from './lib/slug';
 export {
   compareTimestamps,
+  epochSeconds,
   formatTimestamp,
   isLocalDate,
   isTimestamp,
@@ -89,6 +90,12 @@ export {
   createClientService,
 } from './domain/client-service';
 export {
+  type CurrentTotals,
+  currentTotals,
+  type CurrentTotalsInput,
+  type ProjectTotal,
+} from './domain/current-totals';
+export {
   type CreateEntryInput,
   createEntryService,
   type EntryPatch,
@@ -121,7 +128,12 @@ export {
   type QuickPlan,
   type QuickProject,
 } from './domain/quick-plan';
-export { filterRecent, recentEntries, type RecentEntry } from './domain/recent-entries';
+export {
+  filterRecent,
+  latestEntry,
+  recentEntries,
+  type RecentEntry,
+} from './domain/recent-entries';
 export type { OnConflict } from './domain/running';
 export { type DaySegment, splitByDay, type SplitOptions } from './domain/split-by-day';
 export {

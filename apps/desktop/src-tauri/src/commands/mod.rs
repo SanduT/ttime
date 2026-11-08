@@ -5,7 +5,7 @@ pub mod vault;
 
 use tauri_specta::{Builder, collect_commands, collect_events};
 
-use crate::events::{QuickbarShown, VaultChanged};
+use crate::events::{QuickbarShown, TrayAction, VaultChanged};
 
 /// Where the generated TypeScript bindings live, relative to this crate.
 pub const BINDINGS_PATH: &str = concat!(
@@ -32,8 +32,10 @@ pub fn specta_builder() -> Builder<tauri::Wry> {
             quickbar::quickbar_hide,
             quickbar::main_window_show,
             quickbar::set_running,
+            quickbar::popover_hide,
+            quickbar::app_quit,
         ])
-        .events(collect_events![VaultChanged, QuickbarShown])
+        .events(collect_events![VaultChanged, QuickbarShown, TrayAction])
 }
 
 /// Writes the TypeScript bindings for `builder` to `path`.

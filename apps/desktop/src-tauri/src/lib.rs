@@ -50,6 +50,8 @@ pub fn run() -> Result<(), AppError> {
             let home_dir = app.path().home_dir()?;
             let state = AppState::new(home_dir.clone(), state::config_dir_for(&home_dir));
             let has_vault = services::vault::open_saved(app.handle(), &state);
+            let (wake, ticks) = std::sync::mpsc::channel();
+            state.set_ticker(wake)?;
             app.manage(state);
             services::quickbar::create(app.handle())?;
             if let Err(err) = services::quickbar::register_shortcut(app.handle()) {
@@ -57,6 +59,7 @@ pub fn run() -> Result<(), AppError> {
                 log::error!("{err}");
             }
             services::tray::create(app.handle())?;
+            services::tray::start_ticker(app.handle().clone(), ticks)?;
             if !has_vault {
                 // First run (or the saved vault is gone): the main window shows onboarding.
                 panels::show(app.handle(), WindowKind::Main)?;

@@ -1,6 +1,5 @@
 /** Every quick bar action reachable from the keyboard and the ⌘K panel. */
-export type ActionId =
-  'start' | 'note' | 'stop' | 'pause-resume' | 'edit' | 'open-main' | 'actions' | 'close';
+export type ActionId = 'start' | 'note' | 'stop' | 'edit' | 'open-main' | 'actions' | 'close';
 
 /** An action with its label and shortcut hint. */
 export type ActionSpec = { readonly id: ActionId; readonly label: string; readonly hint: string };
@@ -10,7 +9,6 @@ export const ACTIONS: readonly ActionSpec[] = [
   { id: 'start', label: 'Start or switch', hint: '↵' },
   { id: 'note', label: 'Add note', hint: '⌘↵' },
   { id: 'stop', label: 'Stop', hint: '⌘.' },
-  { id: 'pause-resume', label: 'Pause or resume', hint: '⌘P' },
   { id: 'edit', label: 'Edit running entry', hint: '⌘E' },
   { id: 'open-main', label: 'Open ttime', hint: '⌘O' },
   { id: 'actions', label: 'Show actions', hint: '⌘K' },
@@ -29,7 +27,6 @@ export type KeyPress = {
 const META_KEYS: Readonly<Record<string, ActionId>> = {
   Enter: 'note',
   '.': 'stop',
-  p: 'pause-resume',
   e: 'edit',
   o: 'open-main',
   k: 'actions',

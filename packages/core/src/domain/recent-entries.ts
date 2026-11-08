@@ -76,3 +76,11 @@ export const filterRecent = (
     return words.every((word) => haystack.includes(word));
   });
 };
+
+/** The finished entry that ended last, which Resume continues; null when there is none. Pure. */
+export const latestEntry = (entries: readonly Entry[]): Entry | null =>
+  entries.reduce<Entry | null>(
+    (latest, entry) =>
+      latest === null || compareTimestamps(entry.end, latest.end) > 0 ? entry : latest,
+    null,
+  );

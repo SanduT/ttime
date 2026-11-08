@@ -1,10 +1,10 @@
 //! Shared state of the shell.
 
 use std::path::{Path, PathBuf};
-use std::sync::{Mutex, MutexGuard};
+use std::sync::{Mutex, MutexGuard, mpsc::Sender};
 
 use crate::AppError;
-use crate::services::tray::RunningSummary;
+use crate::services::menubar::RunningSummary;
 use crate::services::vault_io::AllowList;
 use crate::services::watcher::VaultWatcher;
 
@@ -31,6 +31,7 @@ pub struct AppState {
     pub config_dir: PathBuf,
     vault: Mutex<VaultSlot>,
     running: Mutex<Option<RunningSummary>>,
+    ticker: Mutex<Option<Sender<()>>>,
 }
 
 impl AppState {
@@ -42,6 +43,7 @@ impl AppState {
             config_dir,
             vault: Mutex::new(VaultSlot::default()),
             running: Mutex::new(None),
+            ticker: Mutex::new(None),
         }
     }
 
@@ -53,6 +55,22 @@ impl AppState {
     /// The running entry as last pushed by the agent webview, locked.
     pub fn running(&self) -> Result<MutexGuard<'_, Option<RunningSummary>>, AppError> {
         self.running.lock().map_err(|_| AppError::StatePoisoned)
+    }
+
+    /// Connects the menu bar ticker, woken by [`AppState::wake_ticker`].
+    pub fn set_ticker(&self, wake: Sender<()>) -> Result<(), AppError> {
+        *self.ticker.lock().map_err(|_| AppError::StatePoisoned)? = Some(wake);
+        Ok(())
+    }
+
+    /// Makes the ticker redraw the title now (after the running entry changed).
+    pub fn wake_ticker(&self) {
+        if let Ok(ticker) = self.ticker.lock()
+            && let Some(wake) = ticker.as_ref()
+            && wake.send(()).is_err()
+        {
+            log::warn!("The menu bar ticker has stopped");
+        }
     }
 
     /// The folders the webviews may touch right now: the config folder and the open vault.

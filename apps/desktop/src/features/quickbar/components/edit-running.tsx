@@ -2,8 +2,9 @@ import type { Project, RunningEntry, RunningPatch } from '@ttime/core';
 import { useEffect, useRef, useState } from 'react';
 
 import { createSystemClock } from '../../../shared/adapters/system';
+import { clockOf } from '../../../shared/lib/display';
 import { Button } from '../../../shared/ui/button';
-import { clockOf, timestampAt } from '../lib/clock-input';
+import { timestampAt } from '../lib/clock-input';
 import { useQuickbarStore } from '../store/quickbar-store';
 
 type Props = {

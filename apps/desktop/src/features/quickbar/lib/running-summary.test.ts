@@ -12,7 +12,7 @@ describe('toRunningSummary', () => {
 
   test('names the project and its color', () => {
     expect(toRunningSummary(buildRunning(), projects)).toEqual({
-      start: '2026-11-08T09:00:00+02:00',
+      startEpochSeconds: 1_794_121_200,
       projectName: 'Acme Website',
       color: '#4F7CFF',
     });

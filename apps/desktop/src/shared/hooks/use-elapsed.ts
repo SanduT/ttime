@@ -1,7 +1,7 @@
 import { formatTimestamp, secondsBetween, type Timestamp } from '@ttime/core';
 import { useEffect, useState } from 'react';
 
-import { createSystemClock } from '../../../shared/adapters/system';
+import { createSystemClock } from '../adapters/system';
 
 const clock = createSystemClock();
 const TICK_MS = 1000;

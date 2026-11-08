@@ -8,8 +8,17 @@ use tauri::{
 
 use crate::{AppError, services::activation};
 
-/// Corner radius of the quick bar's vibrancy material, matching the webview's card.
-const QUICKBAR_RADIUS: f64 = 12.0;
+/// Corner radius of the panels' vibrancy material, matching the webview's card.
+const PANEL_RADIUS: f64 = 12.0;
+
+/// A screen area in logical points.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Area {
+    pub x: f64,
+    pub y: f64,
+    pub width: f64,
+    pub height: f64,
+}
 
 /// One of the app's windows.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -48,6 +57,11 @@ impl WindowKind {
         }
     }
 
+    /// The quick bar and popover are floating panels; the main window is a normal window.
+    const fn is_panel(self) -> bool {
+        matches!(self, Self::Quickbar | Self::Popover)
+    }
+
     fn from_label(label: &str) -> Option<Self> {
         Self::ALL.into_iter().find(|kind| kind.label() == label)
     }
@@ -63,7 +77,7 @@ pub fn create(app: &AppHandle, kind: WindowKind) -> Result<WebviewWindow, AppErr
         .title("ttime")
         .inner_size(width, height)
         .visible(false);
-    let builder = if kind == WindowKind::Quickbar {
+    let builder = if kind.is_panel() {
         builder
             .decorations(false)
             .transparent(true)
@@ -74,13 +88,47 @@ pub fn create(app: &AppHandle, kind: WindowKind) -> Result<WebviewWindow, AppErr
                 EffectsBuilder::new()
                     .effect(Effect::Popover)
                     .state(EffectState::Active)
-                    .radius(QUICKBAR_RADIUS)
+                    .radius(PANEL_RADIUS)
                     .build(),
             )
     } else {
         builder
     };
     Ok(builder.build()?)
+}
+
+/// Shows the panel `kind` and gives it keyboard focus (main thread on macOS).
+pub fn show_panel(app: &AppHandle, kind: WindowKind) -> Result<(), AppError> {
+    #[cfg(target_os = "macos")]
+    {
+        let handle = app.clone();
+        app.run_on_main_thread(move || {
+            if let Err(err) = crate::platform::macos::panel::show(&handle, kind.label()) {
+                log::error!("Could not show the {} panel: {err}", kind.label());
+            }
+        })?;
+    }
+    #[cfg(not(target_os = "macos"))]
+    show(app, kind)?;
+    Ok(())
+}
+
+/// Hides the panel `kind`; on macOS the previous app keeps keyboard focus.
+pub fn hide_panel(app: &AppHandle, kind: WindowKind) -> Result<(), AppError> {
+    #[cfg(target_os = "macos")]
+    {
+        let handle = app.clone();
+        app.run_on_main_thread(move || {
+            if let Err(err) = crate::platform::macos::panel::hide(&handle, kind.label()) {
+                log::error!("Could not hide the {} panel: {err}", kind.label());
+            }
+        })?;
+    }
+    #[cfg(not(target_os = "macos"))]
+    if let Some(window) = app.get_webview_window(kind.label()) {
+        window.hide()?;
+    }
+    Ok(())
 }
 
 /// Shows and focuses `kind`, creating it if needed.

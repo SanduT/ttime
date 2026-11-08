@@ -2,12 +2,11 @@ import { formatElapsed, formatTimestamp, type Project } from '@ttime/core';
 import { useMemo } from 'react';
 
 import { createSystemClock } from '../../../shared/adapters/system';
+import { useElapsed } from '../../../shared/hooks/use-elapsed';
+import { clockOf, FALLBACK_COLOR } from '../../../shared/lib/display';
 import { useVaultStore } from '../../../shared/store/vault-store';
-import { useElapsed } from '../hooks/use-elapsed';
-import { clockOf } from '../lib/clock-input';
-import { FALLBACK_COLOR } from '../lib/running-summary';
+import { ProjectDot } from '../../../shared/ui/project-dot';
 import { buildToday } from '../lib/today';
-import { ProjectDot } from './project-dot';
 
 const clock = createSystemClock();
 

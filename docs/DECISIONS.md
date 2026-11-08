@@ -374,3 +374,42 @@ elapsed-time ticker and the colored icon come with step 6.
 
 Favorites (⌘1 to ⌘9) are P1 (step 13). The `idle-resolution` and `forgotten-timer` modes come
 with the monitors (step 11).
+
+## Step 6: Menu bar
+
+### DEC-58 Menu bar title and icon
+
+- While tracking, the icon is a dot in the project color drawn in Rust (36 px RGBA) and the
+  title is the elapsed `h:mm`. When idle, the template clock icon shows with no title.
+- A Rust thread redraws the title on the running entry's minute boundaries and whenever
+  `set_running` changes the summary. It never polls files.
+- `RunningSummary.start` is now `startEpochSeconds`, so Rust needs no date parsing.
+- Display options (project and time, icon only) and showing seconds wait for Settings (step 7).
+  Until then the title is time only, the PRD default.
+
+### DEC-59 Tray clicks and menu
+
+Left click toggles the popover under the icon. Right click shows Stop (or Resume when idle), New
+Entry…, Add Note…, Open ttime, Quit. Stop and Resume go to the agent (quick bar webview) as a
+`tray:action` event, so every vault write stays in the core. The menu is rebuilt when the
+running state or the resume target changes.
+
+### DEC-60 Popover
+
+- The popover is a floating `NSPanel` like the quick bar (shared `FloatingPanel`), created on
+  first click, kept hidden afterwards, and hidden when it loses focus.
+- It loads 8 days of entries: this week plus one day for `dayStartsAt`.
+- Today and This week totals come from core's `currentTotals`, which splits entries at report-day
+  boundaries and counts the running entry up to now.
+- Discard asks for a second click ("Confirm discard") instead of a dialog, to keep the panel
+  keyboard and click friendly.
+- Favorites wait for P1 (step 13), Settings for step 7. Recent entries (5) are startable in one
+  click.
+
+### DEC-61 No separate Pause in the UI
+
+PRD 4 defines Pause as a stop, and core's `pause` is `stop`, so a Pause button next to Stop did
+the same thing. The UI shows one action instead: Stop while tracking, and `Resume <description>`
+(the project name when the description is empty) when idle, naming what Resume continues. This
+applies to the popover and the tray menu. The quick bar drops ⌘P; Enter on the latest entry row
+already continues it. Core `pause` and the CLI `ttime pause` stay as documented.

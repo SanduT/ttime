@@ -47,3 +47,20 @@ Start with no `~/.config/ttime/config.json` (move it aside if it exists).
 10. ⌘. stops: the confirmation shows what was logged; the tray title returns to `ttime`.
 11. ⌘O opens the main window.
 12. Click another app while the quick bar is open: it hides.
+
+## Step 6: Menu bar
+
+1. Idle: the menu bar shows the clock icon only (no title).
+2. Start an entry with the quick bar: the icon becomes a dot in the project color and the title
+   shows `0:00`, then `0:01` a minute after the start. A backdated start (`-20m`) shows `0:20`.
+3. Left click the icon: the popover opens under it with the running entry, its latest notes, a
+   seconds counter, Recent and the Today and This week totals. Click elsewhere: it hides.
+4. Expand Today and This week: per-project times show, including the running entry.
+5. Popover Stop: the dot turns back into the clock and the title clears. The popover then shows
+   `Resume <description>`: it continues the same project and description as a new entry.
+6. Popover Add note… and Switch… hide the popover and open the quick bar in that mode.
+7. Discard, then Confirm discard: the running entry is gone and nothing is logged.
+8. Click a Recent row: it starts that entry (the previous one stops at the same instant).
+9. Right click the icon: Stop, New Entry…, Add Note…, Open ttime, Quit ttime. Stop ends the
+   entry. When idle, the first item reads `Resume <description>` and resumes it.
+10. Edit `running.json` from outside (or use the CLI): the icon and title follow within a second.

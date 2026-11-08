@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 
 import { buildEntry, buildProject } from '../testing/builders';
 import { parseQuickInput } from './quick-input-parser';
-import { filterRecent, recentEntries } from './recent-entries';
+import { filterRecent, latestEntry, recentEntries } from './recent-entries';
 
 const PROJECTS = [
   buildProject(),
@@ -90,5 +90,23 @@ describe('filterRecent', () => {
 
   test('finds nothing for an @project that matches no project', () => {
     expect(filterRecent(recent, parseQuickInput('@nope'), PROJECTS)).toEqual([]);
+  });
+});
+
+describe('latestEntry', () => {
+  test('is the entry that ended last', () => {
+    const early = buildEntry({
+      start: '2026-11-08T08:00:00+02:00',
+      end: '2026-11-08T12:00:00+02:00',
+    });
+    const late = buildEntry({
+      start: '2026-11-08T09:00:00+02:00',
+      end: '2026-11-08T10:00:00+02:00',
+    });
+    expect(latestEntry([late, early])).toBe(early);
+  });
+
+  test('is null without entries', () => {
+    expect(latestEntry([])).toBeNull();
   });
 });

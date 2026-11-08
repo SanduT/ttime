@@ -1,17 +1,9 @@
-import {
-  createQuickActions,
-  createTimerService,
-  type QuickPlan,
-  type RecentEntry,
-  type RunningPatch,
-  type TTimeError,
-  type Vault,
-} from '@ttime/core';
+import { type QuickPlan, type RecentEntry, type RunningPatch, type TTimeError } from '@ttime/core';
 import { useMemo } from 'react';
 
 import { windowApi } from '../../../shared/bridge/window-api';
-import { getAppContext } from '../../../shared/lib/app-context';
 import { runAction } from '../../../shared/lib/run-action';
+import { servicesFor, type VaultServices } from '../../../shared/lib/vault-services';
 import { useVaultStore } from '../../../shared/store/vault-store';
 import { useQuickbarStore } from '../store/quickbar-store';
 
@@ -22,47 +14,35 @@ export type QuickbarActions = {
   readonly note: (plan: QuickPlan) => Promise<void>;
   readonly continueRecent: (item: RecentEntry) => Promise<void>;
   readonly stop: () => Promise<void>;
-  /** Pauses the running entry, or resumes the last one when nothing runs. */
-  readonly pauseResume: () => Promise<void>;
   readonly editRunning: (patch: RunningPatch) => Promise<void>;
   readonly openMain: () => Promise<void>;
   readonly close: () => Promise<void>;
 };
 
-type Services = {
-  readonly quick: ReturnType<typeof createQuickActions>;
-  readonly timer: ReturnType<typeof createTimerService>;
-};
-
-const services = async (vault: Vault): Promise<Services> => {
-  const { clock, ids, logger } = await getAppContext();
-  return {
-    quick: createQuickActions({ vault, clock, ids, logger }),
-    timer: createTimerService({ vault, ids, logger }),
-  };
-};
-
 const canTrim = (error: TTimeError | null): boolean =>
   error?.code === 'timer.backdate_overlap' && error.details['trimmable'] === true;
 
-/** Binds the actions to the window's vault and running state. */
+/** Binds the actions to the window's vault. */
 export const useQuickbarActions = (): QuickbarActions => {
   const vault = useVaultStore((state) => state.vault);
-  const running = useVaultStore((state) => state.snapshot?.running ?? null);
   const { showResult, enterNoteMode, showError } = useQuickbarStore.getState();
 
   return useMemo(() => {
     const act = <T>(
       label: string,
-      action: (s: Services) => Promise<T>,
+      action: (s: VaultServices) => Promise<T>,
       trimPlan: QuickPlan | null = null,
     ): Promise<T | undefined> =>
-      runAction(label, async () => (vault === null ? undefined : action(await services(vault))), {
-        onError: (message, error) => {
-          const trimmable = canTrim(error);
-          showError({ message, trimmable, trim: trimmable ? trimPlan : null });
+      runAction(
+        label,
+        async () => (vault === null ? undefined : action(await servicesFor(vault))),
+        {
+          onError: (message, error) => {
+            const trimmable = canTrim(error);
+            showError({ message, trimmable, trim: trimmable ? trimPlan : null });
+          },
         },
-      });
+      );
 
     return {
       start: async (plan, trim = false) => {
@@ -89,19 +69,6 @@ export const useQuickbarActions = (): QuickbarActions => {
           showResult({ kind: 'stopped', entry: result.entry });
         }
       },
-      pauseResume: async () => {
-        if (running === null) {
-          const result = await act('Resume', (s) => s.timer.resume());
-          if (result !== undefined) {
-            showResult({ kind: 'started', entry: result.started, stopped: result.stopped });
-          }
-          return;
-        }
-        const result = await act('Pause', (s) => s.timer.pause().then((entry) => ({ entry })));
-        if (result !== undefined) {
-          showResult({ kind: 'stopped', entry: result.entry });
-        }
-      },
       editRunning: async (patch) => {
         const entry = await act('Edit running entry', (s) => s.timer.editRunning(patch));
         if (entry !== undefined) {
@@ -118,5 +85,5 @@ export const useQuickbarActions = (): QuickbarActions => {
         await runAction('Close quick bar', () => windowApi.hideQuickbar());
       },
     };
-  }, [vault, running, showResult, enterNoteMode, showError]);
+  }, [vault, showResult, enterNoteMode, showError]);
 };

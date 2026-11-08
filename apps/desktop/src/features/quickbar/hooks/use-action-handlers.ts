@@ -28,7 +28,6 @@ export const useActionHandlers = (
       }
     },
     stop: () => void actions.stop(),
-    'pause-resume': () => void actions.pauseResume(),
     edit: () => {
       if (running !== null) {
         setPanel('edit');

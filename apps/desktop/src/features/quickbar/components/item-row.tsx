@@ -2,9 +2,9 @@ import type { Project, QuickPlan } from '@ttime/core';
 import { Command } from 'cmdk';
 import type { ReactNode } from 'react';
 
+import { FALLBACK_COLOR } from '../../../shared/lib/display';
+import { ProjectDot } from '../../../shared/ui/project-dot';
 import type { QuickItem } from '../lib/quick-items';
-import { FALLBACK_COLOR } from '../lib/running-summary';
-import { ProjectDot } from './project-dot';
 
 type Props = {
   readonly item: QuickItem;

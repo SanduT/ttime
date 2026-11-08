@@ -2,9 +2,6 @@ import { formatTimestamp, resolveStart, type Temporal, type Timestamp } from '@t
 
 const CLOCK = /^([01]?\d|2[0-3]):([0-5]\d)$/;
 
-/** `HH:MM` of a vault timestamp, as typed in the edit form. */
-export const clockOf = (timestamp: Timestamp): string => timestamp.slice(11, 16);
-
 /**
  * The timestamp for an `H:MM` or `HH:MM` wall-clock time on `now`'s date, or null when the
  * text is not a valid time. Times later than now are left for the core to reject.

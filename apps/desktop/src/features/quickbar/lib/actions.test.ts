@@ -15,7 +15,6 @@ describe('actionForKey', () => {
   test('maps the ⌘ shortcuts from PRD 6.1', () => {
     expect(actionForKey(press('Enter', { metaKey: true }))).toBe('note');
     expect(actionForKey(press('.', { metaKey: true }))).toBe('stop');
-    expect(actionForKey(press('p', { metaKey: true }))).toBe('pause-resume');
     expect(actionForKey(press('E', { metaKey: true }))).toBe('edit');
     expect(actionForKey(press('o', { metaKey: true }))).toBe('open-main');
     expect(actionForKey(press('k', { metaKey: true }))).toBe('actions');
