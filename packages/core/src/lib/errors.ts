@@ -17,7 +17,9 @@ export type ErrorCode =
   | 'project.not_found'
   | 'project.archived'
   | 'client.not_found'
+  | 'config.parse_failed'
   | 'io.failed'
+  | 'io.path_not_allowed'
   | 'platform.failed'
   | 'internal.invariant';
 

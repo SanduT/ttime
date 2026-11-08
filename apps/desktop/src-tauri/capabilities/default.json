@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Permissions for the ttime windows. No fs, http or shell plugins are enabled.",
+  "description": "Permissions for the ttime windows. No fs, http or shell plugins are enabled; the dialog plugin may only open the folder picker.",
   "windows": ["quickbar", "popover", "main"],
-  "permissions": ["core:default", "log:default"]
+  "permissions": ["core:default", "log:default", "dialog:allow-open"]
 }

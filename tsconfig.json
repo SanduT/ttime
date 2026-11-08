@@ -6,10 +6,23 @@
   },
   "include": ["*.ts", "eslint/**/*.ts", "scripts/**/*.ts", "types/**/*.d.ts"],
   "references": [
-    { "path": "./packages/core/tsconfig.src.json" },
-    { "path": "./packages/core/tsconfig.test.json" },
-    { "path": "./packages/cli" },
-    { "path": "./apps/desktop/tsconfig.app.json" },
-    { "path": "./apps/desktop/tsconfig.node.json" }
+    {
+      "path": "./packages/core/tsconfig.src.json"
+    },
+    {
+      "path": "./packages/core/tsconfig.test.json"
+    },
+    {
+      "path": "./packages/cli"
+    },
+    {
+      "path": "./apps/desktop/tsconfig.app.json"
+    },
+    {
+      "path": "./apps/desktop/tsconfig.node.json"
+    },
+    {
+      "path": "./apps/desktop/tsconfig.test.json"
+    }
   ]
 }

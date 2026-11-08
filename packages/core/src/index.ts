@@ -59,6 +59,13 @@ export {
 } from './ports/memory-fs';
 
 // storage
+export {
+  type AppConfig,
+  appConfigPath,
+  appConfigSchema,
+  readAppConfig,
+  writeAppConfig,
+} from './storage/app-config';
 export type { IssueCode, IssueSeverity, VaultIssue } from './storage/issues';
 export { lockDirFor } from './storage/lock';
 export type { VaultSnapshot } from './storage/reader';

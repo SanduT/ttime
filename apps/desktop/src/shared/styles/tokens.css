@@ -5,6 +5,11 @@
   --color-surface: light-dark(rgb(255 255 255 / 0.72), rgb(30 30 32 / 0.72));
   --color-text: light-dark(rgb(28 28 30), rgb(242 242 247));
   --color-text-muted: light-dark(rgb(99 99 102), rgb(152 152 157));
+  --color-border: light-dark(rgb(0 0 0 / 0.1), rgb(255 255 255 / 0.12));
+  --color-control: light-dark(rgb(0 0 0 / 0.05), rgb(255 255 255 / 0.08));
+  --color-accent: light-dark(rgb(0 122 255), rgb(10 132 255));
+  --color-on-accent: rgb(255 255 255);
+  --color-danger: light-dark(rgb(215 0 21), rgb(255 69 58));
 }
 
 :root {

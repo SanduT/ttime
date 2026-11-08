@@ -15,7 +15,6 @@
     "apps/desktop": {
       "entry": ["src/windows/*/main.tsx"],
       "project": ["src/**/*.{ts,tsx}"],
-      "ignore": ["src/shared/bridge/bindings.ts"],
       "ignoreDependencies": ["tailwindcss"]
     }
   }

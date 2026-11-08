@@ -3,3 +3,6 @@
 pub mod activation;
 pub mod panels;
 pub mod tray;
+pub mod vault;
+pub mod vault_io;
+pub mod watcher;

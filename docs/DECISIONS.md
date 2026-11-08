@@ -259,3 +259,60 @@ suggests `--trim`. It never prompts.
 
 Manual runs may write the real CLI config folder `~/.config/ttime` (config, locks). Automated tests
 still use temporary directories only.
+
+## Step 4: Rust file layer and onboarding (2026-11-08)
+
+### DEC-41 Who reads and writes `config.json`
+
+The core owns the config file (`storage/app-config.ts`: schema, unknown keys kept, a broken file
+is never overwritten), so the app and the CLI share one implementation. The webview writes it
+through `TauriFs` after a vault is chosen. Rust reads only its `vault` key at launch, to restore
+the allow-list and the watcher before any window asks; an unreadable file means onboarding.
+
+### DEC-42 Allow-list and vault root rules
+
+- Paths must be absolute with no `.` or `..` segments. They are resolved through symlinks
+  (missing tails allowed), and a dangling symlink is rejected so a later write can't escape.
+- The allowed roots themselves can't be removed with `vault_remove`.
+- `vault_set_root` needs an existing folder that is neither `/` nor the home folder.
+- Opening a folder that is not a vault restores the previous root.
+
+### DEC-43 Vault commands are async
+
+All file commands run as async Tauri commands, off the main thread, so a slow disk never blocks
+the tray or panels.
+
+### DEC-44 `FileStat` numbers
+
+Specta forbids 64-bit integers, so `mtimeMs` and `size` are `f64`, which the bindings type as
+`number | null`. `TauriFs` maps `null` (never produced in practice) to 0.
+
+### DEC-45 Rust errors without a TypeScript twin
+
+`io.failed`, `io.path_not_allowed` and `input.invalid` keep their code. Other Rust codes
+(`platform.watcher`, `platform.tauri`, ...) become `platform.failed` with the original in
+`details.rustCode`. `io.path_not_allowed` and `config.parse_failed` were added to the core codes.
+
+### DEC-46 New Rust dependencies
+
+`notify-debouncer-full` 0.7.0 (uses `notify` 8.2.2, licensed CC0-1.0, allowed per crate in
+`deny.toml`) and `tauri-plugin-dialog` 2.8.4 for the folder picker. The dialog plugin depends on
+the `tauri-plugin-fs` crate, but that plugin is not registered and no `fs:` permission is
+granted; the capability only adds `dialog:allow-open`.
+
+### DEC-47 Whole-snapshot reload for now
+
+On `vault:changed` the main window reloads the whole snapshot. Re-reading only the changed files
+comes with the per-window stores of steps 5 to 7.
+
+### DEC-48 Onboarding scope
+
+Step 4 onboarding is: create a vault (name plus folder) or open an existing one, then a vault
+overview with counts and issues. The sample project, hotkey recording and launch at login from
+ARCHITECTURE 14.6 come with the steps that add those features.
+
+### DEC-49 UI error plumbing and desktop tests
+
+`runAction`, a toaster and one error boundary per window (CONVENTIONS 7) were added now because
+onboarding is the first UI with actions. Desktop unit tests run with `bun test` and have their
+own `tsconfig.test.json`, like core.

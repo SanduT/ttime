@@ -8,5 +8,10 @@
     "rootDir": "src"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "references": [{ "path": "../../packages/core/tsconfig.src.json" }]
+  "references": [
+    {
+      "path": "../../packages/core/tsconfig.src.json"
+    }
+  ],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]
 }

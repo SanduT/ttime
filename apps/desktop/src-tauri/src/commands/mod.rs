@@ -1,6 +1,10 @@
 //! IPC handlers, registered with tauri-specta so the TypeScript bindings are generated.
 
-use tauri_specta::{Builder, collect_commands};
+pub mod vault;
+
+use tauri_specta::{Builder, collect_commands, collect_events};
+
+use crate::events::VaultChanged;
 
 /// Where the generated TypeScript bindings live, relative to this crate.
 pub const BINDINGS_PATH: &str = concat!(
@@ -10,7 +14,21 @@ pub const BINDINGS_PATH: &str = concat!(
 
 /// The tauri-specta builder with every command and event of the app.
 pub fn specta_builder() -> Builder<tauri::Wry> {
-    Builder::<tauri::Wry>::new().commands(collect_commands![])
+    Builder::<tauri::Wry>::new()
+        .commands(collect_commands![
+            vault::app_env,
+            vault::vault_root,
+            vault::vault_set_root,
+            vault::vault_read_text,
+            vault::vault_write_atomic,
+            vault::vault_append_line,
+            vault::vault_list,
+            vault::vault_mkdirp,
+            vault::vault_mkdir_exclusive,
+            vault::vault_remove,
+            vault::vault_stat,
+        ])
+        .events(collect_events![VaultChanged])
 }
 
 /// Writes the TypeScript bindings for `builder` to `path`.

@@ -3,10 +3,14 @@
 
 mod commands;
 mod error;
+mod events;
 mod services;
+mod state;
 
 pub use error::AppError;
 use services::panels::{self, WindowKind};
+use state::AppState;
+use tauri::Manager;
 use tauri_plugin_log::{RotationStrategy, Target, TargetKind};
 
 /// Largest log file before rotation, in bytes.
@@ -35,12 +39,21 @@ pub fn run() -> Result<(), AppError> {
 
     tauri::Builder::default()
         .plugin(log_plugin())
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(specta.invoke_handler())
         .setup(move |app| {
             specta.mount_events(app);
             services::activation::set_accessory(app.handle());
+            let home_dir = app.path().home_dir()?;
+            let state = AppState::new(home_dir.clone(), state::config_dir_for(&home_dir));
+            let has_vault = services::vault::open_saved(app.handle(), &state);
+            app.manage(state);
             panels::create(app.handle(), WindowKind::Quickbar)?;
             services::tray::create(app.handle())?;
+            if !has_vault {
+                // First run (or the saved vault is gone): the main window shows onboarding.
+                panels::show(app.handle(), WindowKind::Main)?;
+            }
             log::info!("ttime started");
             Ok(())
         })

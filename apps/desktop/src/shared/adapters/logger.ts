@@ -22,7 +22,7 @@ const forward =
   };
 
 /** Logger for the webviews: writes to the shared tauri-plugin-log file used by Rust too. */
-export const createTauriLogger = (): Logger => ({
+export const createLogger = (): Logger => ({
   debug: forward(debug),
   info: forward(info),
   warn: forward(warn),
