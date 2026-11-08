@@ -1,0 +1,12 @@
+{
+  "archived": false,
+  "createdAt": "2026-11-01T09:00:00+02:00",
+  "defaultRate": {
+    "amount": "50.00",
+    "currency": "EUR"
+  },
+  "id": "acme",
+  "name": "Acme GmbH",
+  "notes": "",
+  "schema": 1
+}

@@ -9,7 +9,8 @@
       "project": ["src/**/*.ts"]
     },
     "packages/cli": {
-      "project": ["src/**/*.ts"]
+      "entry": ["test/integration/support/{writer,hold-lock}.ts"],
+      "project": ["src/**/*.ts", "test/**/*.ts"]
     },
     "apps/desktop": {
       "entry": ["src/windows/*/main.tsx"],

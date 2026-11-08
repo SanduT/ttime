@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-07",
+  "entries": [
+    {
+      "billable": true,
+      "createdBy": "app",
+      "description": "release night",
+      "end": "2026-11-08T01:15:00+02:00",
+      "id": "01JC8Z6YQ8K3N7R2T5V9W1X4Z2",
+      "notes": [],
+      "project": "acme-website",
+      "start": "2026-11-07T22:30:00+02:00",
+      "tags": [
+        "ops"
+      ],
+      "updatedAt": "2026-11-08T01:15:00+02:00"
+    }
+  ],
+  "schema": 1
+}

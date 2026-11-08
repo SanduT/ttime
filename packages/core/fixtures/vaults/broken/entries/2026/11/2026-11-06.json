@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-06",
+  "entries": [
+    {
+      "billable": true,
+      "createdBy": "app",
+      "description": "auth refactor",
+      "end": "2026-11-06T11:15:12+02:00",
+      "id": "01JC8Z6YQ8K3N7R2T5V9W1X4Z0",
+      "invoiceLine": "INV-2026-11 #1",
+      "notes": [
+        {
+          "at": "2026-11-06T10:42:00+02:00",
+          "text": "finished login flow"
+        }
+      ],
+      "project": "acme-website",
+      "start": "2026-11-06T09:30:00+02:00",
+      "tags": [
+        "backend"
+      ],
+      "updatedAt": "2026-11-06T11:15:12+02:00"
+    }
+  ],
+  "schema": 1
+}

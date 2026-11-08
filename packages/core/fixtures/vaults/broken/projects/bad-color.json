@@ -1,0 +1,10 @@
+{
+  "billable": false,
+  "billingPeriod": "monthly",
+  "color": "blue",
+  "createdAt": "2026-11-01T09:00:00+02:00",
+  "id": "bad-color",
+  "name": "Bad color",
+  "schema": 1,
+  "status": "active"
+}

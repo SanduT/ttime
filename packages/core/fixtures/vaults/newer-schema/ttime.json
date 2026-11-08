@@ -1,0 +1,31 @@
+{
+  "createdAt": "2026-11-01T09:00:00+02:00",
+  "name": "Fixture vault",
+  "schema": 2,
+  "settings": {
+    "csv": {
+      "bom": true,
+      "decimalSeparator": ".",
+      "delimiter": ","
+    },
+    "dayStartsAt": "00:00",
+    "defaultCurrency": "EUR",
+    "rounding": {
+      "minutes": 15,
+      "mode": "none",
+      "scope": "entry"
+    },
+    "weekStartsOn": "monday",
+    "workingHours": {
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri"
+      ],
+      "end": "18:00",
+      "start": "09:00"
+    }
+  }
+}

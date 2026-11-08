@@ -1,0 +1,20 @@
+{
+  "billable": true,
+  "billingPeriod": "monthly",
+  "client": "acme",
+  "color": "#4F7CFF",
+  "createdAt": "2026-11-01T09:00:00+02:00",
+  "id": "acme-website",
+  "invoicedThrough": null,
+  "name": "Acme Website",
+  "rate": {
+    "amount": "60.00",
+    "currency": "EUR"
+  },
+  "schema": 1,
+  "status": "active",
+  "target": {
+    "hours": 30,
+    "per": "week"
+  }
+}

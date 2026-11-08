@@ -19,7 +19,7 @@
     "check:knip": "knip",
     "check:deps-rust": "cd apps/desktop/src-tauri && cargo deny check && cargo machete",
     "fix": "prettier --write . && eslint . --fix && cd apps/desktop/src-tauri && cargo fmt --all",
-    "test": "cd packages/core && bun test --coverage --pass-with-no-tests && cd ../cli && bun test --pass-with-no-tests",
+    "test": "cd packages/core && bun test --coverage && cd ../cli && bun test",
     "test:rust": "cd apps/desktop/src-tauri && cargo test"
   },
   "devDependencies": {

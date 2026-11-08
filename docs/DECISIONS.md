@@ -72,5 +72,95 @@ commit (table alignment, quote style in code samples). Content is unchanged.
 
 ### DEC-12 Temporary `--pass-with-no-tests`
 
-Step 1 has no TypeScript tests yet, so `bun test` runs with `--pass-with-no-tests`. Removed in
-step 2.
+Step 1 had no TypeScript tests, so `bun test` ran with `--pass-with-no-tests`. Removed in step 2.
+
+## Step 2: Core model and storage (2026-11-08)
+
+### DEC-13 One sanctioned `JSON.parse`
+
+`packages/core/src/lib/json.ts` is the wrapper that the `no-restricted-properties` ban points to,
+so it has the only inline disable in the repo:
+`eslint-disable-next-line no-restricted-properties -- parseJson is the wrapper the ban points to`.
+It returns `unknown`.
+
+### DEC-14 Ports beyond the ARCHITECTURE sketch
+
+- `ClockPort.sleep(ms)`: core has no timer globals (ES2023 lib), and lock acquisition must wait.
+- `EnvPort.pid`: recorded in the lock owner file, as section 5.1 asks.
+- `IdGenerator` (`newId()`): services take `ids` (CONVENTIONS 4.4); `Math.random` is banned in
+  core. `createUlidGenerator` makes monotonic ULIDs from injected random bytes.
+
+### DEC-15 Lock refresh and stale lock breaking
+
+- The owner file is refreshed while the holder works (before each file write of a commit) instead
+  of by a background timer. A hung holder then goes stale and can be recovered, which a timer would
+  hide. Transactions take milliseconds, far below the 10 second stale limit.
+- Breaking a stale lock happens under a second directory, `<lock>.breaking`, created with
+  `mkdirExclusive`. The breaker re-checks that the same owner is still stale before removing it, so
+  two processes can't both break it and delete a fresh lock. A breaker left by a crash is removed
+  once it is older than the stale limit.
+- Release only removes the lock if the owner token is still ours; otherwise it logs an error.
+
+### DEC-16 SHA-256 and UTF-8 in plain TypeScript
+
+The lock name and written-file hashes need SHA-256, and core has no crypto or `TextEncoder`
+(ES2023 only). `lib/sha256.ts` and `lib/utf8.ts` are small implementations tested against FIPS
+vectors and the standard encoder. They are not used for anything security-sensitive.
+
+### DEC-17 Transactions enforce read-before-write
+
+A transaction can only write or remove a path it has read in the same transaction, and reading a
+file that fails to parse throws `vault.parse_failed` (or `vault.read_only` for a newer schema).
+Writes are buffered and applied after the callback succeeds, so a failing transaction writes
+nothing. Data files are written before changelog lines: a crash in between loses a log line, never
+data, and never logs a change that did not happen.
+
+### DEC-18 Trash file shape
+
+`.trash/entries/<id>.json` is `{ "schema": 1, "deletedAt", "deletedBy", "entry": { ... } }`, so the
+entry keeps its own schema and restores unchanged. ARCHITECTURE only says the file has
+`deletedAt` and `deletedBy`.
+
+### DEC-19 Timestamps need a numeric offset
+
+The schema rejects `Z` and fractional seconds. ARCHITECTURE 4.2 asks for the local offset and no
+fractions; the date part of a timestamp then decides the day file without time zone lookups.
+
+### DEC-20 Issue line numbers deferred
+
+PRD D5 asks for file and line. Bun and WebKit's `JSON.parse` errors carry no position, so issues
+report the file, the JSON path and the parser or schema message. Line numbers would need a small
+JSON locator; deferred until the Issues view (step 7). Listed as an open question.
+
+### DEC-21 Missing settings use defaults
+
+Each key under `ttime.json` `settings` falls back to the documented default when absent, so a
+hand-written minimal `ttime.json` still opens. The defaults are written back the next time the
+config is saved.
+
+### DEC-22 Real file system tests live in `packages/cli`
+
+`NodeFs` lives in the CLI and core may not import Node, so the NodeFs contract, fixture, concurrent
+writer and stale lock tests are in `packages/cli/test/integration/` and use temp directories only.
+The concurrent test runs two Bun processes; the stale lock test kills a lock holder with SIGKILL
+and waits for the 10 second stale limit.
+
+### DEC-23 Fixtures are not formatted by Prettier
+
+`packages/core/fixtures/vaults/` holds files in the exact byte format ttime writes. Prettier would
+collapse short arrays and change that, so the folder is in `.prettierignore`.
+
+### DEC-24 `no-unused-vars` with `ignoreRestSiblings`
+
+Lets `const { end, ...running } = entry` drop a key. This is the rule's standard option, not a
+disable.
+
+### DEC-25 Core runtime dependencies
+
+`zod` 4.6.7 (schemas) and `temporal-polyfill` 1.0.8 (time zones and offsets), both chosen in
+ARCHITECTURE section 1. `big.js` is added with the money helpers in step 8.
+
+### DEC-26 Duplicate IDs are reported, not repaired
+
+Moving an entry between day files writes the new file first. A crash in between leaves the entry in
+both files, which the reader reports as `entry.duplicate_id`. It is not repaired automatically.

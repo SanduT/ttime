@@ -26,6 +26,9 @@ export const boundaryElements = [
   { type: 'cli-entry', pattern: 'packages/cli/src' },
 ];
 
+/** Test files may import any layer of their own package. */
+export const boundaryFiles = [{ pattern: '**/*.test.ts', category: 'test' }];
+
 const allow = (from: string | readonly string[], to: readonly string[]) => ({
   from: { element: { types: typeof from === 'string' ? [from] : from } },
   allow: { to: { element: { types: to } } },
@@ -33,6 +36,10 @@ const allow = (from: string | readonly string[], to: readonly string[]) => ({
 
 export const boundaryPolicies = [
   { allow: { to: { origin: ['external', 'core'] } } },
+  {
+    from: { file: { categories: ['test'] } },
+    allow: { to: { element: { types: [...CORE_LAYERS, 'core-testing', 'core-api'] } } },
+  },
   // packages/core: schema <- ports <- storage <- domain <- index.ts
   allow('core-lib', ['core-lib']),
   allow('core-schema', ['core-lib', 'core-schema']),

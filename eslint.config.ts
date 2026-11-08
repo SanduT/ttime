@@ -12,7 +12,7 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import unicorn from 'eslint-plugin-unicorn';
 import { configs as tsConfigs } from 'typescript-eslint';
 
-import { boundaryElements, boundaryPolicies } from './eslint/boundaries';
+import { boundaryElements, boundaryFiles, boundaryPolicies } from './eslint/boundaries';
 import {
   cliImportBans,
   coreGlobalBans,
@@ -58,6 +58,8 @@ const typeSafetyRules: Linter.RulesRecord = {
   '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
   '@typescript-eslint/prefer-readonly': 'error',
   '@typescript-eslint/naming-convention': namingConvention,
+  // Lets `const { end, ...rest } = entry` drop a key without an unused variable.
+  '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
 };
 
 const hygieneRules: Linter.RulesRecord = {
@@ -112,10 +114,11 @@ export default defineConfig(
     },
     plugins: { 'simple-import-sort': simpleImportSort, unicorn, boundaries },
     settings: {
-      'import-x/resolver': { typescript: { alwaysTryTypes: true } },
-      'import/resolver': { typescript: { alwaysTryTypes: true } },
+      'import-x/resolver': { typescript: { alwaysTryTypes: true, bun: true } },
+      'import/resolver': { typescript: { alwaysTryTypes: true, bun: true } },
       'boundaries/include': ['packages/*/src/**/*', 'apps/desktop/src/**/*'],
       'boundaries/elements': boundaryElements,
+      'boundaries/files': boundaryFiles,
     },
     rules: {
       ...typeSafetyRules,
