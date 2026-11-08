@@ -45,6 +45,7 @@ export const PeriodFields = ({ form, today, onChange }: Props) => (
   <div className="flex gap-2">
     <Field label="Period">
       <Select
+        className="w-36"
         value={form.period}
         onChange={(event) => {
           onChange({ period: kindOf(event.target.value) });
@@ -60,6 +61,7 @@ export const PeriodFields = ({ form, today, onChange }: Props) => (
     {form.period === 'month' ? (
       <Field label="Month">
         <Select
+          className="w-44"
           value={form.month}
           onChange={(event) => {
             onChange({ month: event.target.value });

@@ -35,6 +35,12 @@ pub enum AppError {
     /// A native panel could not be created or found.
     #[error("panel failed: {0}")]
     Panel(String),
+    /// A global shortcut is malformed or taken by another app.
+    #[error("{0}")]
+    Shortcut(String),
+    /// Launch at login could not be read or changed.
+    #[error("launch at login failed: {0}")]
+    Autostart(String),
 }
 
 impl AppError {
@@ -50,6 +56,8 @@ impl AppError {
             Self::Watcher(_) => "platform.watcher",
             Self::StatePoisoned => "platform.state",
             Self::Panel(_) => "platform.panel",
+            Self::Shortcut(_) => "platform.shortcut",
+            Self::Autostart(_) => "platform.autostart",
         }
     }
 

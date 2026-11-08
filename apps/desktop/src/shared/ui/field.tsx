@@ -1,7 +1,7 @@
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from 'react';
 
 const CONTROL =
-  'rounded-md border border-(--color-border) bg-(--color-control) px-2 py-1 text-sm outline-none focus:border-(--color-accent)';
+  'h-8 rounded-md border border-(--color-border) bg-(--color-control) px-2 text-sm outline-none focus:border-(--color-accent)';
 
 /** A text input styled like the rest of the app. */
 export const TextInput = ({ className = '', ...rest }: InputHTMLAttributes<HTMLInputElement>) => (

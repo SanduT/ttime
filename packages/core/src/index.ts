@@ -178,6 +178,12 @@ export {
 } from './domain/report';
 export { type Rounding, roundSeconds } from './domain/rounding';
 export type { OnConflict } from './domain/running';
+export {
+  createSettingsService,
+  type SettingsPatch,
+  type SettingsService,
+  type SettingsServiceDeps,
+} from './domain/settings-service';
 export { type DaySegment, splitByDay, type SplitOptions } from './domain/split-by-day';
 export {
   createTimerService,

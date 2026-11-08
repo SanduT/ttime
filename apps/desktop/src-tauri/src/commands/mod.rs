@@ -1,11 +1,12 @@
 //! IPC handlers, registered with tauri-specta so the TypeScript bindings are generated.
 
 pub mod quickbar;
+pub mod settings;
 pub mod vault;
 
 use tauri_specta::{Builder, collect_commands, collect_events};
 
-use crate::events::{QuickbarShown, TrayAction, VaultChanged};
+use crate::events::{OpenSettings, QuickbarShown, TrayAction, VaultChanged, VaultOpened};
 
 /// Where the generated TypeScript bindings live, relative to this crate.
 pub const BINDINGS_PATH: &str = concat!(
@@ -36,8 +37,18 @@ pub fn specta_builder() -> Builder<tauri::Wry> {
             quickbar::set_running,
             quickbar::popover_hide,
             quickbar::app_quit,
+            settings::prefs_get,
+            settings::prefs_set,
+            settings::launch_at_login_get,
+            settings::launch_at_login_set,
         ])
-        .events(collect_events![VaultChanged, QuickbarShown, TrayAction])
+        .events(collect_events![
+            VaultChanged,
+            VaultOpened,
+            QuickbarShown,
+            TrayAction,
+            OpenSettings
+        ])
 }
 
 /// Writes the TypeScript bindings for `builder` to `path`.

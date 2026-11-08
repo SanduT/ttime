@@ -11,7 +11,7 @@ const itemClass = (active: boolean): string =>
     active ? 'bg-(--color-control) font-medium' : 'hover:bg-(--color-control)'
   }`;
 
-/** Today and Projects, plus Issues while the vault has problems (ARCHITECTURE 7.4). */
+/** Today and Projects, Settings at the bottom, plus Issues while the vault has problems (ARCHITECTURE 7.4). */
 export const Sidebar = () => {
   const { view, go } = useNavStore();
   const issues = useVaultStore((state) => state.snapshot?.issues.length ?? 0);
@@ -41,6 +41,18 @@ export const Sidebar = () => {
           ) : null}
         </button>
       ))}
+      <span className="flex-1" />
+      <button
+        type="button"
+        aria-current={view === 'settings' ? 'page' : undefined}
+        className={itemClass(view === 'settings')}
+        onClick={() => {
+          go('settings');
+        }}
+      >
+        Settings
+        <span className="text-xs text-(--color-text-muted)">⌘,</span>
+      </button>
     </nav>
   );
 };

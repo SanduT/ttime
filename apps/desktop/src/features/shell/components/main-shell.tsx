@@ -1,7 +1,9 @@
 import { useVaultStore } from '../../../shared/store/vault-store';
 import { IssuesView } from '../../issues';
 import { ProjectsView } from '../../projects';
+import { SettingsView } from '../../settings';
 import { TodayView } from '../../today';
+import { useSettingsShortcut } from '../hooks/use-settings-shortcut';
 import { useUndoShortcuts } from '../hooks/use-undo-shortcuts';
 import { useNavStore } from '../store/nav-store';
 import { Sidebar } from './sidebar';
@@ -9,6 +11,7 @@ import { Sidebar } from './sidebar';
 /** The main window: sidebar and the selected view. ⌘Z and ⇧⌘Z work everywhere. */
 export const MainShell = () => {
   useUndoShortcuts();
+  useSettingsShortcut();
   const view = useNavStore((state) => state.view);
   const readOnly = useVaultStore((state) => state.snapshot?.readOnly ?? false);
   return (
@@ -23,6 +26,7 @@ export const MainShell = () => {
         {view === 'today' ? <TodayView /> : null}
         {view === 'projects' ? <ProjectsView /> : null}
         {view === 'issues' ? <IssuesView /> : null}
+        {view === 'settings' ? <SettingsView /> : null}
       </main>
     </div>
   );

@@ -107,3 +107,22 @@ Open ttime from the tray. The vault should have a few entries today and on other
 7. Open the file in Numbers or Excel: accents and quotes are intact, `duration_decimal` and `amount`
    are numbers. With Semicolon and Comma decimals, Excel in a comma-decimal locale reads it too.
 8. An entry across midnight is two rows, one per day.
+
+## Step 8b: Settings
+
+1. ⌘, in the main window, the sidebar's Settings, and the tray's Settings… each open Settings.
+2. Quick bar shortcut: click, press ⌃⌥K. The button shows ⌃⌥K; ⌃⌥K now toggles the quick bar and
+   ⌥⇧Space does nothing. Press a shortcut another app owns (for example ⌘Space): an error shows and
+   the previous one still works. Esc while recording cancels.
+3. Menu bar while tracking: Project and time shows `Acme Website 0:12`; Icon only shows the dot
+   alone; Show seconds makes the time tick every second.
+4. Appearance Dark and Light switch every window (main, quick bar, popover); System follows macOS.
+5. Open ttime at login: on, then check System Settings, General, Login Items. Off removes it.
+6. Quit and relaunch: the shortcut, menu bar display and appearance are kept.
+7. Week starts on Sunday: the popover's This week and the export presets start on Sunday.
+8. Working hours: turn off Fri, set 10:00 to 16:00. Today's untracked gaps follow. 16:00 to 10:00
+   shows an error and nothing changes.
+9. Change Day starts at to `04:00`; ⌘Z restores `00:00`.
+10. Export defaults: set Semicolon. A new export sheet starts with Semicolon.
+11. Reveal in Finder selects the vault folder. Open another vault… switches the main window, and
+    the quick bar and popover show the new vault's projects.

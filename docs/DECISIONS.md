@@ -497,3 +497,35 @@ old one. They are output, so they get no changelog line and no schema. The sheet
 path with Reveal in Finder (`vault_reveal`, limited to files inside the open vault, runs
 `/usr/bin/open -R`), Open (`vault_open`, the file's default app) and Open exports folder. A save-anywhere dialog is left out because the webviews may only touch the
 vault and config folders.
+
+## Step 8b: Settings view
+
+### DEC-70 App preferences in a typed `prefs.json`
+
+App preferences live in `prefs.json` in the app config directory (outside the vault), owned by
+Rust as a serde struct, instead of the store plugin (ARCHITECTURE 6.1). Rust needs them at launch
+(hotkey, theme, menu bar title) and every one has a Rust effect, so a typed file with
+`prefs_get` and `prefs_set` keeps them in one place; the store plugin's untyped JS API would
+bypass the bridge. A broken file gives the defaults and is left alone until the next save.
+
+- Quick bar shortcut: recorded in the view, applied by unregistering the old one and
+  registering the new one; if the new one is taken, the old one is registered again and the
+  error is shown.
+- Menu bar while tracking: Time (default), Project and time (name cut at 20 characters), or Icon
+  only; optional seconds, which tick the title every second.
+- Appearance: System, Light or Dark, through `AppHandle::set_theme` for every window.
+- Launch at login: `tauri-plugin-autostart` (LaunchAgent). Its state is read from the system,
+  not stored. In `bun run dev` it registers the debug binary.
+
+### DEC-71 Vault settings and switching vaults
+
+- Week start, day start, working hours, default currency, rounding and CSV defaults are written to
+  `ttime.json` by core's settings service: one locked transaction with a `config` changelog line,
+  so ⌘Z undoes a settings change. Selects save at once; text fields save on blur or Enter.
+- Open another vault… reuses onboarding. Rust now emits `vault:opened`, and every window (quick
+  bar and popover too) reloads its vault on it.
+- Settings opens from the sidebar, ⌘, in the main window, and Settings… in the tray menu.
+
+### DEC-72 Settings that wait for the monitors
+
+Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the monitors of step 11. They join the Settings view with that step, so no setting exists without its behaviour.

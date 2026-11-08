@@ -16,12 +16,13 @@ use tauri_specta::Event;
 
 use crate::{
     AppError,
-    events::{TrayAction, TrayActionKind},
+    events::{OpenSettings, TrayAction, TrayActionKind},
     services::{
         menubar::{self, DOT_SIZE, IDLE_WAIT, RunningSummary},
         panels::{self, WindowKind},
         popover,
         quickbar::{self, QuickbarMode},
+        settings,
     },
     state::AppState,
 };
@@ -33,6 +34,7 @@ const RESUME: &str = "resume";
 const NEW: &str = "new";
 const NOTE: &str = "note";
 const SHOW_MAIN: &str = "show-main";
+const SETTINGS: &str = "settings";
 const QUIT: &str = "quit";
 
 /// The first menu item: Stop while tracking, otherwise Resume with what it continues.
@@ -64,6 +66,7 @@ fn menu(
             &MenuItem::with_id(app, NOTE, "Add Note…", true, None::<&str>)?,
             &PredefinedMenuItem::separator(app)?,
             &MenuItem::with_id(app, SHOW_MAIN, "Open ttime", true, None::<&str>)?,
+            &MenuItem::with_id(app, SETTINGS, "Settings…", true, Some("CmdOrCtrl+,"))?,
             &PredefinedMenuItem::separator(app)?,
             &MenuItem::with_id(app, QUIT, "Quit ttime", true, Some("CmdOrCtrl+Q"))?,
         ],
@@ -128,12 +131,16 @@ fn now_epoch() -> f64 {
 fn refresh_title(app: &AppHandle) -> Result<std::time::Duration, AppError> {
     let state = app.state::<AppState>();
     let summary = state.running()?.clone();
+    let style = settings::title_style(&*state.prefs()?);
     let now = now_epoch();
     if let Some(tray) = app.tray_by_id(TRAY_ID) {
-        tray.set_title(menubar::title(summary.as_ref(), now))?;
+        tray.set_title(menubar::title(summary.as_ref(), now, style))?;
     }
     Ok(summary.map_or(IDLE_WAIT, |running| {
-        menubar::next_tick(menubar::elapsed_seconds(running.start_epoch_seconds, now))
+        menubar::next_tick(
+            menubar::elapsed_seconds(running.start_epoch_seconds, now),
+            style,
+        )
     }))
 }
 
@@ -161,6 +168,13 @@ fn emit_action(app: &AppHandle, action: TrayActionKind) -> Result<(), AppError> 
     Ok(())
 }
 
+/// Shows the main window on its Settings view.
+pub fn open_settings(app: &AppHandle) -> Result<(), AppError> {
+    panels::show(app, WindowKind::Main)?;
+    OpenSettings.emit_to(app, WindowKind::Main.label())?;
+    Ok(())
+}
+
 fn on_menu_event(app: &AppHandle, event: &MenuEvent) {
     let result = match event.id().as_ref() {
         STOP => emit_action(app, TrayActionKind::Stop),
@@ -168,6 +182,7 @@ fn on_menu_event(app: &AppHandle, event: &MenuEvent) {
         NEW => quickbar::show(app, QuickbarMode::New),
         NOTE => quickbar::show(app, QuickbarMode::Note),
         SHOW_MAIN => panels::show(app, WindowKind::Main),
+        SETTINGS => open_settings(app),
         QUIT => {
             app.exit(0);
             Ok(())

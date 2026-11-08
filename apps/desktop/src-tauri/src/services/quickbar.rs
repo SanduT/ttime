@@ -12,9 +12,6 @@ use crate::{
     services::panels::{self, Area, WindowKind},
 };
 
-/// Default global shortcut (PRD 6.1). Configurable in Settings later.
-pub const DEFAULT_SHORTCUT: &str = "Alt+Shift+Space";
-
 /// Fraction of the screen height above the panel's top edge.
 const TOP_FRACTION: f64 = 0.2;
 
@@ -60,17 +57,24 @@ pub fn create(app: &AppHandle) -> Result<(), AppError> {
     Ok(())
 }
 
-/// Registers the default global shortcut that toggles the quick bar.
-pub fn register_shortcut(app: &AppHandle) -> Result<(), AppError> {
+/// Registers `shortcut` (like `Alt+Shift+Space`) to toggle the quick bar.
+pub fn register_shortcut(app: &AppHandle, shortcut: &str) -> Result<(), AppError> {
     app.global_shortcut()
-        .on_shortcut(DEFAULT_SHORTCUT, |app, _shortcut, event| {
+        .on_shortcut(shortcut, |app, _shortcut, event| {
             if event.state == ShortcutState::Pressed
                 && let Err(err) = toggle(app)
             {
                 log::error!("Could not toggle the quick bar: {err}");
             }
         })
-        .map_err(|err| AppError::Panel(format!("could not register {DEFAULT_SHORTCUT}: {err}")))
+        .map_err(|err| AppError::Shortcut(format!("could not use {shortcut}: {err}")))
+}
+
+/// Removes `shortcut`; a shortcut that was never registered is ignored.
+pub fn unregister_shortcut(app: &AppHandle, shortcut: &str) {
+    if let Err(err) = app.global_shortcut().unregister(shortcut) {
+        log::warn!("Could not unregister {shortcut}: {err}");
+    }
 }
 
 fn place(app: &AppHandle, window: &WebviewWindow) -> Result<(), AppError> {

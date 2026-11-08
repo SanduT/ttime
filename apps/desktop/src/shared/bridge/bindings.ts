@@ -49,13 +49,26 @@ export const commands = {
 	popoverHide: () => typedError<null, AppError>(__TAURI_INVOKE("popover_hide")),
 	/**  Quits the app. */
 	appQuit: () => typedError<null, AppError>(__TAURI_INVOKE("app_quit")),
+	/**  The app preferences in effect. */
+	prefsGet: () => typedError<Prefs_Serialize, AppError>(__TAURI_INVOKE("prefs_get")),
+	/**
+	 *  Applies and saves `prefs`. A shortcut another app owns fails with `platform.shortcut` and
+	 *  leaves the old one working.
+	 */
+	prefsSet: (prefs: Prefs_Deserialize) => typedError<Prefs_Serialize, AppError>(__TAURI_INVOKE("prefs_set", { prefs })),
+	/**  Whether ttime starts at login (a `LaunchAgent` on macOS). */
+	launchAtLoginGet: () => typedError<boolean, AppError>(__TAURI_INVOKE("launch_at_login_get")),
+	/**  Turns launch at login on or off. */
+	launchAtLoginSet: (enabled: boolean) => typedError<null, AppError>(__TAURI_INVOKE("launch_at_login_set", { enabled })),
 };
 
 /** Events */
 export const events = {
+	mainOpenSettings: makeEvent<OpenSettings, OpenSettings>("main:open-settings"),
 	quickbarShown: makeEvent<QuickbarShown, QuickbarShown>("quickbar:shown"),
 	trayAction: makeEvent<TrayAction, TrayAction>("tray:action"),
 	vaultChanged: makeEvent<VaultChanged, VaultChanged>("vault:changed"),
+	vaultOpened: makeEvent<VaultOpened, VaultOpened>("vault:opened"),
 };
 
 /* Types */
@@ -73,6 +86,9 @@ export type AppError = {
 	message: string,
 };
 
+/**  Light or dark mode for every window. */
+export type Appearance = "system" | "light" | "dark";
+
 /**  One entry of a directory listing. */
 export type DirEntry = {
 	name: string,
@@ -83,6 +99,41 @@ export type DirEntry = {
 export type FileStat = {
 	mtimeMs: number | null,
 	size: number | null,
+};
+
+/**  What the menu bar shows while tracking. */
+export type MenuBarDisplay = 
+/**  The elapsed time next to the project dot (PRD default). */
+"time" | 
+/**  The project name and the elapsed time. */
+"project-and-time" | 
+/**  The project dot only. */
+"icon";
+
+/**  The main window should show Settings (tray menu item). */
+export type OpenSettings = null;
+
+/**  The app preferences. Missing keys take their defaults. */
+export type Prefs = Prefs_Serialize | Prefs_Deserialize;
+
+/**  The app preferences. Missing keys take their defaults. */
+export type Prefs_Deserialize = {
+	/**  Accelerator that toggles the quick bar, like `Alt+Shift+Space`. */
+	quickbarShortcut?: string,
+	menuBarDisplay?: MenuBarDisplay,
+	/**  Show seconds in the menu bar time. */
+	showSeconds?: boolean,
+	appearance?: Appearance,
+};
+
+/**  The app preferences. Missing keys take their defaults. */
+export type Prefs_Serialize = {
+	/**  Accelerator that toggles the quick bar, like `Alt+Shift+Space`. */
+	quickbarShortcut: string,
+	menuBarDisplay: MenuBarDisplay,
+	/**  Show seconds in the menu bar time. */
+	showSeconds: boolean,
+	appearance: Appearance,
 };
 
 /**  What the quick bar opens for. */
@@ -119,6 +170,11 @@ export type TrayActionKind = "stop" | "resume";
  */
 export type VaultChanged = {
 	paths: string[],
+};
+
+/**  Another vault was opened; every window reloads. */
+export type VaultOpened = {
+	root: string,
 };
 
 /* Tauri Specta runtime */

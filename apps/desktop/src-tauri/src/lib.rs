@@ -42,22 +42,30 @@ pub fn run() -> Result<(), AppError> {
         .plugin(log_plugin())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+        .plugin(tauri_plugin_autostart::init(
+            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+            None,
+        ))
         .plugin(tauri_nspanel::init())
         .invoke_handler(specta.invoke_handler())
         .setup(move |app| {
             specta.mount_events(app);
             services::activation::set_accessory(app.handle());
             let home_dir = app.path().home_dir()?;
-            let state = AppState::new(home_dir.clone(), state::config_dir_for(&home_dir));
+            let prefs_path = app.path().app_config_dir()?.join("prefs.json");
+            let prefs = services::prefs::load(&prefs_path);
+            let state = AppState::new(
+                home_dir.clone(),
+                state::config_dir_for(&home_dir),
+                prefs_path,
+                prefs.clone(),
+            );
             let has_vault = services::vault::open_saved(app.handle(), &state);
             let (wake, ticks) = std::sync::mpsc::channel();
             state.set_ticker(wake)?;
             app.manage(state);
             services::quickbar::create(app.handle())?;
-            if let Err(err) = services::quickbar::register_shortcut(app.handle()) {
-                // Another app may own the shortcut; the tray menu still opens the quick bar.
-                log::error!("{err}");
-            }
+            services::settings::apply_saved(app.handle(), &prefs);
             services::tray::create(app.handle())?;
             services::tray::start_ticker(app.handle().clone(), ticks)?;
             if !has_vault {

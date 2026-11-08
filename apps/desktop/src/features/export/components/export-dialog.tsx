@@ -34,6 +34,7 @@ export const ExportDialog = ({ project, initial, onClose }: Props) => {
         <PeriodFields form={form} today={today} onChange={set} />
         <Field label="Rows">
           <Select
+            className="w-56"
             value={form.mode}
             onChange={(event) => {
               set({ mode: event.target.value === 'daily' ? 'daily' : 'detailed' });
@@ -43,7 +44,16 @@ export const ExportDialog = ({ project, initial, onClose }: Props) => {
             <option value="daily">One per project and day</option>
           </Select>
         </Field>
-        <ExportOptions form={form} onChange={set} />
+        <ExportOptions
+          rounding={form.rounding}
+          csv={form.csv}
+          onRounding={(rounding) => {
+            set({ rounding });
+          }}
+          onCsv={(csv) => {
+            set({ csv });
+          }}
+        />
         <p className="text-sm text-(--color-text-muted)">
           {preview === null || range === null
             ? 'Enter dates like 2026-11-01, with From on or before To.'

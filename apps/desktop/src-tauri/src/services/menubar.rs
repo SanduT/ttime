@@ -4,6 +4,8 @@ use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
 
+use crate::services::prefs::MenuBarDisplay;
+
 /// What the menu bar shows while tracking, pushed by the agent webview with `set_running`.
 /// Rust never reads vault files for this.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, specta::Type)]
@@ -36,22 +38,64 @@ pub fn elapsed_seconds(start: f64, now: f64) -> u64 {
     (now - start).max(0.0).floor() as u64
 }
 
+/// Longest project name shown in the title before it is cut with `…`.
+const NAME_CHARS: usize = 20;
+
+/// How the title looks: what it shows and whether it counts seconds.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct TitleStyle {
+    pub display: MenuBarDisplay,
+    pub seconds: bool,
+}
+
 /// `h:mm` for `seconds`.
 #[must_use]
 pub fn format_elapsed(seconds: u64) -> String {
     format!("{}:{:02}", seconds / 3600, (seconds % 3600) / MINUTE)
 }
 
-/// The elapsed `h:mm` title for the running entry, or `None` (no title) when idle.
+/// `h:mm:ss` for `seconds`.
 #[must_use]
-pub fn title(summary: Option<&RunningSummary>, now: f64) -> Option<String> {
-    summary.map(|running| format_elapsed(elapsed_seconds(running.start_epoch_seconds, now)))
+pub fn format_elapsed_seconds(seconds: u64) -> String {
+    format!("{}:{:02}", format_elapsed(seconds), seconds % MINUTE)
 }
 
-/// How long until the `h:mm` title changes, for an entry running `elapsed` seconds.
+fn short_name(name: &str) -> String {
+    if name.chars().count() <= NAME_CHARS {
+        name.to_owned()
+    } else {
+        let cut: String = name.chars().take(NAME_CHARS - 1).collect();
+        format!("{}…", cut.trim_end())
+    }
+}
+
+/// The title for the running entry in `style`, or `None` (no title) when idle or icon only.
 #[must_use]
-pub const fn next_tick(elapsed: u64) -> Duration {
-    Duration::from_secs(MINUTE - elapsed % MINUTE)
+pub fn title(summary: Option<&RunningSummary>, now: f64, style: TitleStyle) -> Option<String> {
+    let running = summary?;
+    let elapsed = elapsed_seconds(running.start_epoch_seconds, now);
+    let time = if style.seconds {
+        format_elapsed_seconds(elapsed)
+    } else {
+        format_elapsed(elapsed)
+    };
+    match style.display {
+        MenuBarDisplay::Time => Some(time),
+        MenuBarDisplay::ProjectAndTime => {
+            Some(format!("{} {time}", short_name(&running.project_name)))
+        }
+        MenuBarDisplay::Icon => None,
+    }
+}
+
+/// How long until the title changes, for an entry running `elapsed` seconds.
+#[must_use]
+pub const fn next_tick(elapsed: u64, style: TitleStyle) -> Duration {
+    if style.seconds {
+        Duration::from_secs(1)
+    } else {
+        Duration::from_secs(MINUTE - elapsed % MINUTE)
+    }
 }
 
 /// `[r, g, b]` of a `#RRGGBB` color, or gray when it is malformed.
@@ -110,13 +154,45 @@ mod tests {
         }
     }
 
+    const TIME: TitleStyle = TitleStyle {
+        display: MenuBarDisplay::Time,
+        seconds: false,
+    };
+
     #[test]
     fn title_shows_elapsed_hours_and_minutes_while_tracking() {
         assert_eq!(
-            title(Some(&summary(1000.0)), 1000.0 + 3725.0),
+            title(Some(&summary(1000.0)), 1000.0 + 3725.0, TIME),
             Some("1:02".into())
         );
-        assert_eq!(title(None, 1000.0), None);
+        assert_eq!(title(None, 1000.0, TIME), None);
+    }
+
+    #[test]
+    fn title_follows_the_display_style() {
+        let running = summary(1000.0);
+        let style = |display, seconds| TitleStyle { display, seconds };
+        let at = 1000.0 + 3725.0;
+        assert_eq!(
+            title(Some(&running), at, style(MenuBarDisplay::Time, true)),
+            Some("1:02:05".into())
+        );
+        assert_eq!(
+            title(
+                Some(&running),
+                at,
+                style(MenuBarDisplay::ProjectAndTime, false)
+            ),
+            Some("Acme 1:02".into())
+        );
+        assert_eq!(
+            title(Some(&running), at, style(MenuBarDisplay::Icon, true)),
+            None
+        );
+        assert_eq!(
+            short_name("A very long project name here"),
+            "A very long project…"
+        );
     }
 
     #[test]
@@ -127,8 +203,13 @@ mod tests {
 
     #[test]
     fn ticks_on_the_next_minute_boundary_of_the_entry() {
-        assert_eq!(next_tick(0), Duration::from_mins(1));
-        assert_eq!(next_tick(125), Duration::from_secs(55));
+        assert_eq!(next_tick(0, TIME), Duration::from_mins(1));
+        assert_eq!(next_tick(125, TIME), Duration::from_secs(55));
+        let seconds = TitleStyle {
+            seconds: true,
+            ..TIME
+        };
+        assert_eq!(next_tick(125, seconds), Duration::from_secs(1));
     }
 
     #[test]

@@ -16,7 +16,7 @@ export const Button = ({
 }: Props) => (
   <button
     type={type}
-    className={`rounded-md px-3 py-1.5 text-sm font-medium outline-offset-2 focus-visible:outline-2 focus-visible:outline-(--color-accent) disabled:opacity-50 ${VARIANTS[variant]} ${className}`}
+    className={`inline-flex h-8 shrink-0 items-center justify-center gap-1 rounded-md px-3 text-sm font-medium outline-offset-2 focus-visible:outline-2 focus-visible:outline-(--color-accent) disabled:opacity-50 ${VARIANTS[variant]} ${className}`}
     {...rest}
   />
 );

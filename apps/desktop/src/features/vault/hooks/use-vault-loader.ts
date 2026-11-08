@@ -27,7 +27,7 @@ export const useVaultLoader = (options: VaultLoaderOptions = {}): VaultStatus =>
   const show = useVaultStore((state) => state.show);
 
   useEffect(() => {
-    void (async () => {
+    const load = async () => {
       const loaded = await runAction('Load vault', async () => {
         const current = await (await getAppContext()).session.current();
         show(current, current === null ? null : await current.read(await readOptions(days)));
@@ -36,7 +36,19 @@ export const useVaultLoader = (options: VaultLoaderOptions = {}): VaultStatus =>
       if (loaded === undefined) {
         show(null, null);
       }
-    })();
+    };
+    void load();
+    // Another window (Settings) may open a different vault: load it here too.
+    const unlisten = getAppContext().then((context) =>
+      context.onVaultOpened(() => {
+        void load();
+      }),
+    );
+    return () => {
+      void unlisten.then((stop) => {
+        stop();
+      });
+    };
   }, [show, days]);
 
   useEffect(() => {

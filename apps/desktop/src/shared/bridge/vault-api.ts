@@ -22,6 +22,8 @@ export type VaultControlApi = {
   readonly env: () => Promise<EnvPort>;
   /** Calls `onChange` with absolute paths after files in the vault change. Returns unlisten. */
   readonly onChanged: (onChange: (paths: readonly string[]) => void) => Promise<() => void>;
+  /** Calls `onOpen` after any window opens another vault. Returns unlisten. */
+  readonly onOpened: (onOpen: () => void) => Promise<() => void>;
   /** Shows a file inside the open vault selected in Finder. */
   readonly reveal: (path: string) => Promise<null>;
   /** Opens a file or folder inside the open vault with its default app. */
@@ -54,6 +56,10 @@ export const vaultControlApi: VaultControlApi = {
   onChanged: (onChange) =>
     events.vaultChanged.listen((event) => {
       onChange(event.payload.paths);
+    }),
+  onOpened: (onOpen) =>
+    events.vaultOpened.listen(() => {
+      onOpen();
     }),
   reveal: (path) => unwrap(commands.vaultReveal(path)),
   open: (path) => unwrap(commands.vaultOpen(path)),

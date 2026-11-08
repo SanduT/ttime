@@ -5,6 +5,7 @@ use std::sync::{Mutex, MutexGuard, mpsc::Sender};
 
 use crate::AppError;
 use crate::services::menubar::RunningSummary;
+use crate::services::prefs::Prefs;
 use crate::services::vault_io::AllowList;
 use crate::services::watcher::VaultWatcher;
 
@@ -32,15 +33,20 @@ pub struct AppState {
     vault: Mutex<VaultSlot>,
     running: Mutex<Option<RunningSummary>>,
     ticker: Mutex<Option<Sender<()>>>,
+    /// `prefs.json` in the app config directory.
+    pub prefs_path: PathBuf,
+    prefs: Mutex<Prefs>,
 }
 
 impl AppState {
     /// State with no vault open yet.
     #[must_use]
-    pub fn new(home_dir: PathBuf, config_dir: PathBuf) -> Self {
+    pub fn new(home_dir: PathBuf, config_dir: PathBuf, prefs_path: PathBuf, prefs: Prefs) -> Self {
         Self {
             home_dir,
             config_dir,
+            prefs_path,
+            prefs: Mutex::new(prefs),
             vault: Mutex::new(VaultSlot::default()),
             running: Mutex::new(None),
             ticker: Mutex::new(None),
@@ -55,6 +61,11 @@ impl AppState {
     /// The running entry as last pushed by the agent webview, locked.
     pub fn running(&self) -> Result<MutexGuard<'_, Option<RunningSummary>>, AppError> {
         self.running.lock().map_err(|_| AppError::StatePoisoned)
+    }
+
+    /// The app preferences, locked.
+    pub fn prefs(&self) -> Result<MutexGuard<'_, Prefs>, AppError> {
+        self.prefs.lock().map_err(|_| AppError::StatePoisoned)
     }
 
     /// Connects the menu bar ticker, woken by [`AppState::wake_ticker`].

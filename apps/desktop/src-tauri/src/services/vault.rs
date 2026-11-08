@@ -1,6 +1,9 @@
 //! Choosing the open vault: validates the folder, remembers it and restarts the watcher.
 //! The config file itself is written by the webview through the core.
 
+use tauri_specta::Event;
+
+use crate::events::VaultOpened;
 use std::path::{Path, PathBuf};
 
 use serde::Deserialize;
@@ -37,7 +40,12 @@ pub fn open(app: &AppHandle, state: &AppState, path: &Path) -> Result<PathBuf, A
     let mut slot = state.vault()?;
     slot.root = Some(root.clone());
     slot.watcher = Some(watcher);
+    drop(slot);
     log::info!("Vault opened");
+    VaultOpened {
+        root: root.display().to_string(),
+    }
+    .emit(app)?;
     Ok(root)
 }
 

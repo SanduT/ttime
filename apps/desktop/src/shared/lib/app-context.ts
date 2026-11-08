@@ -13,6 +13,7 @@ export type AppContext = {
   readonly clock: ClockPort;
   readonly ids: IdGenerator;
   readonly onVaultChanged: (onChange: (paths: readonly string[]) => void) => Promise<() => void>;
+  readonly onVaultOpened: (onOpen: () => void) => Promise<() => void>;
 };
 
 let context: Promise<AppContext> | undefined;
@@ -30,7 +31,14 @@ const build = async (): Promise<AppContext> => {
     ids,
     logger,
   });
-  return { session, logger, clock, ids, onVaultChanged: vaultControlApi.onChanged };
+  return {
+    session,
+    logger,
+    clock,
+    ids,
+    onVaultChanged: vaultControlApi.onChanged,
+    onVaultOpened: vaultControlApi.onOpened,
+  };
 };
 
 /** The window's context, created on first use. */
