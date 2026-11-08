@@ -3,9 +3,13 @@
 
 use tauri::{
     AppHandle, Manager, WebviewUrl, WebviewWindow, WebviewWindowBuilder, Window, WindowEvent,
+    window::{Effect, EffectState, EffectsBuilder},
 };
 
 use crate::{AppError, services::activation};
+
+/// Corner radius of the quick bar's vibrancy material, matching the webview's card.
+const QUICKBAR_RADIUS: f64 = 12.0;
 
 /// One of the app's windows.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -55,12 +59,28 @@ pub fn create(app: &AppHandle, kind: WindowKind) -> Result<WebviewWindow, AppErr
         return Ok(window);
     }
     let (width, height) = kind.size();
-    let window = WebviewWindowBuilder::new(app, kind.label(), WebviewUrl::App(kind.page().into()))
+    let builder = WebviewWindowBuilder::new(app, kind.label(), WebviewUrl::App(kind.page().into()))
         .title("ttime")
         .inner_size(width, height)
-        .visible(false)
-        .build()?;
-    Ok(window)
+        .visible(false);
+    let builder = if kind == WindowKind::Quickbar {
+        builder
+            .decorations(false)
+            .transparent(true)
+            .resizable(false)
+            .skip_taskbar(true)
+            .shadow(true)
+            .effects(
+                EffectsBuilder::new()
+                    .effect(Effect::Popover)
+                    .state(EffectState::Active)
+                    .radius(QUICKBAR_RADIUS)
+                    .build(),
+            )
+    } else {
+        builder
+    };
+    Ok(builder.build()?)
 }
 
 /// Shows and focuses `kind`, creating it if needed.

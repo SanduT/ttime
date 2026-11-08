@@ -15,6 +15,7 @@ import {
   requireProject,
   requireTimestamp,
   trashEntry,
+  wallTime,
 } from './entry-store';
 import {
   clearBackdate,
@@ -86,9 +87,10 @@ const startInTx = async (
   if (running === null) {
     await clearBackdate(tx, start, input.onConflict ?? 'cancel');
   } else if (compareTimestamps(start, running.start) <= 0) {
+    const from = wallTime(tx, running.start);
     throw new TTimeError(
       'timer.invalid_start',
-      `Start ${start} is not after the running entry's start`,
+      `Can't switch at ${wallTime(tx, start)}: the running entry started at ${from}. Use a start after ${from}, or stop it first and trim.`,
       {
         details: { start, runningStart: running.start },
       },

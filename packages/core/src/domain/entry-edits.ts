@@ -2,6 +2,8 @@ import { TTimeError } from '../lib/errors';
 import {
   compareTimestamps,
   formatTimestamp,
+  formatWallTime,
+  localDateOf,
   secondsBetween,
   type Timestamp,
   toZoned,
@@ -28,7 +30,10 @@ export const splitEntry = (
   updatedAt: Timestamp,
 ): readonly [Entry, Entry] => {
   if (compareTimestamps(at, entry.start) <= 0 || compareTimestamps(at, entry.end) >= 0) {
-    throw new TTimeError('entry.invalid_range', `${at} is not inside the entry`, {
+    const day = localDateOf(entry.start);
+    const w = (time: Timestamp): string => formatWallTime(time, day);
+    const message = `${w(at)} is not inside the entry (${w(entry.start)} to ${w(entry.end)}).`;
+    throw new TTimeError('entry.invalid_range', message, {
       details: { id: entry.id, start: entry.start, end: entry.end, at },
     });
   }

@@ -11,13 +11,19 @@ type ToastState = {
 
 let nextId = 1;
 
+/** How long a toast stays before it closes by itself. */
+const TOAST_MS = 6000;
+
 /** Messages from `runAction`, shown by the window's toaster. */
-export const useToastStore = create<ToastState>()((set) => ({
+export const useToastStore = create<ToastState>()((set, get) => ({
   toasts: [],
   push: (message) => {
     const toast = { id: nextId, message };
     nextId += 1;
     set((state) => ({ toasts: [...state.toasts, toast] }));
+    setTimeout(() => {
+      get().dismiss(toast.id);
+    }, TOAST_MS);
   },
   dismiss: (id) => {
     set((state) => ({ toasts: state.toasts.filter((toast) => toast.id !== id) }));

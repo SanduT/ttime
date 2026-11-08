@@ -23,6 +23,7 @@
     "@tauri-apps/plugin-dialog": "2.8.4",
     "@tauri-apps/plugin-log": "2.10.1",
     "@ttime/core": "workspace:*",
+    "cmdk": "1.1.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "zustand": "5.1.0"

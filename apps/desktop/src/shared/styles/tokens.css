@@ -22,3 +22,9 @@ body {
   color: var(--color-text);
   background: var(--color-surface);
 }
+
+/* Panels sit on a native vibrancy material; the page itself stays transparent. */
+body.panel {
+  background: transparent;
+  overflow: hidden;
+}

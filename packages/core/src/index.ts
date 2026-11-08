@@ -4,6 +4,7 @@ export { Temporal } from 'temporal-polyfill';
 
 // lib
 export { LOCK_STALE_MS, MAX_FUTURE_START_SECONDS, SCHEMA_VERSION } from './lib/constants';
+export { formatElapsed } from './lib/duration';
 export { type ErrorCode, isTTimeError, TTimeError, type TTimeErrorOptions } from './lib/errors';
 export { parseJson, stringifyStable, tryParseJson } from './lib/json';
 export { slugify, uniqueSlug } from './lib/slug';
@@ -104,11 +105,23 @@ export {
   type ProjectServiceDeps,
 } from './domain/project-service';
 export {
+  createQuickActions,
+  type QuickActions,
+  type QuickActionsDeps,
+} from './domain/quick-actions';
+export {
   parseQuickInput,
   type QuickInput,
   resolveStart,
   type StartSpec,
 } from './domain/quick-input-parser';
+export {
+  planQuickInput,
+  type QuickContext,
+  type QuickPlan,
+  type QuickProject,
+} from './domain/quick-plan';
+export { filterRecent, recentEntries, type RecentEntry } from './domain/recent-entries';
 export type { OnConflict } from './domain/running';
 export { type DaySegment, splitByDay, type SplitOptions } from './domain/split-by-day';
 export {

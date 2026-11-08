@@ -32,6 +32,9 @@ pub enum AppError {
     /// Shared state is unusable (a thread panicked while holding it).
     #[error("internal state is unavailable")]
     StatePoisoned,
+    /// A native panel could not be created or found.
+    #[error("panel failed: {0}")]
+    Panel(String),
 }
 
 impl AppError {
@@ -46,6 +49,7 @@ impl AppError {
             Self::InvalidInput(_) => "input.invalid",
             Self::Watcher(_) => "platform.watcher",
             Self::StatePoisoned => "platform.state",
+            Self::Panel(_) => "platform.panel",
         }
     }
 

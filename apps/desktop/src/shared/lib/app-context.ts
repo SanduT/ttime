@@ -1,4 +1,4 @@
-import type { Logger } from '@ttime/core';
+import type { ClockPort, IdGenerator, Logger } from '@ttime/core';
 
 import { createLogger } from '../adapters/logger';
 import { createRandomIds, createSystemClock } from '../adapters/system';
@@ -10,6 +10,8 @@ import { createVaultSession, type VaultSession } from './vault-session';
 export type AppContext = {
   readonly session: VaultSession;
   readonly logger: Logger;
+  readonly clock: ClockPort;
+  readonly ids: IdGenerator;
   readonly onVaultChanged: (onChange: (paths: readonly string[]) => void) => Promise<() => void>;
 };
 
@@ -19,15 +21,16 @@ const build = async (): Promise<AppContext> => {
   const logger = createLogger();
   const clock = createSystemClock();
   const env = await vaultControlApi.env();
+  const ids = createRandomIds(clock);
   const session = createVaultSession({
     control: vaultControlApi,
     fs: createTauriFs(),
     env,
     clock,
-    ids: createRandomIds(clock),
+    ids,
     logger,
   });
-  return { session, logger, onVaultChanged: vaultControlApi.onChanged };
+  return { session, logger, clock, ids, onVaultChanged: vaultControlApi.onChanged };
 };
 
 /** The window's context, created on first use. */

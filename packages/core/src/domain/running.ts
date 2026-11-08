@@ -3,7 +3,7 @@ import { TTimeError } from '../lib/errors';
 import { addDays, compareTimestamps, localDateOf, type Timestamp } from '../lib/time';
 import type { Entry, RunningEntry } from '../schema/entry';
 import type { VaultTx } from '../storage/transaction';
-import { entriesBetween, nowStamp, putEntry } from './entry-store';
+import { entriesBetween, nowStamp, putEntry, wallTime } from './entry-store';
 
 /** What to do when a backdated start overlaps finished entries. */
 export type OnConflict = 'cancel' | 'trim';
@@ -54,7 +54,8 @@ export const finishRunning = async (
 ): Promise<Entry | null> => {
   const order = compareTimestamps(end, running.start);
   if (order < 0) {
-    throw new TTimeError('timer.invalid_end', `End ${end} is before the start ${running.start}`, {
+    const message = `The end (${wallTime(tx, end)}) is before the running entry started (${wallTime(tx, running.start)}).`;
+    throw new TTimeError('timer.invalid_end', message, {
       details: { start: running.start, end },
     });
   }
@@ -87,9 +88,17 @@ export const clearBackdate = async (
   }
   const trimmable = conflicts.every((e) => compareTimestamps(e.start, start) < 0);
   if (onConflict === 'cancel' || !trimmable) {
-    throw new TTimeError('timer.backdate_overlap', `Start ${start} overlaps earlier entries`, {
+    const earliestStart = conflicts.reduce(
+      (latest, e) => (compareTimestamps(e.end, latest) > 0 ? e.end : latest),
+      start,
+    );
+    const at = (time: Timestamp): string => wallTime(tx, time);
+    const fix = trimmable ? ', or trim the earlier entry' : '';
+    const message = `Starting at ${at(start)} overlaps earlier time that ends at ${at(earliestStart)}. Start at ${at(earliestStart)} or later${fix}.`;
+    throw new TTimeError('timer.backdate_overlap', message, {
       details: {
         start,
+        earliestStart,
         trimmable,
         conflicts: conflicts.map((e) => ({ id: e.id, start: e.start, end: e.end })),
       },

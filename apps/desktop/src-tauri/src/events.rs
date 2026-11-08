@@ -9,3 +9,10 @@ use serde::{Deserialize, Serialize};
 pub struct VaultChanged {
     pub paths: Vec<String>,
 }
+
+/// The quick bar was just shown; the webview resets its input for `mode`.
+#[derive(Debug, Clone, Serialize, Deserialize, specta::Type, tauri_specta::Event)]
+#[tauri_specta(event_name = "quickbar:shown")]
+pub struct QuickbarShown {
+    pub mode: crate::services::quickbar::QuickbarMode,
+}

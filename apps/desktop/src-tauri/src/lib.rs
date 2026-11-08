@@ -4,6 +4,7 @@
 mod commands;
 mod error;
 mod events;
+mod platform;
 mod services;
 mod state;
 
@@ -40,6 +41,8 @@ pub fn run() -> Result<(), AppError> {
     tauri::Builder::default()
         .plugin(log_plugin())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+        .plugin(tauri_nspanel::init())
         .invoke_handler(specta.invoke_handler())
         .setup(move |app| {
             specta.mount_events(app);
@@ -48,7 +51,11 @@ pub fn run() -> Result<(), AppError> {
             let state = AppState::new(home_dir.clone(), state::config_dir_for(&home_dir));
             let has_vault = services::vault::open_saved(app.handle(), &state);
             app.manage(state);
-            panels::create(app.handle(), WindowKind::Quickbar)?;
+            services::quickbar::create(app.handle())?;
+            if let Err(err) = services::quickbar::register_shortcut(app.handle()) {
+                // Another app may own the shortcut; the tray menu still opens the quick bar.
+                log::error!("{err}");
+            }
             services::tray::create(app.handle())?;
             if !has_vault {
                 // First run (or the saved vault is gone): the main window shows onboarding.

@@ -74,6 +74,16 @@ export const localDateOf = (timestamp: Timestamp): LocalDate => {
 /** The `yyyy-mm` month of a timestamp's local date. */
 export const monthOf = (timestamp: Timestamp): string => localDateOf(timestamp).slice(0, 7);
 
+/**
+ * A timestamp for messages: `HH:MM` in its own offset, with the date in front when it is not
+ * `today` (`2026-11-07 23:30`).
+ */
+export const formatWallTime = (timestamp: Timestamp, today: LocalDate): string => {
+  const clock = timestamp.slice(11, 16);
+  const date = localDateOf(timestamp);
+  return date === today ? clock : `${date} ${clock}`;
+};
+
 /** Re-reads a vault timestamp as a zoned time in `timeZone`. */
 export const toZoned = (timestamp: Timestamp, timeZone: string): Temporal.ZonedDateTime =>
   toInstant(timestamp).toZonedDateTimeISO(timeZone);

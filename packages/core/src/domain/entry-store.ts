@@ -7,6 +7,7 @@ import {
   compareDates,
   compareTimestamps,
   formatTimestamp,
+  formatWallTime,
   isTimestamp,
   type LocalDate,
   localDateOf,
@@ -38,10 +39,14 @@ export const requireTimestamp = (value: Timestamp, field: string): void => {
   }
 };
 
+/** A timestamp for an error message, relative to the transaction's today. */
+export const wallTime = (tx: VaultTx, time: Timestamp): string =>
+  formatWallTime(time, localDateOf(nowStamp(tx)));
+
 /** Throws `code` when `time` is more than the allowed clock skew in the future. */
 export const requireNotFuture = (tx: VaultTx, time: Timestamp, code: ErrorCode): void => {
   if (secondsBetween(nowStamp(tx), time) > MAX_FUTURE_START_SECONDS) {
-    throw new TTimeError(code, `${time} is in the future`, {
+    throw new TTimeError(code, `${wallTime(tx, time)} is in the future.`, {
       details: { time, now: nowStamp(tx) },
     });
   }

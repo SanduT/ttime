@@ -1,4 +1,4 @@
-import { expect, test } from 'bun:test';
+import { describe, expect, test } from 'bun:test';
 import { Temporal } from 'temporal-polyfill';
 
 import { isTTimeError } from './errors';
@@ -8,6 +8,7 @@ import {
   compareTimestamps,
   epochSeconds,
   formatTimestamp,
+  formatWallTime,
   isLocalDate,
   isLocalTime,
   isTimestamp,
@@ -63,4 +64,11 @@ test('toZoned and date arithmetic', () => {
   expect(toZoned('2026-11-08T10:00:00+02:00', 'UTC').hour).toBe(8);
   expect(addDays('2026-12-31', 1)).toBe('2027-01-01');
   expect(compareDates('2026-11-08', '2026-11-07')).toBe(1);
+});
+
+describe('formatWallTime', () => {
+  test('shows only the clock time for today and adds the date otherwise', () => {
+    expect(formatWallTime('2026-11-08T09:05:00+02:00', '2026-11-08')).toBe('09:05');
+    expect(formatWallTime('2026-11-07T23:30:00+02:00', '2026-11-08')).toBe('2026-11-07 23:30');
+  });
 });

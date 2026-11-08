@@ -17,6 +17,7 @@ import {
   requireProject,
   requireTimestamp,
   trashEntry,
+  wallTime,
 } from './entry-store';
 
 /** A finished entry to add by hand. Overlaps are allowed (reports flag them). */
@@ -61,7 +62,7 @@ const requireRange = (tx: VaultTx, entry: Entry): void => {
   if (compareTimestamps(entry.end, entry.start) <= 0) {
     throw new TTimeError(
       'entry.invalid_range',
-      `End ${entry.end} is not after start ${entry.start}`,
+      `The end (${wallTime(tx, entry.end)}) must be after the start (${wallTime(tx, entry.start)}).`,
       {
         details: { start: entry.start, end: entry.end },
       },

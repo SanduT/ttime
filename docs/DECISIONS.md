@@ -316,3 +316,61 @@ ARCHITECTURE 14.6 come with the steps that add those features.
 `runAction`, a toaster and one error boundary per window (CONVENTIONS 7) were added now because
 onboarding is the first UI with actions. Desktop unit tests run with `bun test` and have their
 own `tsconfig.test.json`, like core.
+
+## Step 5: Quick bar (2026-11-08)
+
+### DEC-50 Project when the text has no `@project`
+
+Every entry needs a project. Without `@project` the quick bar uses the running entry's project,
+then the latest active project from history. With neither, it asks for `@project`. An `@query`
+that matches nothing creates a project with that name (the row says so before Enter).
+
+### DEC-51 The quick bar stays open after an action
+
+The PRD says the quick bar is fully keyboard driven but not what happens after Enter. After a
+start, switch, stop, pause, resume or edit it shows what happened (new entry with a live timer,
+or what was logged) instead of closing. Enter on an empty input or Esc closes it; typing logs
+another entry. A note keeps the quick bar in note mode with the running entry's notes listed, so
+several notes can be added in a row. The input shows what Enter does (`Start ›`, `Switch ›`,
+`Note ›`).
+
+### DEC-52 List contents
+
+With an empty input the list shows the latest recent entry (Enter continues it) and today's
+entries with their times and total, to make missed time easy to fill in. While typing it shows
+a start row and matching recent entries; while an `@query` is typed, project completions. Tab
+copies a highlighted recent entry into the input.
+
+### DEC-53 Errors in the quick bar
+
+Errors show inside the quick bar, not as toasts, and clear when typing; Esc dismisses them. A
+backdate overlap that trimming can fix offers "Trim the earlier entry and start anyway" as the
+first row (or "press Enter again" in the edit form), using the core's `onConflict: 'trim'`. Toasts
+in other windows close after 6 seconds. Core error messages show times as `HH:MM`, with the date
+only when it is not today, instead of raw timestamps.
+
+### DEC-54 Global shortcut registered in Rust
+
+ARCHITECTURE 7.1 has the agent webview register hotkeys. The default ⌥⇧Space is registered in
+Rust at launch instead, so it works before the webview loads and never depends on a hidden
+webview's event loop. Making it configurable (Settings) will go through a Rust command. If the
+shortcut is taken, the error is logged and the tray menu still opens the quick bar.
+
+### DEC-55 Quick bar panel details
+
+- The panel hides when it loses focus, like launchers, besides Esc.
+- `tauri-nspanel` 2.1.1. Its macros generate no `unsafe` in our crate, so the panel code needs
+  no `unsafe_code` exception; it lives in `platform/macos/panel.rs` with one
+  `#[expect(clippy::unused_unit)]` the `panel_event!` grammar requires.
+- Vibrancy uses Tauri's window effects (`Popover` material), which needs `macOSPrivateApi`.
+- Panel operations run on the main thread through `run_on_main_thread`.
+
+### DEC-56 Running summary in step 5
+
+`set_running` stores the summary and the tray title shows the running project's name. The
+elapsed-time ticker and the colored icon come with step 6.
+
+### DEC-57 Deferred quick bar items
+
+Favorites (⌘1 to ⌘9) are P1 (step 13). The `idle-resolution` and `forgotten-timer` modes come
+with the monitors (step 11).

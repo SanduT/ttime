@@ -60,9 +60,16 @@ describe('start', () => {
     const t = await setup();
     await t.timer.start({ project: 'acme-website' });
     t.clock.advance({ hours: 1 });
-    expect(
-      await errorCodeOf(t.timer.start({ project: 'internal', start: '2026-11-08T10:00:00+02:00' })),
-    ).toBe('timer.invalid_start');
+    try {
+      await t.timer.start({ project: 'internal', start: '2026-11-08T10:00:00+02:00' });
+      expect.unreachable();
+    } catch (error) {
+      expect(error).toMatchObject({
+        code: 'timer.invalid_start',
+        message:
+          "Can't switch at 10:00: the running entry started at 10:00. Use a start after 10:00, or stop it first and trim.",
+      });
+    }
   });
 
   test('a start more than 60 seconds in the future is rejected', async () => {
@@ -113,7 +120,13 @@ describe('backdating with nothing running', () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: 'timer.backdate_overlap',
-        details: { trimmable: true, conflicts: [{ id: previous.id }] },
+        message:
+          'Starting at 09:00 overlaps earlier time that ends at 09:30. Start at 09:30 or later, or trim the earlier entry.',
+        details: {
+          trimmable: true,
+          earliestStart: '2026-11-08T09:30:00+02:00',
+          conflicts: [{ id: previous.id }],
+        },
       });
     }
     expect(await t.readRaw(DAY)).toBe(before);
@@ -155,5 +168,25 @@ describe('backdating with nothing running', () => {
     expect(
       await errorCodeOf(t.timer.start({ project: 'internal', start: '2026-11-08T00:15:00+02:00' })),
     ).toBe('timer.backdate_overlap');
+  });
+});
+
+describe('backdate overlap messages', () => {
+  test('names the date of an overlap on another day', async () => {
+    const t = await setup();
+    const yesterday = buildEntry({
+      start: '2026-11-07T22:00:00+02:00',
+      end: '2026-11-07T23:30:00+02:00',
+    });
+    await t.writeJson('entries/2026/11/2026-11-07.json', buildDay('2026-11-07', [yesterday]));
+    try {
+      await t.timer.start({ project: 'internal', start: '2026-11-07T23:00:00+02:00' });
+      expect.unreachable();
+    } catch (error) {
+      expect(error).toMatchObject({
+        message:
+          'Starting at 2026-11-07 23:00 overlaps earlier time that ends at 2026-11-07 23:30. Start at 2026-11-07 23:30 or later, or trim the earlier entry.',
+      });
+    }
   });
 });

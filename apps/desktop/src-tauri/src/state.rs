@@ -4,6 +4,7 @@ use std::path::{Path, PathBuf};
 use std::sync::{Mutex, MutexGuard};
 
 use crate::AppError;
+use crate::services::tray::RunningSummary;
 use crate::services::vault_io::AllowList;
 use crate::services::watcher::VaultWatcher;
 
@@ -29,6 +30,7 @@ pub struct AppState {
     pub home_dir: PathBuf,
     pub config_dir: PathBuf,
     vault: Mutex<VaultSlot>,
+    running: Mutex<Option<RunningSummary>>,
 }
 
 impl AppState {
@@ -39,12 +41,18 @@ impl AppState {
             home_dir,
             config_dir,
             vault: Mutex::new(VaultSlot::default()),
+            running: Mutex::new(None),
         }
     }
 
     /// The vault slot, locked.
     pub fn vault(&self) -> Result<MutexGuard<'_, VaultSlot>, AppError> {
         self.vault.lock().map_err(|_| AppError::StatePoisoned)
+    }
+
+    /// The running entry as last pushed by the agent webview, locked.
+    pub fn running(&self) -> Result<MutexGuard<'_, Option<RunningSummary>>, AppError> {
+        self.running.lock().map_err(|_| AppError::StatePoisoned)
     }
 
     /// The folders the webviews may touch right now: the config folder and the open vault.

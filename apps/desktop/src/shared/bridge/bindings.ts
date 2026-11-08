@@ -27,10 +27,19 @@ export const commands = {
 	vaultRemove: (path: string, recursive: boolean) => typedError<null, AppError>(__TAURI_INVOKE("vault_remove", { path, recursive })),
 	/**  Metadata, or `null` when missing. */
 	vaultStat: (path: string) => typedError<FileStat | null, AppError>(__TAURI_INVOKE("vault_stat", { path })),
+	/**  Shows the quick bar under the cursor in `mode`. */
+	quickbarShow: (mode: QuickbarMode) => typedError<null, AppError>(__TAURI_INVOKE("quickbar_show", { mode })),
+	/**  Hides the quick bar; focus returns to the previous app. */
+	quickbarHide: () => typedError<null, AppError>(__TAURI_INVOKE("quickbar_hide")),
+	/**  Opens (or focuses) the main window. */
+	mainWindowShow: () => typedError<null, AppError>(__TAURI_INVOKE("main_window_show")),
+	/**  The agent webview reports the running entry (or `null`) after any running-state change. */
+	setRunning: (summary: RunningSummary | null) => typedError<null, AppError>(__TAURI_INVOKE("set_running", { summary })),
 };
 
 /** Events */
 export const events = {
+	quickbarShown: makeEvent<QuickbarShown, QuickbarShown>("quickbar:shown"),
 	vaultChanged: makeEvent<VaultChanged, VaultChanged>("vault:changed"),
 };
 
@@ -59,6 +68,26 @@ export type DirEntry = {
 export type FileStat = {
 	mtimeMs: number | null,
 	size: number | null,
+};
+
+/**  What the quick bar opens for. */
+export type QuickbarMode = "new" | "note" | "edit-running";
+
+/**  The quick bar was just shown; the webview resets its input for `mode`. */
+export type QuickbarShown = {
+	mode: QuickbarMode,
+};
+
+/**
+ *  What the menu bar shows while tracking, pushed by the agent webview with `set_running`.
+ *  Rust never reads vault files for this.
+ */
+export type RunningSummary = {
+	/**  Vault timestamp of the start. */
+	start: string,
+	projectName: string,
+	/**  `#RRGGBB`. */
+	color: string,
 };
 
 /**
