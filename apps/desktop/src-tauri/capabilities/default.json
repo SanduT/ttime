@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Permissions for the ttime windows. No fs, http or shell plugins are enabled.",
+  "windows": ["quickbar", "popover", "main"],
+  "permissions": ["core:default", "log:default"]
+}

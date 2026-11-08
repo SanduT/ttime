@@ -1,0 +1,21 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/*.ts"],
+      "project": ["*.ts", "eslint/**/*.ts", "scripts/**/*.ts"]
+    },
+    "packages/core": {
+      "project": ["src/**/*.ts"]
+    },
+    "packages/cli": {
+      "project": ["src/**/*.ts"]
+    },
+    "apps/desktop": {
+      "entry": ["src/windows/*/main.tsx"],
+      "project": ["src/**/*.{ts,tsx}"],
+      "ignore": ["src/shared/bridge/bindings.ts"],
+      "ignoreDependencies": ["tailwindcss"]
+    }
+  }
+}

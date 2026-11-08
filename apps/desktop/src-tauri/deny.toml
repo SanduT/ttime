@@ -1,0 +1,49 @@
+# cargo-deny: security advisories, licenses and duplicate crates.
+# The app ships on macOS only in Phases 1 and 2, so only Apple targets are checked.
+
+[graph]
+targets = ["aarch64-apple-darwin", "x86_64-apple-darwin"]
+all-features = true
+
+[advisories]
+yanked = "deny"
+ignore = [
+  # `paste` is unmaintained (not vulnerable). It is a build-time macro pulled in by tauri-specta.
+  # See docs/DECISIONS.md.
+  { id = "RUSTSEC-2024-0436", reason = "unmaintained proc macro, transitive via tauri-specta" },
+]
+
+[licenses]
+confidence-threshold = 0.9
+unused-allowed-license = "allow"
+allow = [
+  "MIT",
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "ISC",
+  "Unicode-3.0",
+  "Zlib",
+]
+
+# MPL-2.0 (file-level copyleft) reaches us only through Tauri itself, used unmodified.
+# Allowed per crate, not globally. See docs/DECISIONS.md.
+exceptions = [
+  { crate = "cssparser", allow = ["MPL-2.0"] },
+  { crate = "cssparser-macros", allow = ["MPL-2.0"] },
+  { crate = "dtoa-short", allow = ["MPL-2.0"] },
+  { crate = "option-ext", allow = ["MPL-2.0"] },
+  { crate = "selectors", allow = ["MPL-2.0"] },
+]
+
+[licenses.private]
+ignore = true
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

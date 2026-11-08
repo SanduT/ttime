@@ -1,0 +1,52 @@
+[package]
+name = "ttime"
+version = "0.1.0"
+description = "Local-first macOS time tracker"
+edition = "2024"
+publish = false
+
+# `specta` is only referenced by tauri-specta's `collect_commands!` expansion, which machete
+# cannot see. See docs/DECISIONS.md.
+[package.metadata.cargo-machete]
+ignored = ["specta"]
+
+[lib]
+name = "ttime_lib"
+crate-type = ["rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7.4", features = [] }
+
+[dependencies]
+log = "0.4.35"
+serde = { version = "1.0.229", features = ["derive"] }
+specta = { version = "=2.0.0-rc.26", features = ["derive", "function"] }
+specta-typescript = "=0.0.13"
+tauri = { version = "2.12.5", features = ["tray-icon"] }
+tauri-plugin-log = "2.10.1"
+tauri-specta = { version = "=2.0.0-rc.26", features = ["derive", "typescript"] }
+thiserror = "2.0.21"
+
+[lints.rust]
+unsafe_code = "deny"
+unused_must_use = "deny"
+missing_debug_implementations = "warn"
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+todo = "deny"
+unimplemented = "deny"
+dbg_macro = "deny"
+print_stdout = "deny"
+print_stderr = "deny"
+undocumented_unsafe_blocks = "deny"
+allow_attributes_without_reason = "deny"
+module_name_repetitions = "allow"
+missing_errors_doc = "allow"
+
+[dev-dependencies]
+serde_json = "1.0.154"

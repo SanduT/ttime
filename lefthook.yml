@@ -1,0 +1,23 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: prettier
+      glob: '*.{ts,tsx,js,json,md,yml,yaml,css,html}'
+      run: bunx prettier --check {staged_files}
+    - name: eslint
+      glob: '*.{ts,tsx}'
+      run: bunx eslint --max-warnings 0 --no-warn-ignored {staged_files}
+    - name: rustfmt
+      glob: '*.rs'
+      root: apps/desktop/src-tauri/
+      run: cargo fmt --all --check
+
+commit-msg:
+  jobs:
+    - name: conventional-commits
+      run: bun scripts/check-commit-msg.ts {1}
+
+pre-push:
+  jobs:
+    - name: check
+      run: bun run check
