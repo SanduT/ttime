@@ -72,8 +72,51 @@ export {
   type WrittenFile,
 } from './storage/vault';
 
+// domain
+export {
+  type ClientPatch,
+  type ClientService,
+  type ClientServiceDeps,
+  type CreateClientInput,
+  createClientService,
+} from './domain/client-service';
+export {
+  type CreateEntryInput,
+  createEntryService,
+  type EntryPatch,
+  type EntryService,
+  type EntryServiceDeps,
+} from './domain/entry-service';
+export { type MatchKind, matchProjects, type ProjectMatch } from './domain/project-matcher';
+export {
+  type CreateProjectInput,
+  createProjectService,
+  PROJECT_COLORS,
+  type ProjectPatch,
+  type ProjectService,
+  type ProjectServiceDeps,
+} from './domain/project-service';
+export {
+  parseQuickInput,
+  type QuickInput,
+  resolveStart,
+  type StartSpec,
+} from './domain/quick-input-parser';
+export type { OnConflict } from './domain/running';
+export { type DaySegment, splitByDay, type SplitOptions } from './domain/split-by-day';
+export {
+  createTimerService,
+  type RunningPatch,
+  type StartInput,
+  type StartResult,
+  type TimerService,
+  type TimerServiceDeps,
+} from './domain/timer-service';
+
 // testing
 export { buildClient, buildDay, buildEntry, buildProject, buildRunning } from './testing/builders';
+export { createDomainTestVault, type DomainTestVault } from './testing/domain-vault';
+export { errorCodeOf } from './testing/errors';
 export {
   createRecordingLogger,
   createTestVault,

@@ -164,3 +164,77 @@ ARCHITECTURE section 1. `big.js` is added with the money helpers in step 8.
 
 Moving an entry between day files writes the new file first. A crash in between leaves the entry in
 both files, which the reader reports as `entry.duplicate_id`. It is not repaired automatically.
+
+## Step 3: Domain services (2026-11-08)
+
+### DEC-27 Zero-length entries are discarded
+
+The schema requires `end` after `start`. Stopping in the same second as the start, or discarding
+such an entry, writes no entry and no trash file. The changelog still records the stop or delete
+with the running entry as `before`.
+
+### DEC-28 Backdating rules in detail
+
+- With an entry running, a new start must be after the running entry's start; the running entry
+  ends at the new start (`timer.invalid_start` otherwise).
+- With nothing running, finished entries ending after the new start conflict. `onConflict:
+'cancel'` (default) throws `timer.backdate_overlap` with the conflicts in `details`. `'trim'`
+  ends them at the new start, but never trims an entry to nothing (it still throws).
+- Conflicts are looked for in day files from the day before the new start through today, so an
+  entry longer than about a day before the new start is not seen. The reader flags overlaps anyway.
+- Starts and stops may be at most 60 seconds in the future (clock skew between processes).
+- Changing the running entry's start uses the same rules.
+
+### DEC-29 Discarding the running entry
+
+Discard moves the running entry to `.trash/entries/<id>.json` with `end` set to the discard
+time, so the trash file has a normal finished entry and can be restored like any other.
+
+### DEC-30 `stop` completes an interrupted stop
+
+If `running.json` names an entry already in its day file, `stop` returns that entry and clears
+`running.json` instead of failing with `timer.not_running`. Every other operation clears it
+silently in the same transaction.
+
+### DEC-31 Manual entries
+
+- Overlapping manual entries are allowed and flagged by the reader (PRD 6.3).
+- An entry may not end more than 60 seconds in the future (`entry.invalid_range`).
+- New time can't go to an archived project (`project.archived`). Existing entries of an archived
+  project can still be edited.
+
+### DEC-32 Merge and split
+
+- Merge needs two or more entries of one project. The earliest entry keeps its ID, description and
+  billable flag, the span runs from the earliest start to the latest end (gaps become tracked
+  time), tags and notes are combined, and the other entries go to the trash.
+- Split keeps the ID on the first part; notes go to the part their time falls in.
+
+### DEC-33 Resume source
+
+Resume copies project, description, tags and billable from the entry that ended last in the
+newest non-empty day file.
+
+### DEC-34 Quick input details
+
+- For project, start and billable, the last token wins. Repeated tags are kept once.
+- `at` is only a token when the next word is a valid `H:MM` or `HH:MM`; otherwise it stays in the
+  description. `-1h15m` is accepted as well as `-1h15`.
+- Project matching ignores case and accents. A prefix also matches any word of the name or the
+  slug. Archived projects rank after active ones of the same match kind.
+
+### DEC-35 Default project colors
+
+A new project without a color takes the next color from an 8-color palette
+(`PROJECT_COLORS`), by number of existing projects.
+
+### DEC-36 Service dependencies
+
+Services take `{ vault, ids, logger }` (project and client services only `{ vault, logger }`).
+Time comes from the transaction (`tx.now`), so one operation uses one instant. Each service
+logs its operation name and batch ID at `info`, never descriptions or names.
+
+### DEC-37 `splitByDay` ships with the domain
+
+Day splitting (midnight, `dayStartsAt`, DST) is a pure helper in `domain/split-by-day.ts`, tested
+now as the build order asks, and used by `ReportService` in a later step.

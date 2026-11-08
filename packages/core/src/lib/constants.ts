@@ -18,3 +18,7 @@ export const LOCK_TIMEOUT_MS = 15_000;
 
 /** Milliseconds per second. */
 export const MS_PER_SECOND = 1000;
+
+/** Seconds per minute and per hour, for duration math. */
+export const SECONDS_PER_MINUTE = 60;
+export const SECONDS_PER_HOUR = 3600;
