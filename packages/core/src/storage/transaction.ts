@@ -4,6 +4,7 @@ import type { z } from 'zod';
 import { SCHEMA_VERSION } from '../lib/constants';
 import { TTimeError } from '../lib/errors';
 import { stringifyStable } from '../lib/json';
+import { joinPath } from '../lib/path';
 import { compareTimestamps, isLocalDate, type LocalDate } from '../lib/time';
 import type { FsPort } from '../ports/fs-port';
 import type { Change, ChangeKind, ChangeOp } from '../schema/changelog';
@@ -70,6 +71,11 @@ export type VaultTx = {
   readonly writeTrash: (trashed: TrashedEntry) => void;
   readonly removeTrash: (id: string) => void;
   readonly record: (change: ChangeInput) => void;
+  /**
+   * Writes `exports/<fileName>`, replacing an earlier export of the same name. Exports are
+   * output, not vault data: no schema and no changelog line.
+   */
+  readonly writeExport: (fileName: string, text: string) => void;
 };
 
 /** What a transaction leaves to commit. */
@@ -86,6 +92,9 @@ export type TxDeps = {
   readonly batch: string;
   readonly actor: Actor;
 };
+
+/** An export file name: no folders, ends in `.csv`. */
+const EXPORT_NAME = /^[\w.-]+\.csv$/;
 
 const byNoteTime = (a: Note, b: Note): number => compareTimestamps(a.at, b.at);
 
@@ -245,6 +254,12 @@ export const createTx = (deps: TxDeps): { readonly tx: VaultTx; readonly state: 
     },
     record: (change) => {
       changes.push(change);
+    },
+    writeExport: (fileName, text) => {
+      if (!EXPORT_NAME.test(fileName)) {
+        throw new TTimeError('input.invalid', `Invalid export file name: ${fileName}`);
+      }
+      files.pending.push({ type: 'write', path: joinPath(paths.exportsDir, fileName), text });
     },
   };
   return { tx, state: { pending: files.pending, changes } };

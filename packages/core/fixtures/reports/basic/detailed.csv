@@ -1,0 +1,5 @@
+date,start,end,duration_decimal,duration_hhmm,project,client,description,notes,tags,billable,rate,amount,currency
+2026-11-06,09:30,11:15,1.75,1:45,Acme Website,Acme GmbH,auth refactor,10:42 finished login flow,backend,yes,60.00,105.00,EUR
+2026-11-06,11:15,11:45,0.50,0:30,Internal,,inbox,,,no,,,
+2026-11-07,22:30,00:00,1.50,1:30,Acme Website,Acme GmbH,release night,,ops,yes,60.00,90.00,EUR
+2026-11-08,00:00,01:15,1.25,1:15,Acme Website,Acme GmbH,release night,,ops,yes,60.00,75.00,EUR

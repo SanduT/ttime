@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 
 import { errorCodeOf } from '../testing/errors';
-import { amountFor, formatMoney, parseAmount } from './money';
+import { amountFor, decimalHours, formatMoney, parseAmount, sumMoney } from './money';
 
 describe('money', () => {
   test('parseAmount normalizes to two decimals', () => {
@@ -25,5 +25,24 @@ describe('money', () => {
 
   test('formatMoney groups thousands', () => {
     expect(formatMoney({ amount: '1234567.5', currency: 'EUR' })).toBe('1,234,567.50 EUR');
+  });
+
+  test('decimalHours has two places', () => {
+    expect(decimalHours(5400)).toBe('1.50');
+    expect(decimalHours(1)).toBe('0.00');
+    expect(decimalHours(18)).toBe('0.01');
+  });
+
+  test('sumMoney adds per currency', () => {
+    expect(
+      sumMoney([
+        { amount: '10.50', currency: 'USD' },
+        { amount: '1.25', currency: 'EUR' },
+        { amount: '2.25', currency: 'EUR' },
+      ]),
+    ).toEqual([
+      { amount: '3.50', currency: 'EUR' },
+      { amount: '10.50', currency: 'USD' },
+    ]);
   });
 });

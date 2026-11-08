@@ -92,3 +92,18 @@ Open ttime from the tray. The vault should have a few entries today and on other
 13. New client, then Edit on its group header: rename it and archive it.
 14. Break a project file on disk (invalid JSON on line 3): Issues appears with a count; it shows
     `projects/<name>.json:3` and the message. Fix the file: Issues disappears.
+
+## Step 8: CSV export
+
+1. Projects, Export CSV: Period is This month. The preview line shows the dates, rows, total and
+   amounts, and updates when any option changes. No control overflows the sheet.
+2. Period Last week and Last month: the dates are the full previous week or calendar month.
+   Month… shows a month list (last 24 months). Custom… shows From and To.
+3. Open a project, pick This week, Export CSV: Period is This week. With All time it is Custom.
+4. Switch Rows to "One per project and day": the row count drops when a day has several entries.
+5. Rounding Up, 15 min, Each entry: the total grows. Each day total: it changes only the daily rows.
+6. Export CSV: "Saved exports/..." shows. Open opens the file in Numbers or Excel; Reveal in Finder
+   selects it. Open exports folder opens the folder in Finder, even before the first export.
+7. Open the file in Numbers or Excel: accents and quotes are intact, `duration_decimal` and `amount`
+   are numbers. With Semicolon and Comma decimals, Excel in a comma-decimal locale reads it too.
+8. An entry across midnight is two rows, one per day.

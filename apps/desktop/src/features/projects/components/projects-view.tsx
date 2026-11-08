@@ -1,4 +1,7 @@
+import { useState } from 'react';
+
 import { Button } from '../../../shared/ui/button';
+import { ExportDialog } from '../../export';
 import { useProjectsStore } from '../store/projects-store';
 import { ClientEditor } from './client-editor';
 import { ProjectDetail } from './project-detail';
@@ -8,6 +11,7 @@ import { ProjectList } from './project-list';
 /** Projects (PRD 6.3): the list grouped by client, a project's detail, and the editors. */
 export const ProjectsView = () => {
   const { selected, editor, showArchived, toggleArchived, edit } = useProjectsStore();
+  const [exporting, setExporting] = useState(false);
   return (
     <>
       {selected === null ? (
@@ -18,6 +22,13 @@ export const ProjectsView = () => {
               <input type="checkbox" checked={showArchived} onChange={toggleArchived} />
               Show archived
             </label>
+            <Button
+              onClick={() => {
+                setExporting(true);
+              }}
+            >
+              Export CSV
+            </Button>
             <Button
               onClick={() => {
                 edit({ kind: 'client', id: null });
@@ -39,6 +50,15 @@ export const ProjectsView = () => {
       ) : (
         <ProjectDetail id={selected} />
       )}
+      {exporting ? (
+        <ExportDialog
+          project={null}
+          initial={{ kind: 'this-month' }}
+          onClose={() => {
+            setExporting(false);
+          }}
+        />
+      ) : null}
       {editor?.kind === 'project' ? (
         <ProjectEditor key={editor.id ?? 'new'} id={editor.id} />
       ) : null}

@@ -28,6 +28,8 @@ pub fn specta_builder() -> Builder<tauri::Wry> {
             vault::vault_mkdir_exclusive,
             vault::vault_remove,
             vault::vault_stat,
+            vault::vault_reveal,
+            vault::vault_open,
             quickbar::quickbar_show,
             quickbar::quickbar_hide,
             quickbar::main_window_show,

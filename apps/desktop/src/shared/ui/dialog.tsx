@@ -4,10 +4,12 @@ type Props = {
   readonly title: string;
   readonly onClose: () => void;
   readonly children: ReactNode;
+  /** Wider dialog for forms with several controls per row. */
+  readonly wide?: boolean;
 };
 
 /** A modal dialog (native `<dialog>`): Esc and the backdrop close it. */
-export const Dialog = ({ title, onClose, children }: Props) => {
+export const Dialog = ({ title, onClose, children, wide = false }: Props) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -20,7 +22,7 @@ export const Dialog = ({ title, onClose, children }: Props) => {
     <dialog
       ref={dialogRef}
       aria-label={title}
-      className="m-auto w-[420px] rounded-xl border border-(--color-border) bg-(--color-surface-solid) p-0 text-(--color-text) shadow-xl backdrop:bg-black/30"
+      className={`m-auto ${wide ? 'w-[540px]' : 'w-[420px]'} rounded-xl border border-(--color-border) bg-(--color-surface-solid) p-0 text-(--color-text) shadow-xl backdrop:bg-black/30`}
       onCancel={(event) => {
         event.preventDefault();
         onClose();

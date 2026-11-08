@@ -27,6 +27,13 @@ export const commands = {
 	vaultRemove: (path: string, recursive: boolean) => typedError<null, AppError>(__TAURI_INVOKE("vault_remove", { path, recursive })),
 	/**  Metadata, or `null` when missing. */
 	vaultStat: (path: string) => typedError<FileStat | null, AppError>(__TAURI_INVOKE("vault_stat", { path })),
+	/**  Shows `path` (inside the open vault) selected in Finder, for example a fresh export. */
+	vaultReveal: (path: string) => typedError<null, AppError>(__TAURI_INVOKE("vault_reveal", { path })),
+	/**
+	 *  Opens `path` (inside the open vault) with its default app: a CSV in the spreadsheet app, a
+	 *  folder in Finder.
+	 */
+	vaultOpen: (path: string) => typedError<null, AppError>(__TAURI_INVOKE("vault_open", { path })),
 	/**  Shows the quick bar under the cursor in `mode`. */
 	quickbarShow: (mode: QuickbarMode) => typedError<null, AppError>(__TAURI_INVOKE("quickbar_show", { mode })),
 	/**  Hides the quick bar; focus returns to the previous app. */

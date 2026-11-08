@@ -1,0 +1,2 @@
+# Expected CSV exports keep their CRLF line ends byte for byte.
+packages/core/fixtures/reports/** -text

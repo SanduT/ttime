@@ -143,3 +143,42 @@ pub async fn vault_stat(
 ) -> Result<Option<FileStat>, AppError> {
     vault_io::stat(&checked(&state, &path)?)
 }
+
+/// `path` resolved and checked to be inside the open vault (not only the allow-list).
+fn in_vault(state: &AppState, path: String) -> Result<PathBuf, AppError> {
+    let resolved = checked(state, &path)?;
+    let inside_vault = state
+        .vault()?
+        .root
+        .as_ref()
+        .is_some_and(|root| resolved.starts_with(root));
+    if inside_vault {
+        Ok(resolved)
+    } else {
+        Err(AppError::PathNotAllowed(path))
+    }
+}
+
+fn run_open(args: &[&str], path: &std::path::Path) -> Result<(), AppError> {
+    std::process::Command::new("/usr/bin/open")
+        .args(args)
+        .arg(path)
+        .spawn()
+        .map_err(|err| AppError::io("open", path, err))?;
+    Ok(())
+}
+
+/// Shows `path` (inside the open vault) selected in Finder, for example a fresh export.
+#[tauri::command]
+#[specta::specta]
+pub async fn vault_reveal(state: State<'_, AppState>, path: String) -> Result<(), AppError> {
+    run_open(&["-R"], &in_vault(&state, path)?)
+}
+
+/// Opens `path` (inside the open vault) with its default app: a CSV in the spreadsheet app, a
+/// folder in Finder.
+#[tauri::command]
+#[specta::specta]
+pub async fn vault_open(state: State<'_, AppState>, path: String) -> Result<(), AppError> {
+    run_open(&[], &in_vault(&state, path)?)
+}

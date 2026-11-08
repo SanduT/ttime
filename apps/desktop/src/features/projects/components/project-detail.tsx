@@ -1,19 +1,13 @@
-import {
-  amountFor,
-  currentTotals,
-  DEFAULT_SETTINGS,
-  formatElapsed,
-  formatMoney,
-  formatTimestamp,
-} from '@ttime/core';
-import { useMemo } from 'react';
+import { amountFor, formatElapsed, formatMoney, type LocalDate } from '@ttime/core';
+import { useState } from 'react';
 
-import { useNow } from '../../../shared/hooks/use-now';
 import { clockOf } from '../../../shared/lib/display';
 import { useVaultStore } from '../../../shared/store/vault-store';
 import { Button } from '../../../shared/ui/button';
 import { ProjectDot } from '../../../shared/ui/project-dot';
-import { type Period, periodStart, type ProjectDay, projectDays } from '../lib/project-entries';
+import { ExportDialog, type InitialPeriod } from '../../export';
+import { useProjectDays } from '../hooks/use-project-days';
+import type { Period, ProjectDay } from '../lib/project-entries';
 import { useProjectsStore } from '../store/projects-store';
 
 const PERIODS: readonly { readonly id: Period; readonly label: string }[] = [
@@ -55,23 +49,21 @@ const DayList = ({ days }: { readonly days: readonly ProjectDay[] }) =>
     </section>
   ));
 
+/** The export sheet starts on the project's selected period. */
+const initialPeriod = (period: Period, from: LocalDate, to: LocalDate): InitialPeriod => {
+  if (period === 'week') {
+    return { kind: 'this-week' };
+  }
+  return period === 'month' ? { kind: 'this-month' } : { kind: 'custom', from, to };
+};
+
 /** One project: its entries by day with notes, the period total and the amount at its rate. */
 export const ProjectDetail = ({ id }: { readonly id: string }) => {
   const snapshot = useVaultStore((state) => state.snapshot);
   const { period, setPeriod, select, edit } = useProjectsStore();
-  const now = useNow();
   const project = snapshot?.projects.get(id);
-  const days = useMemo(() => {
-    if (snapshot === null) {
-      return [];
-    }
-    const settings = snapshot.config?.settings ?? DEFAULT_SETTINGS;
-    const { today, week } = currentTotals({ entries: [], running: null, now, settings });
-    const running =
-      snapshot.running === null ? [] : [{ ...snapshot.running, end: formatTimestamp(now) }];
-    const entries = [...[...snapshot.days.values()].flatMap((day) => day.entries), ...running];
-    return projectDays(entries, id, periodStart(period, today.date, week.start));
-  }, [snapshot, id, period, now]);
+  const { days, from, to } = useProjectDays(id);
+  const [exporting, setExporting] = useState(false);
   if (project === undefined) {
     return null;
   }
@@ -88,6 +80,13 @@ export const ProjectDetail = ({ id }: { readonly id: string }) => {
         </Button>
         <ProjectDot color={project.color} />
         <h1 className="flex-1 text-lg font-semibold">{project.name}</h1>
+        <Button
+          onClick={() => {
+            setExporting(true);
+          }}
+        >
+          Export CSV
+        </Button>
         <Button
           onClick={() => {
             edit({ kind: 'project', id });
@@ -123,6 +122,15 @@ export const ProjectDetail = ({ id }: { readonly id: string }) => {
         <p className="text-sm text-(--color-text-muted)">No time in this period.</p>
       ) : null}
       <DayList days={days} />
+      {exporting ? (
+        <ExportDialog
+          project={id}
+          initial={initialPeriod(period, from, to)}
+          onClose={() => {
+            setExporting(false);
+          }}
+        />
+      ) : null}
     </section>
   );
 };

@@ -92,6 +92,14 @@ export {
   createClientService,
 } from './domain/client-service';
 export {
+  buildExport,
+  type CsvOptions,
+  exportFileName,
+  type ExportMode,
+  type ExportPreview,
+  toCsv,
+} from './domain/csv-export';
+export {
   type CurrentTotals,
   currentTotals,
   type CurrentTotalsInput,
@@ -112,6 +120,20 @@ export {
   type EntryService,
   type EntryServiceDeps,
 } from './domain/entry-service';
+export {
+  createExportService,
+  type ExportRequest,
+  type ExportResult,
+  type ExportService,
+  type ExportServiceDeps,
+} from './domain/export-service';
+export {
+  type DateRange,
+  monthRange,
+  type PeriodPreset,
+  presetRange,
+  recentMonths,
+} from './domain/periods';
 export { type MatchKind, matchProjects, type ProjectMatch } from './domain/project-matcher';
 export {
   type CreateProjectInput,
@@ -145,6 +167,16 @@ export {
   recentEntries,
   type RecentEntry,
 } from './domain/recent-entries';
+export {
+  dailySummary,
+  type ReportInput,
+  type ReportRow,
+  reportRows,
+  type ReportTotals,
+  reportTotals,
+  type SummaryRow,
+} from './domain/report';
+export { type Rounding, roundSeconds } from './domain/rounding';
 export type { OnConflict } from './domain/running';
 export { type DaySegment, splitByDay, type SplitOptions } from './domain/split-by-day';
 export {
@@ -157,7 +189,7 @@ export {
 } from './domain/timer-service';
 export { type Batch, type UndoState } from './domain/undo-history';
 export { createUndoService, type UndoService, type UndoServiceDeps } from './domain/undo-service';
-export { amountFor, formatMoney, parseAmount } from './lib/money';
+export { amountFor, decimalHours, formatMoney, parseAmount, sumMoney } from './lib/money';
 
 // testing
 export { buildClient, buildDay, buildEntry, buildProject, buildRunning } from './testing/builders';

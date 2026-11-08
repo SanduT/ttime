@@ -464,3 +464,36 @@ that have issues are read a second time.
   (ARCHITECTURE 12).
 - Calendar and Analytics join the sidebar with steps 9 and 10.
 - Split and merge exist in core but have no UI yet; the calendar (step 9) is their natural home.
+
+## Step 8: CSV export
+
+### DEC-67 Report rows and rounding
+
+- `reportRows` splits each finished entry at report-day boundaries (`dayStartsAt`, the current
+  time zone), so an entry across midnight is two rows; each row keeps the notes written in its
+  part. The running entry is not exported.
+- Entry scope rounds each row. Day scope rounds the per-project day total, so it only changes the
+  Daily summary; Detailed rows then show raw durations. Nearest rounds halves up.
+- Rows of one project and day merge in the Daily summary, with billable and non-billable time
+  apart, unique descriptions joined with `; `, and all notes and tags.
+- The rate is the project's, else its client's default rate. Only billable time is priced; the
+  amount is rounded seconds times the rate, half up to cents (big.js).
+
+### DEC-68 CSV format
+
+- The PRD columns plus a final `currency` column, since `rate` and `amount` are written as plain
+  numbers (with the chosen decimal separator) so spreadsheets can sum them.
+- Daily summary rows drop `start` and `end`. Times are wall-clock `HH:MM`, durations as decimal
+  hours with two places and `h:mm`, tags joined with `, `, billable as `yes` or `no`.
+- RFC 4180 quoting, CRLF line ends, optional UTF-8 BOM.
+- Golden test: the `basic` fixture's expected exports live in `packages/core/fixtures/reports/`
+  (excluded from Prettier, `-text` in `.gitattributes` to keep CRLF).
+
+### DEC-69 Where exports go
+
+Exports are written into the vault's `exports/` folder (PRD 6.6 and the vault layout), named
+`<project or all-projects>_<from>_<to>_<mode>.csv`; a new export of the same name replaces the
+old one. They are output, so they get no changelog line and no schema. The sheet shows the saved
+path with Reveal in Finder (`vault_reveal`, limited to files inside the open vault, runs
+`/usr/bin/open -R`), Open (`vault_open`, the file's default app) and Open exports folder. A save-anywhere dialog is left out because the webviews may only touch the
+vault and config folders.

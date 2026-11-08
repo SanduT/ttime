@@ -34,6 +34,8 @@ const setup = async (initialRoot: string | null = null) => {
     },
     env: () => Promise.resolve(env),
     onChanged: () => Promise.resolve(() => null),
+    reveal: () => Promise.resolve(null),
+    open: () => Promise.resolve(null),
   };
   const session = createVaultSession({
     control,

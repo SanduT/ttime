@@ -31,3 +31,18 @@ export const formatMoney = (money: MoneyValue): string => {
   const [whole = '0', cents = '00'] = new Big(money.amount).toFixed(2).split('.');
   return `${whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}.${cents} ${money.currency}`;
 };
+
+/** Hours as a decimal string with two places (`5400` seconds is `1.50`), rounded half up. */
+export const decimalHours = (seconds: number): string =>
+  new Big(seconds).div(SECONDS_PER_HOUR).toFixed(2, Big.roundHalfUp);
+
+/** Adds amounts per currency; the result is sorted by currency code. */
+export const sumMoney = (amounts: readonly MoneyValue[]): MoneyValue[] => {
+  const totals = new Map<string, Big>();
+  for (const money of amounts) {
+    totals.set(money.currency, (totals.get(money.currency) ?? new Big(0)).plus(money.amount));
+  }
+  return [...totals]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([currency, total]) => ({ amount: total.toFixed(2), currency }));
+};

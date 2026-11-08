@@ -3,3 +3,4 @@ apps/desktop/src-tauri/target/
 apps/desktop/src-tauri/gen/
 apps/desktop/src/shared/bridge/bindings.ts
 packages/core/fixtures/vaults/
+packages/core/fixtures/reports/
