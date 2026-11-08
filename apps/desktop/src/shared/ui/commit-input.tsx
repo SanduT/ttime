@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { TextInput } from '../../../shared/ui/field';
+import { TextInput } from './field';
 
 type Props = {
   readonly value: string;

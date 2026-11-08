@@ -84,6 +84,7 @@ export {
 } from './storage/vault';
 
 // domain
+export { type Analytics, analytics, type DayShare, type ProjectShare } from './domain/analytics';
 export {
   type ClientPatch,
   type ClientService,
@@ -133,6 +134,7 @@ export {
   type PeriodPreset,
   presetRange,
   recentMonths,
+  shiftRange,
 } from './domain/periods';
 export { type MatchKind, matchProjects, type ProjectMatch } from './domain/project-matcher';
 export {

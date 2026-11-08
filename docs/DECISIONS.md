@@ -555,3 +555,26 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
 - The editor reuses Today's entry form in a dialog: project (move to another project), times,
   description, Delete. Blocks are buttons, so Tab and Enter open the editor without a pointer.
 - ← and → change the week, T returns to this week.
+
+## Step 10: Analytics
+
+### DEC-75 Analytics numbers
+
+- Analytics uses the vault's default rounding (Settings, Export defaults) and the same report
+  code as the CSV export: report rows, then the daily summary. A test checks that its totals
+  equal a Daily export with the same rounding, for entry and day scope (PRD acceptance 5). A note
+  under the period says when rounding is on.
+- Like the export, the running entry is not counted; the popover and Today show live time.
+- The drill-down lists the project's entry parts per day with notes; durations there follow
+  entry-scope rounding, so with day scope they show raw time while the totals are rounded.
+
+### DEC-76 Period picker and charts
+
+- Today, This week, Last week, This month, Last month, This year and Custom, with ← and → moving
+  by the period's own length (a day, a week, a whole month, a year, or the custom length). The
+  export sheet gains Today and This year too.
+- Charts are plain elements styled with the app tokens (no chart library, no new dependency):
+  horizontal bars per project, and per-day columns stacked by project in the same colors.
+  Periods longer than a month label months instead of days.
+- Export CSV opens the export sheet for the shown period, and for the drilled project when one
+  is open.

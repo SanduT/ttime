@@ -1,7 +1,7 @@
 import type { SettingsPatch, VaultSettings } from '@ttime/core';
 
+import { CommitInput } from '../../../shared/ui/commit-input';
 import { Select } from '../../../shared/ui/field';
-import { CommitInput } from './commit-input';
 import { Row, Section } from './section';
 
 type Props = {

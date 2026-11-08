@@ -1,4 +1,5 @@
 import { useVaultStore } from '../../../shared/store/vault-store';
+import { AnalyticsView } from '../../analytics';
 import { CalendarView } from '../../calendar';
 import { IssuesView } from '../../issues';
 import { ProjectsView } from '../../projects';
@@ -27,6 +28,7 @@ export const MainShell = () => {
         {view === 'today' ? <TodayView /> : null}
         {view === 'calendar' ? <CalendarView /> : null}
         {view === 'projects' ? <ProjectsView /> : null}
+        {view === 'analytics' ? <AnalyticsView /> : null}
         {view === 'issues' ? <IssuesView /> : null}
         {view === 'settings' ? <SettingsView /> : null}
       </main>

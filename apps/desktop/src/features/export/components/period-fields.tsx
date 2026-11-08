@@ -10,10 +10,12 @@ type Props = {
 };
 
 const KINDS: readonly { readonly id: PeriodKind; readonly label: string }[] = [
+  { id: 'today', label: 'Today' },
   { id: 'this-week', label: 'This week' },
   { id: 'last-week', label: 'Last week' },
   { id: 'this-month', label: 'This month' },
   { id: 'last-month', label: 'Last month' },
+  { id: 'this-year', label: 'This year' },
   { id: 'month', label: 'Month…' },
   { id: 'custom', label: 'Custom…' },
 ];

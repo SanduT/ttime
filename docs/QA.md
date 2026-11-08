@@ -145,3 +145,16 @@ Have a few entries this week, including one across midnight and two that overlap
    ⌘Z brings it back. ⌘Z after a move puts the block back.
 9. ← and → change the week, This week and T return. The running entry grows and cannot be dragged.
 10. Change Week starts on in Settings: the calendar follows.
+
+## Step 10: Analytics
+
+1. Sidebar Analytics: This week by default. Hours, Billable and Amount tiles; Hours per project
+   bars (largest first); Hours per day columns stacked in the project colors; the Projects table
+   with hours, share and amount.
+2. The ← and → buttons and keys move a week, T returns to this week; Last month shows the whole previous month; This year labels months under
+   the day chart. Custom… shows From and To; a valid date updates the view.
+3. Set rounding Up, 15 min in Settings: a note appears and totals grow. Export CSV with Rows "One
+   per project and day" for the same period: its preview total equals the Hours tile.
+4. Click a project name: its days, entries and notes. ← All projects returns. Export CSV from
+   there exports only that project.
+5. A period with no time says so.

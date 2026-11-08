@@ -5,6 +5,7 @@ const ITEMS: readonly { readonly view: View; readonly label: string }[] = [
   { view: 'today', label: 'Today' },
   { view: 'calendar', label: 'Calendar' },
   { view: 'projects', label: 'Projects' },
+  { view: 'analytics', label: 'Analytics' },
 ];
 
 const itemClass = (active: boolean): string =>
