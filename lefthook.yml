@@ -20,4 +20,5 @@ commit-msg:
 pre-push:
   jobs:
     - name: check
-      run: bun run check
+      # Apple's /usr/bin/git sets SDKROOT for hooks, which breaks Rust linking (DECISIONS DEC-38).
+      run: env -u SDKROOT bun run check

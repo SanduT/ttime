@@ -57,7 +57,8 @@ file differs from what the commands generate.
 
 ### DEC-09 Placeholder bundle identifier
 
-`com.sandut.ttime`. The final name and identifier are open questions (PRD section 13).
+`com.sandut.ttime`. The final name and identifier are open questions (PRD section 13). Kept for
+local use (confirmed 2026-11-08).
 
 ### DEC-10 Step 1 tray menu
 
@@ -130,7 +131,8 @@ fractions; the date part of a timestamp then decides the day file without time z
 
 PRD D5 asks for file and line. Bun and WebKit's `JSON.parse` errors carry no position, so issues
 report the file, the JSON path and the parser or schema message. Line numbers would need a small
-JSON locator; deferred until the Issues view (step 7). Listed as an open question.
+JSON locator; deferred until the Issues view (step 7), where they will be added (confirmed
+2026-11-08).
 
 ### DEC-21 Missing settings use defaults
 
@@ -238,3 +240,22 @@ logs its operation name and batch ID at `info`, never descriptions or names.
 
 Day splitting (midnight, `dayStartsAt`, DST) is a pure helper in `domain/split-by-day.ts`, tested
 now as the build order asks, and used by `ReportService` in a later step.
+
+## Before step 4 (2026-11-08)
+
+### DEC-38 The pre-push hook clears `SDKROOT`
+
+Apple's `/usr/bin/git` sets `SDKROOT` to the Command Line Tools SDK for hooks. On this machine that
+SDK (27.2) is newer than the Xcode linker selected by `xcode-select`, so linking the Rust tests
+fails inside the hook only. The hook runs `env -u SDKROOT bun run check` so rustc picks the SDK the
+way it does in a normal shell.
+
+### DEC-39 CLI backdate conflicts fail with a hint
+
+When a backdated start overlaps earlier entries, the CLI fails with the conflicts listed and
+suggests `--trim`. It never prompts.
+
+### DEC-40 Manual runs may use `~/.config/ttime`
+
+Manual runs may write the real CLI config folder `~/.config/ttime` (config, locks). Automated tests
+still use temporary directories only.
