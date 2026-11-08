@@ -27,6 +27,17 @@ export type VaultDeps = {
   readonly logger: Logger;
   readonly root: string;
   readonly actor: Actor;
+  /** Run transactions without writing anything: no files, no changelog (CLI and MCP dry runs). */
+  readonly dryRun?: boolean;
+  /** Called after every transaction, committed or dry, with what it changed. */
+  readonly onTransact?: (report: TxReport) => void;
+};
+
+/** What one transaction changed, as changelog lines. */
+export type TxReport = {
+  readonly batch: string;
+  readonly changes: readonly Change[];
+  readonly dryRun: boolean;
 };
 
 /** A written file and the hash of what was written. */
@@ -37,6 +48,8 @@ export type TxResult<T> = {
   readonly value: T;
   readonly batch: string;
   readonly written: readonly WrittenFile[];
+  /** The changelog lines of this transaction (also when nothing was written in a dry run). */
+  readonly changes: readonly Change[];
 };
 
 /** The vault: lock-free snapshot reads and locked transactions. */
@@ -51,10 +64,15 @@ export type Vault = {
   readonly history: (options?: { readonly months?: number }) => Promise<readonly Change[]>;
 };
 
+const changeLines = (tx: VaultTx, state: TxState): Change[] => {
+  const at = formatTimestamp(tx.now);
+  return state.changes.map((change) => ({ ...change, actor: tx.actor, at, batch: tx.batch }));
+};
+
 const commit = async (
   deps: VaultDeps,
-  tx: VaultTx,
   state: TxState,
+  lines: readonly Change[],
   lock: LockHandle,
 ): Promise<WrittenFile[]> => {
   const paths = vaultPaths(deps.root);
@@ -69,12 +87,10 @@ const commit = async (
     await deps.fs.writeAtomic(op.path, op.text);
     written.push({ path: op.path, sha256: sha256Hex(op.text) });
   }
-  if (state.changes.length > 0) {
-    const at = formatTimestamp(tx.now);
+  if (lines.length > 0) {
     await deps.fs.mkdirp(paths.changelogDir);
-    for (const change of state.changes) {
-      const line: Change = { ...change, actor: tx.actor, at, batch: tx.batch };
-      await deps.fs.appendLine(paths.changelog(monthOf(at)), stringifyLine(line));
+    for (const line of lines) {
+      await deps.fs.appendLine(paths.changelog(monthOf(line.at)), stringifyLine(line));
     }
   }
   return written;
@@ -99,8 +115,11 @@ export const createVault = (deps: VaultDeps): Vault => ({
       });
       await tx.readConfig();
       const value = await fn(tx);
-      const written = await commit(deps, tx, state, lock);
-      return { value, batch: tx.batch, written };
+      const changes = changeLines(tx, state);
+      const dryRun = deps.dryRun ?? false;
+      const written = dryRun ? [] : await commit(deps, state, changes, lock);
+      deps.onTransact?.({ batch: tx.batch, changes, dryRun });
+      return { value, batch: tx.batch, written, changes };
     } finally {
       await lock.release();
     }

@@ -2,6 +2,7 @@
 export type ErrorCode =
   | 'input.invalid'
   | 'vault.missing_config'
+  | 'vault.not_set'
   | 'vault.parse_failed'
   | 'vault.read_only'
   | 'vault.locked'

@@ -79,6 +79,7 @@ export type { ChangeInput, VaultTx } from './storage/transaction';
 export {
   createVault,
   initVault,
+  type TxReport,
   type TxResult,
   type Vault,
   type VaultDeps,
@@ -116,6 +117,7 @@ export {
   type Gap,
   MIN_GAP_SECONDS,
 } from './domain/day-view';
+export { type EntryFilter, queryEntries } from './domain/entry-query';
 export {
   type CreateEntryInput,
   createEntryService,
@@ -196,6 +198,7 @@ export {
   type SettingsServiceDeps,
 } from './domain/settings-service';
 export { type DaySegment, splitByDay, type SplitOptions } from './domain/split-by-day';
+export { summarize, type Summary, type SummaryGroup, type SummaryGroupBy } from './domain/summary';
 export {
   createTimerService,
   type RunningPatch,
@@ -215,6 +218,7 @@ export {
   weekView,
   type WeekViewInput,
 } from './domain/week-view';
+export { parseDuration } from './lib/duration';
 export { amountFor, decimalHours, formatMoney, parseAmount, sumMoney } from './lib/money';
 
 // testing

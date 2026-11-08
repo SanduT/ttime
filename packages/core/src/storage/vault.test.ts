@@ -5,7 +5,7 @@ import { parseJson } from '../lib/json';
 import { sha256Hex } from '../lib/sha256';
 import { buildClient, buildDay, buildEntry, buildProject } from '../testing/builders';
 import { createTestVault } from '../testing/test-vault';
-import { initVault } from './vault';
+import { createVault, initVault, type TxReport } from './vault';
 
 describe('initVault', () => {
   test('creates ttime.json with defaults, an empty running file and the folders', async () => {
@@ -152,5 +152,30 @@ describe('transaction reads and trash', () => {
     } catch (error) {
       expect(isTTimeError(error, 'input.invalid')).toBe(true);
     }
+  });
+});
+
+describe('dry runs', () => {
+  test('a dry-run transaction reports its changes and writes nothing', async () => {
+    const t = await createTestVault();
+    const reports: TxReport[] = [];
+    const dry = createVault({
+      ...t.deps,
+      dryRun: true,
+      onTransact: (report) => reports.push(report),
+    });
+    const project = buildProject();
+    const result = await dry.transact(async (tx) => {
+      await tx.readProject(project.id);
+      tx.writeProject(project);
+      tx.record({ op: 'create', kind: 'project', id: project.id, before: null, after: project });
+    });
+    expect(result.written).toEqual([]);
+    expect(result.changes).toMatchObject([
+      { op: 'create', kind: 'project', id: 'acme-website', actor: 'app' },
+    ]);
+    expect(reports).toEqual([{ batch: result.batch, changes: result.changes, dryRun: true }]);
+    expect(await t.readRaw('projects/acme-website.json')).toBeNull();
+    expect(await t.readRaw('changelog/2026-11.jsonl')).toBeNull();
   });
 });

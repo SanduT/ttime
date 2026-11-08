@@ -611,3 +611,49 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
   input for 5 minutes (or the Mac slept through it), the timer stops at the last activity before
   that, not at the auto-stop time. Only entries started before that time are stopped.
 - Tracking reminders (P1) remain for step 13.
+
+## Step 12: CLI, MCP server and skill
+
+### DEC-79 CLI
+
+- Flags are parsed with `node:util` `parseArgs` (no dependency). Values are checked by core's
+  parsers (dates, times, durations, money) and the CLI date helpers, which throw `input.invalid`,
+  instead of per-command Zod schemas.
+- The vault is `--vault`, else `TTIME_VAULT`, else the vault in `~/.config/ttime/config.json`
+  (the app's). A missing vault is the new error `vault.not_set` (exit 2).
+- `--dry-run` runs every transaction in full, validation included, through a vault created with
+  `dryRun: true`, which writes no files and no changelog. The output lists the changes.
+- `add` with a date and duration but no start begins after that day's last entry, or at the
+  working-hours start on an empty day. `--period` (this-week, last-month, ...) is added next to
+  `--from` and `--to`.
+- `status` includes the running entry, like the popover; `ls`, `report` and `export` leave it out,
+  like the CSV export. `report` by project or day equals a CSV export with the same rounding; by tag
+  or description it rounds per entry, and an entry with several tags counts under each.
+- `undo` without `--batch` reverts the latest CLI change. `export` prints the absolute path.
+- Not built: `export --out` (copy the printed path instead) and `dev seed` (moved to step 13).
+- `bun run build:cli` compiles `~/.local/bin/ttime`. It writes outside the repo, so it is run by
+  hand.
+
+### DEC-80 MCP server
+
+- `ttime mcp` serves `@modelcontextprotocol/sdk` 1.32.2 over stdio with the 15 tools of
+  ARCHITECTURE 8.2. Each tool is a Zod input shape plus a thin call into the same command functions
+  the CLI uses, and results are JSON text. One wrapper (`mcp/run-tool.ts`) opens the vault per call
+  (actor `mcp`), applies the write rules and turns errors into `{ code, message }` error results.
+- Tool arguments are camelCase (`dryRun`, `groupBy`, `billingPeriod`, `includeArchived`) to match
+  the codebase naming rule, instead of the snake_case in ARCHITECTURE 8.2.
+- Writes: `dryRun` returns the changes without writing. Without `confirm`, a write first runs as a
+  dry run; if it touches more than 3 records it returns `needsConfirmation` with the changes, else
+  it runs for real. Results carry the batch IDs for `undo`.
+- `tz` (IANA) applies to times without an offset and to "today"; default the system zone.
+- `add_note` has no `at` and `add_entry` has no `notes`: core stamps notes when they are added
+  to a running entry. `update_project` also archives and unarchives.
+- SDK subpaths are imported without `.js` (`@modelcontextprotocol/sdk/server/mcp`), which both
+  TypeScript and Bun resolve through the package's `./*` export; the ESLint resolver does not
+  resolve the `.js` form.
+
+### DEC-81 Skill
+
+- `skills/ttime/SKILL.md` covers the data model, conventions, which MCP tool or CLI command to use,
+  and the four worked examples of ARCHITECTURE 8.3. It prefers MCP and falls back to the CLI with
+  `--json`, so it works in Claude Code without the MCP server.

@@ -177,3 +177,23 @@ Settings, App: set Idle detection to 1 minute and Long timers to 0 for the first
 7. Auto-stop: enable it with a time a minute from now, start a timer, leave the Mac for 6 minutes:
    the timer has stopped at your last input, and the menu bar shows the idle icon.
 8. Invalid values (`24:00`, `abc`) are not saved. Settings survive a restart.
+
+## Step 12: CLI, MCP server and skill
+
+`T` is `bun packages/cli/src/index.ts` from the repo root (or `ttime` after `bun run build:cli`).
+
+1. `T status`, `T ls --period this-week`, `T report --period last-week --group day`: match the app.
+2. `T start "test @<project> -15m"`: the menu bar shows it within a second. `T note "hello"`,
+   `T stop`: the entry and note appear in Today.
+3. `T projects add --name "CLI Test" --rate 40 --dry-run` writes nothing; without `--dry-run` it is
+   created; `T undo` removes it.
+4. `T add --project <p> --date yesterday --duration 1h --desc x`: it appears in the calendar.
+5. `T export --period last-month`: the printed file opens in Numbers.
+6. `T doctor` on a vault with a broken file prints the file and line and exits 2.
+7. Register the MCP server in Claude Code: `claude mcp add ttime -- bun <repo>/packages/cli/src/index.ts mcp`
+   (or the built binary with `mcp`). In Claude, "add 2 hours yesterday afternoon on <project> for
+   the auth review": Claude calls `list_projects` and `add_entry`; the calendar shows the entry
+   within a second (PRD S9). "Undo that" reverts it.
+8. Ask Claude to move 4 or more entries: it shows a preview and asks before writing.
+9. Copy or link `skills/ttime` into `~/.claude/skills/`: Claude follows its conventions (confirms
+   inferred times, mentions undo).
