@@ -95,3 +95,18 @@ export const addDays = (date: LocalDate, days: number): LocalDate =>
 /** Orders two local dates. */
 export const compareDates = (a: LocalDate, b: LocalDate): number =>
   Temporal.PlainDate.compare(Temporal.PlainDate.from(a), Temporal.PlainDate.from(b));
+
+const TYPED_CLOCK = /^([01]?\d|2[0-3]):?([0-5]\d)$/;
+
+/**
+ * The timestamp of a typed wall-clock time (`9:05`, `09:05` or `0905`) on `date` in `timeZone`,
+ * or null when the text is not a time. Used by editors that show a day.
+ */
+export const timestampOn = (date: LocalDate, text: string, timeZone: string): Timestamp | null => {
+  const match = TYPED_CLOCK.exec(text.trim());
+  if (match === null) {
+    return null;
+  }
+  const plainTime = Temporal.PlainTime.from({ hour: Number(match[1]), minute: Number(match[2]) });
+  return formatTimestamp(Temporal.PlainDate.from(date).toZonedDateTime({ timeZone, plainTime }));
+};

@@ -25,4 +25,6 @@ export type VaultIssue = {
   /** JSON path inside the file. */
   readonly path: readonly (string | number)[];
   readonly message: string;
+  /** 1-based line in the file where the problem is, when the file exists. */
+  readonly line?: number;
 };

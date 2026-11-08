@@ -3,6 +3,8 @@
 @theme {
   --font-sans: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --color-surface: light-dark(rgb(255 255 255 / 0.72), rgb(30 30 32 / 0.72));
+  /* Opaque surface for dialogs and other layers drawn over content. */
+  --color-surface-solid: light-dark(rgb(255 255 255), rgb(38 38 40));
   --color-text: light-dark(rgb(28 28 30), rgb(242 242 247));
   --color-text-muted: light-dark(rgb(99 99 102), rgb(152 152 157));
   --color-border: light-dark(rgb(0 0 0 / 0.1), rgb(255 255 255 / 0.12));

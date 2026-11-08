@@ -6,7 +6,7 @@ import { TTimeError } from '../lib/errors';
 import { stringifyStable } from '../lib/json';
 import { compareTimestamps, isLocalDate, type LocalDate } from '../lib/time';
 import type { FsPort } from '../ports/fs-port';
-import type { ChangeKind, ChangeOp } from '../schema/changelog';
+import type { Change, ChangeKind, ChangeOp } from '../schema/changelog';
 import { type Client, clientSchema } from '../schema/client';
 import {
   type DayFile,
@@ -20,6 +20,7 @@ import {
 import type { Actor } from '../schema/primitives';
 import { type Project, projectSchema } from '../schema/project';
 import { type VaultConfig, vaultConfigSchema } from '../schema/vault-config';
+import { listChangelogMonths, readChangelogMonth } from './changelog';
 import { DAY_FILE_PATTERN, RECORD_FILE_PATTERN, type VaultPaths } from './paths';
 import { readVaultFile } from './read-file';
 
@@ -30,6 +31,8 @@ export type ChangeInput = {
   readonly id: string;
   readonly before: unknown;
   readonly after: unknown;
+  /** The batch this change reverts, for undo batches. */
+  readonly undoes?: string;
 };
 
 /** A pending file operation, applied in order at commit. */
@@ -49,6 +52,9 @@ export type VaultTx = {
   readonly batch: string;
   readonly actor: Actor;
   readonly readConfig: () => Promise<VaultConfig>;
+  readonly writeConfig: (config: VaultConfig) => void;
+  /** The changes of batch `batch`, in the order they were made; empty when unknown. */
+  readonly readBatch: (batch: string) => Promise<readonly Change[]>;
   readonly listDays: () => Promise<readonly LocalDate[]>;
   readonly readDay: (date: LocalDate) => Promise<DayFile>;
   readonly writeDay: (day: DayFile) => void;
@@ -188,6 +194,20 @@ export const createTx = (deps: TxDeps): { readonly tx: VaultTx; readonly state: 
         throw new TTimeError('vault.missing_config', `No ttime.json in ${paths.root}`);
       }
       return config;
+    },
+    writeConfig: (config) => {
+      files.write(paths.config, vaultConfigSchema, config);
+    },
+    readBatch: async (batch) => {
+      for (const month of await listChangelogMonths(fs, paths)) {
+        const changes = (await readChangelogMonth(fs, paths, month)).filter(
+          (change) => change.batch === batch,
+        );
+        if (changes.length > 0) {
+          return changes;
+        }
+      }
+      return [];
     },
     listDays: () => listDayDates(fs, paths.entriesDir),
     readDay: async (date) => {

@@ -9,6 +9,7 @@ export { type ErrorCode, isTTimeError, TTimeError, type TTimeErrorOptions } from
 export { parseJson, stringifyStable, tryParseJson } from './lib/json';
 export { slugify, uniqueSlug } from './lib/slug';
 export {
+  addDays,
   compareTimestamps,
   epochSeconds,
   formatTimestamp,
@@ -18,6 +19,7 @@ export {
   localDateOf,
   secondsBetween,
   type Timestamp,
+  timestampOn,
   toZoned,
 } from './lib/time';
 
@@ -96,6 +98,14 @@ export {
   type ProjectTotal,
 } from './domain/current-totals';
 export {
+  type DayRow,
+  type DayView,
+  dayView,
+  type DayViewInput,
+  type Gap,
+  MIN_GAP_SECONDS,
+} from './domain/day-view';
+export {
   type CreateEntryInput,
   createEntryService,
   type EntryPatch,
@@ -111,6 +121,7 @@ export {
   type ProjectService,
   type ProjectServiceDeps,
 } from './domain/project-service';
+export { type ProjectHours, projectTotals, type ProjectTotalsInput } from './domain/project-totals';
 export {
   createQuickActions,
   type QuickActions,
@@ -144,6 +155,9 @@ export {
   type TimerService,
   type TimerServiceDeps,
 } from './domain/timer-service';
+export { type Batch, type UndoState } from './domain/undo-history';
+export { createUndoService, type UndoService, type UndoServiceDeps } from './domain/undo-service';
+export { amountFor, formatMoney, parseAmount } from './lib/money';
 
 // testing
 export { buildClient, buildDay, buildEntry, buildProject, buildRunning } from './testing/builders';

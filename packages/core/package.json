@@ -7,7 +7,11 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "big.js": "7.0.1",
     "temporal-polyfill": "1.0.8",
     "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/big.js": "7.0.0"
   }
 }

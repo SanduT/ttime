@@ -384,7 +384,7 @@ with the monitors (step 11).
 - A Rust thread redraws the title on the running entry's minute boundaries and whenever
   `set_running` changes the summary. It never polls files.
 - `RunningSummary.start` is now `startEpochSeconds`, so Rust needs no date parsing.
-- Display options (project and time, icon only) and showing seconds wait for Settings (step 7).
+- Display options (project and time, icon only) and showing seconds wait for the Settings view (step 8b, DEC-66).
   Until then the title is time only, the PRD default.
 
 ### DEC-59 Tray clicks and menu
@@ -403,7 +403,7 @@ running state or the resume target changes.
   boundaries and counts the running entry up to now.
 - Discard asks for a second click ("Confirm discard") instead of a dialog, to keep the panel
   keyboard and click friendly.
-- Favorites wait for P1 (step 13), Settings for step 7. Recent entries (5) are startable in one
+- Favorites wait for P1 (step 13), Settings for the Settings view (DEC-66). Recent entries (5) are startable in one
   click.
 
 ### DEC-61 No separate Pause in the UI
@@ -413,3 +413,54 @@ the same thing. The UI shows one action instead: Stop while tracking, and `Resum
 (the project name when the description is empty) when idle, naming what Resume continues. This
 applies to the popover and the tray menu. The quick bar drops ⌘P; Enter on the latest entry row
 already continues it. Core `pause` and the CLI `ttime pause` stay as documented.
+
+## Step 7: Main window
+
+### DEC-62 Undo and redo
+
+- ⌘Z reverts the latest `app` batch and ⇧⌘Z reverts the latest undo batch, computed by replaying
+  the last two months of changelog (`undoState`). Quick bar, popover and main window changes all
+  count, since they share the `app` actor. A new change clears redo.
+- Undo applies `before` for every line of the batch, newest line first, in one new batch whose
+  lines carry `undoes: <batch>` and the op of what the revert did (`create`, `update`, `delete`
+  or `restore`). The changelog op list is unchanged.
+- Before restoring, each record must still equal the batch's `after`. Otherwise the undo fails with
+  `undo.conflict`, so a later edit (from the app, the CLI or a hand edit) is never lost.
+- Nothing is hard-deleted: undoing an entry's creation moves it to the trash, and undoing a
+  project or client creation archives it.
+- The Activity list of CLI and MCP batches comes with the CLI (step 12), when such batches exist.
+
+### DEC-63 Issue line numbers
+
+`VaultIssue.line` comes from a small JSON scanner in core (`jsonProblemLine`): the line of the
+first syntax error, or of the value at the issue's JSON path (its deepest existing parent for a
+missing key). WebKit's `JSON.parse` errors carry no position, so the scanner is needed. Only files
+that have issues are read a second time.
+
+### DEC-64 Today view
+
+- Rows are the entries that start on the day plus the running entry; totals split time at
+  `dayStartsAt`, so an entry across midnight is listed on its start day but counted on both.
+- Gaps of at least 5 minutes inside the working hours, never after now, show "Fill gap".
+- Editing happens in place: click a row, Enter saves, Esc cancels. An end at or before the start
+  means the next day. The running entry opens the quick bar's edit form instead.
+- Deleting moves the entry to the trash with a toast that ⌘Z restores it.
+
+### DEC-65 Projects view
+
+- The list groups projects by client (no client last) with this week, this month and all time,
+  split at report-day boundaries and including the running entry. Archived projects and clients
+  show on request.
+- Project detail lists the project's entries by day for this week, this month or all time, with
+  the total and, when a rate is set, the amount (`amountFor`, big.js 7.0.1, half up to cents).
+  Export CSV comes with step 8.
+- `ProjectPatch` takes `null` for `client` and `rate` to remove them, since
+  `exactOptionalPropertyTypes` rules out passing `undefined`.
+
+### DEC-66 Deferred from the main window
+
+- The Settings view (⌘,: hotkeys, menu bar display, week and day start, working hours and the
+  rest of PRD 6.7) was in no build order step. It becomes step 8b, right after CSV export
+  (ARCHITECTURE 12).
+- Calendar and Analytics join the sidebar with steps 9 and 10.
+- Split and merge exist in core but have no UI yet; the calendar (step 9) is their natural home.

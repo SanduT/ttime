@@ -18,6 +18,8 @@ export const changeSchema = z.looseObject({
   batch: ulidSchema,
   before: z.unknown().nullable(),
   after: z.unknown().nullable(),
+  /** Set on every line of an undo batch: the batch it reverts. */
+  undoes: ulidSchema.optional(),
 });
 
 /** A changelog line. */

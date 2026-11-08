@@ -1,6 +1,8 @@
 import type { Temporal } from 'temporal-polyfill';
 import type { z } from 'zod';
 
+import { jsonProblemLine } from '../lib/json-locate';
+import { joinPath } from '../lib/path';
 import { compareDates, type LocalDate } from '../lib/time';
 import type { FsPort } from '../ports/fs-port';
 import { type Client, clientSchema } from '../schema/client';
@@ -119,6 +121,26 @@ const loadDays = async (
   return days.sort((a, b) => compareDates(a.date, b.date));
 };
 
+/** Adds the line number to each issue whose file exists. Reads only files that have issues. */
+const withLines = async (
+  fs: FsPort,
+  root: string,
+  issues: readonly VaultIssue[],
+): Promise<VaultIssue[]> => {
+  const files = [...new Set(issues.map((issue) => issue.file))];
+  const texts = new Map(
+    await Promise.all(
+      files.map(async (file) => [file, await fs.readText(joinPath(root, file))] as const),
+    ),
+  );
+  return issues.map((issue) => {
+    const text = texts.get(issue.file);
+    return text === null || text === undefined
+      ? issue
+      : { ...issue, line: jsonProblemLine(text, issue.path) };
+  });
+};
+
 /** Reads and validates the whole vault (or the days from `since` on). Never writes. */
 export const loadSnapshot = async ({
   fs,
@@ -169,7 +191,7 @@ export const loadSnapshot = async ({
     projects,
     days: new Map(days.map((d) => [d.date, d.day])),
     running,
-    issues,
+    issues: await withLines(fs, root, issues),
     readOnly: issues.some((i) => i.code === 'file.newer_schema'),
   };
 };

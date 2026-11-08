@@ -15,6 +15,7 @@ import {
   localDateOf,
   monthOf,
   secondsBetween,
+  timestampOn,
   toInstant,
   toZoned,
 } from './time';
@@ -70,5 +71,17 @@ describe('formatWallTime', () => {
   test('shows only the clock time for today and adds the date otherwise', () => {
     expect(formatWallTime('2026-11-08T09:05:00+02:00', '2026-11-08')).toBe('09:05');
     expect(formatWallTime('2026-11-07T23:30:00+02:00', '2026-11-08')).toBe('2026-11-07 23:30');
+  });
+});
+
+describe('timestampOn', () => {
+  test('reads typed times on a date', () => {
+    expect(timestampOn('2026-11-08', '9:05', 'Europe/Bucharest')).toBe('2026-11-08T09:05:00+02:00');
+    expect(timestampOn('2026-11-08', '1730', 'Europe/Bucharest')).toBe('2026-11-08T17:30:00+02:00');
+  });
+
+  test('is null for other text', () => {
+    expect(timestampOn('2026-11-08', '25:00', 'Europe/Bucharest')).toBeNull();
+    expect(timestampOn('2026-11-08', 'soon', 'Europe/Bucharest')).toBeNull();
   });
 });

@@ -561,6 +561,7 @@ Each step ends with passing tests and a short note on what can be demoed.
 6. **Menu bar:** tray title ticker, colored icon, popover, right-click menu.
 7. **Main window:** Today and Projects views, entry, project and client editors, undo, Issues view.
 8. **CSV export:** `ReportService`, `Rounding`, `CSVExporter`, the export sheet with rounding and locale options.
+   8b. **Settings view** (⌘,): PRD 6.7, including the hotkey recorder and the menu bar display options (DEC-66).
 9. **Calendar week view** with drag editing.
 10. **Analytics view.**
 11. **Monitors:** idle, power and scheduler in Rust; idle-resolution and forgotten-timer prompts in the quick bar.

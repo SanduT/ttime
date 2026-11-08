@@ -12,6 +12,7 @@ import type { Logger } from '../ports/logger';
 import type { Change } from '../schema/changelog';
 import type { Actor } from '../schema/primitives';
 import { DEFAULT_SETTINGS, vaultConfigSchema } from '../schema/vault-config';
+import { readChangelog } from './changelog';
 import { acquireLock, lockDirFor, type LockHandle } from './lock';
 import { vaultPaths } from './paths';
 import { loadSnapshot, type VaultSnapshot } from './reader';
@@ -46,6 +47,8 @@ export type Vault = {
   readonly read: (options?: { readonly since?: LocalDate }) => Promise<VaultSnapshot>;
   /** Runs `fn` as one locked read-modify-write and commits its buffered writes. */
   readonly transact: <T>(fn: (tx: VaultTx) => Promise<T>) => Promise<TxResult<T>>;
+  /** Changes of the newest `months` changelog files (all when omitted), oldest first. */
+  readonly history: (options?: { readonly months?: number }) => Promise<readonly Change[]>;
 };
 
 const commit = async (
@@ -83,6 +86,7 @@ export const createVault = (deps: VaultDeps): Vault => ({
   actor: deps.actor,
   read: (options) =>
     loadSnapshot({ fs: deps.fs, root: deps.root, now: deps.clock.now(), since: options?.since }),
+  history: (options) => readChangelog(deps.fs, vaultPaths(deps.root), options?.months),
   transact: async (fn) => {
     const lock = await acquireLock(deps, lockDirFor(deps.env, deps.root));
     try {

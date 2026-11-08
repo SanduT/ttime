@@ -51,6 +51,15 @@ describe('ProjectService', () => {
     expect(await errorCodeOf(t.projects.update('nope', {}))).toBe('project.not_found');
   });
 
+  test('update with null removes the client and rate', async () => {
+    const t = await createDomainTestVault();
+    await t.projects.update('acme-website', { rate: { amount: '50.00', currency: 'EUR' } });
+    const project = await t.projects.update('acme-website', { client: null, rate: null });
+    expect(project.client).toBeUndefined();
+    expect(project.rate).toBeUndefined();
+    expect(await t.readRaw('projects/acme-website.json')).not.toContain('"client"');
+  });
+
   test('archive and unarchive toggle the status', async () => {
     const t = await createDomainTestVault();
     expect((await t.projects.archive('internal')).status).toBe('archived');

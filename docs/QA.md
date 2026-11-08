@@ -64,3 +64,31 @@ Start with no `~/.config/ttime/config.json` (move it aside if it exists).
 9. Right click the icon: Stop, New Entry…, Add Note…, Open ttime, Quit ttime. Stop ends the
    entry. When idle, the first item reads `Resume <description>` and resumes it.
 10. Edit `running.json` from outside (or use the CLI): the icon and title follow within a second.
+
+## Step 7: Main window
+
+Open ttime from the tray. The vault should have a few entries today and on other days.
+
+1. The sidebar shows the vault name, Today and Projects. Issues appears only while a file is
+   broken.
+2. Today lists today's entries by start with their notes, the running entry, and dashed "Untracked"
+   rows for gaps inside 09:00 to 18:00 on weekdays. The header shows the day total and per project.
+3. ← and → change the day, T returns to today (not while typing in a field).
+4. Click an entry: it opens in place. Change the end time and the project, press Enter: the row
+   updates. Esc cancels an edit.
+5. Fill gap: the form starts with the gap's times; pick a project, Enter: the entry is added and
+   the gap shrinks or disappears.
+6. Add entry with `22:00` to `01:00`: it is three hours and counts on both days.
+7. Delete an entry from its editor: a toast says ⌘Z restores it. Press ⌘Z: it is back. Press ⇧⌘Z:
+   it is deleted again.
+8. Edit an entry, then change the same entry in its day file from outside, then press ⌘Z: the
+   message says it was edited again since, and nothing changes.
+9. Projects: groups by client with this week, this month and all time. New project with a client,
+   a color and a rate of `50`: it appears in its client group.
+10. Open the project: entries by day with notes; This week, This month and All time change the
+    list and the total; with a rate the amount shows next to the total.
+11. Edit the project, clear the rate and the client, Save: it moves to "No client".
+12. Archive it: it disappears; "Show archived" shows it with "Archived". Unarchive works.
+13. New client, then Edit on its group header: rename it and archive it.
+14. Break a project file on disk (invalid JSON on line 3): Issues appears with a count; it shows
+    `projects/<name>.json:3` and the message. Fix the file: Issues disappears.

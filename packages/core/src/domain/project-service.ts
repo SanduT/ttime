@@ -31,8 +31,25 @@ export type CreateProjectInput = {
   readonly target?: NonNullable<Project['target']>;
 };
 
-/** Fields of a project that can change. The ID never changes. */
-export type ProjectPatch = Partial<CreateProjectInput>;
+/** Fields of a project that can change; `null` removes `client` or `rate`. The ID never changes. */
+export type ProjectPatch = Partial<Omit<CreateProjectInput, 'client' | 'rate'>> & {
+  readonly client?: string | null;
+  readonly rate?: Money | null;
+};
+
+/** `project` with `patch` applied: `null` removes an optional field. */
+const applyPatch = (project: Project, patch: ProjectPatch): Project => {
+  const { client, rate, ...rest } = patch;
+  const { client: oldClient, rate: oldRate, ...kept } = project;
+  const nextClient = client === undefined ? oldClient : (client ?? undefined);
+  const nextRate = rate === undefined ? oldRate : (rate ?? undefined);
+  return {
+    ...kept,
+    ...rest,
+    ...(nextClient === undefined ? {} : { client: nextClient }),
+    ...(nextRate === undefined ? {} : { rate: nextRate }),
+  };
+};
 
 /** Dependencies of {@link createProjectService}. */
 export type ProjectServiceDeps = {
@@ -109,10 +126,9 @@ export const createProjectService = ({ vault, logger }: ProjectServiceDeps): Pro
     update: (id, patch) =>
       run('update', async (tx) => {
         const project = await requireProject(tx, id, { allowArchived: true });
-        await requireClient(tx, patch.client);
+        await requireClient(tx, patch.client ?? undefined);
         return save(tx, project, {
-          ...project,
-          ...patch,
+          ...applyPatch(project, patch),
           ...(patch.name === undefined ? {} : { name: requireName(patch.name) }),
         });
       }),

@@ -36,10 +36,17 @@ const WEEKDAYS = [
 ] as const;
 
 /** The report day `now` falls in: its date, minus one before `dayStartsAt`. */
-const reportDay = (now: Temporal.ZonedDateTime, dayStartsAt: string): Temporal.PlainDate =>
+export const reportDay = (now: Temporal.ZonedDateTime, dayStartsAt: string): Temporal.PlainDate =>
   Temporal.PlainTime.compare(now.toPlainTime(), Temporal.PlainTime.from(dayStartsAt)) < 0
     ? now.toPlainDate().subtract({ days: 1 })
     : now.toPlainDate();
+
+/** The first day of the week containing `date`. */
+export const weekStartOf = (
+  date: Temporal.PlainDate,
+  weekStartsOn: VaultSettings['weekStartsOn'],
+): Temporal.PlainDate =>
+  date.subtract({ days: (date.dayOfWeek - 1 - WEEKDAYS.indexOf(weekStartsOn) + 7) % 7 });
 
 const toTotal = (byProject: ReadonlyMap<string, number>): Total => ({
   seconds: [...byProject.values()].reduce((sum, seconds) => sum + seconds, 0),
@@ -55,9 +62,7 @@ const toTotal = (byProject: ReadonlyMap<string, number>): Total => ({
 export const currentTotals = (input: CurrentTotalsInput): CurrentTotals => {
   const { now, settings } = input;
   const today = reportDay(now, settings.dayStartsAt);
-  const weekStart = today.subtract({
-    days: (today.dayOfWeek - 1 - WEEKDAYS.indexOf(settings.weekStartsOn) + 7) % 7,
-  });
+  const weekStart = weekStartOf(today, settings.weekStartsOn);
   const nowStamp = formatTimestamp(now);
   const spans = [
     ...input.entries,
