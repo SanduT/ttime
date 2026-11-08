@@ -4,7 +4,12 @@ import { create } from 'zustand';
 import type { QuickbarMode } from '../../../shared/bridge/window-api';
 
 /** What the quick bar body shows. `done` confirms the last action. */
-export type QuickbarPanel = 'list' | 'actions' | 'edit' | 'done';
+export type QuickbarPanel = 'list' | 'actions' | 'edit' | 'done' | 'prompt';
+
+/** A monitor question waiting for an answer. Times are seconds since the Unix epoch. */
+export type MonitorPrompt =
+  | { readonly kind: 'idle'; readonly since: number; readonly returned: number }
+  | { readonly kind: 'forgotten'; readonly hours: number; readonly lastActivity: number };
 
 /** What the last action did, shown on the `done` panel. */
 export type QuickResult =
@@ -31,6 +36,9 @@ type QuickbarState = {
   readonly selected: string;
   readonly result: QuickResult | null;
   readonly error: QuickError | null;
+  /** Shown on the `prompt` panel; kept until answered. */
+  readonly prompt: MonitorPrompt | null;
+  readonly setPrompt: (prompt: MonitorPrompt | null) => void;
   /** Typing clears the error and leaves the `done` and `actions` panels. */
   readonly setText: (text: string) => void;
   readonly setPanel: (panel: QuickbarPanel) => void;
@@ -43,6 +51,13 @@ type QuickbarState = {
   readonly open: (mode: QuickbarMode) => void;
 };
 
+const panelFor = (mode: QuickbarMode): QuickbarPanel => {
+  if (mode === 'prompt') {
+    return 'prompt';
+  }
+  return mode === 'edit-running' ? 'edit' : 'list';
+};
+
 /** UI state of the quick bar. */
 export const useQuickbarStore = create<QuickbarState>()((set) => ({
   text: '',
@@ -51,6 +66,10 @@ export const useQuickbarStore = create<QuickbarState>()((set) => ({
   selected: '',
   result: null,
   error: null,
+  prompt: null,
+  setPrompt: (prompt) => {
+    set({ prompt });
+  },
   setText: (text) => {
     set((state) => ({
       text,
@@ -82,7 +101,7 @@ export const useQuickbarStore = create<QuickbarState>()((set) => ({
       selected: '',
       result: null,
       error: null,
-      panel: mode === 'edit-running' ? 'edit' : 'list',
+      panel: panelFor(mode),
       noteMode: mode === 'note',
     });
   },

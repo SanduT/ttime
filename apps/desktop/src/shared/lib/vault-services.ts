@@ -2,6 +2,7 @@ import {
   createClientService,
   createEntryService,
   createExportService,
+  createIdleService,
   createProjectService,
   createQuickActions,
   createSettingsService,
@@ -22,6 +23,7 @@ export type VaultServices = {
   readonly undo: ReturnType<typeof createUndoService>;
   readonly exports: ReturnType<typeof createExportService>;
   readonly settings: ReturnType<typeof createSettingsService>;
+  readonly idle: ReturnType<typeof createIdleService>;
 };
 
 /** Core services bound to `vault` and this window's clock, IDs and logger. */
@@ -35,6 +37,7 @@ export const servicesFor = async (vault: Vault): Promise<VaultServices> => {
     clients: createClientService({ vault, logger }),
     undo: createUndoService({ vault, logger }),
     settings: createSettingsService({ vault, logger }),
+    idle: createIdleService({ vault, ids, logger }),
     exports: createExportService({ vault, logger, timeZone: () => clock.now().timeZoneId }),
   };
 };

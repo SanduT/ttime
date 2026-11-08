@@ -68,6 +68,7 @@ pub fn run() -> Result<(), AppError> {
             services::settings::apply_saved(app.handle(), &prefs);
             services::tray::create(app.handle())?;
             services::tray::start_ticker(app.handle().clone(), ticks)?;
+            services::monitors::start(app.handle().clone())?;
             if !has_vault {
                 // First run (or the saved vault is gone): the main window shows onboarding.
                 panels::show(app.handle(), WindowKind::Main)?;

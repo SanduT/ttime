@@ -45,7 +45,18 @@ pub struct Prefs {
     /// Show seconds in the menu bar time.
     pub show_seconds: bool,
     pub appearance: Appearance,
+    /// Ask about idle time after this many minutes without input; 0 turns it off.
+    pub idle_minutes: u32,
+    /// Remind while a timer runs this many hours, repeating; 0 turns it off.
+    pub forgotten_hours: u32,
+    /// Stop a timer still running after this local time (`HH:MM`), at the last activity.
+    pub auto_stop: Option<String>,
 }
+
+/// Default idle threshold in minutes (PRD 6.5).
+pub const DEFAULT_IDLE_MINUTES: u32 = 10;
+/// Default forgotten-timer limit in hours (PRD 6.5).
+pub const DEFAULT_FORGOTTEN_HOURS: u32 = 4;
 
 impl Default for Prefs {
     fn default() -> Self {
@@ -54,6 +65,9 @@ impl Default for Prefs {
             menu_bar_display: MenuBarDisplay::default(),
             show_seconds: false,
             appearance: Appearance::default(),
+            idle_minutes: DEFAULT_IDLE_MINUTES,
+            forgotten_hours: DEFAULT_FORGOTTEN_HOURS,
+            auto_stop: None,
         }
     }
 }
@@ -107,10 +121,14 @@ mod tests {
             menu_bar_display: MenuBarDisplay::ProjectAndTime,
             show_seconds: true,
             appearance: Appearance::Dark,
+            idle_minutes: 15,
+            forgotten_hours: 0,
+            auto_stop: Some("18:00".into()),
         };
         save(&path, &prefs).unwrap();
         assert_eq!(load(&path), prefs);
         std::fs::write(&path, r#"{"appearance":"light"}"#).unwrap();
         assert_eq!(load(&path).quickbar_shortcut, DEFAULT_SHORTCUT);
+        assert_eq!(load(&path).idle_minutes, DEFAULT_IDLE_MINUTES);
     }
 }

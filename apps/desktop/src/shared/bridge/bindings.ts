@@ -65,6 +65,9 @@ export const commands = {
 /** Events */
 export const events = {
 	mainOpenSettings: makeEvent<OpenSettings, OpenSettings>("main:open-settings"),
+	monitorAutoStop: makeEvent<MonitorAutoStop, MonitorAutoStop>("monitor:auto-stop"),
+	monitorForgotten: makeEvent<MonitorForgotten, MonitorForgotten>("monitor:forgotten"),
+	monitorIdle: makeEvent<MonitorIdle, MonitorIdle>("monitor:idle"),
 	quickbarShown: makeEvent<QuickbarShown, QuickbarShown>("quickbar:shown"),
 	trayAction: makeEvent<TrayAction, TrayAction>("tray:action"),
 	vaultChanged: makeEvent<VaultChanged, VaultChanged>("vault:changed"),
@@ -110,6 +113,27 @@ export type MenuBarDisplay =
 /**  The project dot only. */
 "icon";
 
+/**  The auto-stop time passed while the user was away: stop the timer at `at`. */
+export type MonitorAutoStop = {
+	/**  Seconds since the Unix epoch. */
+	at: number | null,
+};
+
+/**  The running timer passed the forgotten-timer limit again. */
+export type MonitorForgotten = {
+	hours: number,
+	/**  The last input, in seconds since the Unix epoch. */
+	lastActivity: number | null,
+};
+
+/**  The user is back after idle time while a timer ran. Times are seconds since the Unix epoch. */
+export type MonitorIdle = {
+	/**  The last input before going idle (or the last activity before sleep). */
+	since: number | null,
+	/**  The first input after coming back. */
+	returned: number | null,
+};
+
 /**  The main window should show Settings (tray menu item). */
 export type OpenSettings = null;
 
@@ -124,6 +148,12 @@ export type Prefs_Deserialize = {
 	/**  Show seconds in the menu bar time. */
 	showSeconds?: boolean,
 	appearance?: Appearance,
+	/**  Ask about idle time after this many minutes without input; 0 turns it off. */
+	idleMinutes?: number,
+	/**  Remind while a timer runs this many hours, repeating; 0 turns it off. */
+	forgottenHours?: number,
+	/**  Stop a timer still running after this local time (`HH:MM`), at the last activity. */
+	autoStop?: string | null,
 };
 
 /**  The app preferences. Missing keys take their defaults. */
@@ -134,10 +164,18 @@ export type Prefs_Serialize = {
 	/**  Show seconds in the menu bar time. */
 	showSeconds: boolean,
 	appearance: Appearance,
+	/**  Ask about idle time after this many minutes without input; 0 turns it off. */
+	idleMinutes: number,
+	/**  Remind while a timer runs this many hours, repeating; 0 turns it off. */
+	forgottenHours: number,
+	/**  Stop a timer still running after this local time (`HH:MM`), at the last activity. */
+	autoStop: string | null,
 };
 
 /**  What the quick bar opens for. */
-export type QuickbarMode = "new" | "note" | "edit-running";
+export type QuickbarMode = "new" | "note" | "edit-running" | 
+/**  A monitor prompt (idle time or a forgotten timer) the agent has queued. */
+"prompt";
 
 /**  The quick bar was just shown; the webview resets its input for `mode`. */
 export type QuickbarShown = {

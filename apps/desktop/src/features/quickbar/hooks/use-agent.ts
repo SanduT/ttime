@@ -6,6 +6,7 @@ import { runAction } from '../../../shared/lib/run-action';
 import { servicesFor } from '../../../shared/lib/vault-services';
 import { useVaultStore } from '../../../shared/store/vault-store';
 import { toRunningSummary } from '../lib/running-summary';
+import { useMonitors } from './use-monitors';
 
 /** Pushes the running entry to Rust for the menu bar after every change. */
 const usePushRunning = (): void => {
@@ -62,9 +63,11 @@ const useTrayActions = (): void => {
 
 /**
  * The agent role (ARCHITECTURE 7.1): keeps the menu bar current after every change, local or
- * external (the snapshot reloads on `vault:changed`), and handles the tray menu's timer actions.
+ * external (the snapshot reloads on `vault:changed`), handles the tray menu's timer actions and
+ * the monitors.
  */
 export const useAgent = (): void => {
   usePushRunning();
   useTrayActions();
+  useMonitors();
 };

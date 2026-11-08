@@ -6,7 +6,10 @@ pub mod vault;
 
 use tauri_specta::{Builder, collect_commands, collect_events};
 
-use crate::events::{OpenSettings, QuickbarShown, TrayAction, VaultChanged, VaultOpened};
+use crate::events::{
+    MonitorAutoStop, MonitorForgotten, MonitorIdle, OpenSettings, QuickbarShown, TrayAction,
+    VaultChanged, VaultOpened,
+};
 
 /// Where the generated TypeScript bindings live, relative to this crate.
 pub const BINDINGS_PATH: &str = concat!(
@@ -47,7 +50,10 @@ pub fn specta_builder() -> Builder<tauri::Wry> {
             VaultOpened,
             QuickbarShown,
             TrayAction,
-            OpenSettings
+            OpenSettings,
+            MonitorIdle,
+            MonitorForgotten,
+            MonitorAutoStop
         ])
 }
 

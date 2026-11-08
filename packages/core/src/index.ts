@@ -14,11 +14,13 @@ export {
   epochSeconds,
   formatTimestamp,
   isLocalDate,
+  isLocalTime,
   isTimestamp,
   type LocalDate,
   localDateOf,
   secondsBetween,
   type Timestamp,
+  timestampFromEpoch,
   timestampOn,
   toZoned,
 } from './lib/time';
@@ -128,6 +130,13 @@ export {
   type ExportService,
   type ExportServiceDeps,
 } from './domain/export-service';
+export {
+  createIdleService,
+  type IdleChoice,
+  type IdleResolution,
+  type IdleService,
+  type IdleServiceDeps,
+} from './domain/idle-service';
 export {
   type DateRange,
   monthRange,

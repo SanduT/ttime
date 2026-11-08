@@ -22,6 +22,8 @@ pub enum QuickbarMode {
     New,
     Note,
     EditRunning,
+    /// A monitor prompt (idle time or a forgotten timer) the agent has queued.
+    Prompt,
 }
 
 /// Top-left corner for a panel of `size` on `area`: centered horizontally, its top a fifth of

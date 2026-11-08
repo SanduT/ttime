@@ -69,11 +69,13 @@ export type TimerService = {
   readonly editRunning: (patch: RunningPatch) => Promise<RunningEntry>;
 };
 
-const clearRunning = (tx: VaultTx): void => {
+/** Empties `running.json`. */
+export const clearRunning = (tx: VaultTx): void => {
   tx.writeRunning({ schema: SCHEMA_VERSION, entry: null });
 };
 
-const startInTx = async (
+/** Starts an entry inside `tx`, stopping the running one at the same instant. */
+export const startInTx = async (
   tx: VaultTx,
   ids: IdGenerator,
   input: StartInput,

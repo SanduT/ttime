@@ -15,6 +15,7 @@ import {
   localDateOf,
   monthOf,
   secondsBetween,
+  timestampFromEpoch,
   timestampOn,
   toInstant,
   toZoned,
@@ -83,5 +84,13 @@ describe('timestampOn', () => {
   test('is null for other text', () => {
     expect(timestampOn('2026-11-08', '25:00', 'Europe/Bucharest')).toBeNull();
     expect(timestampOn('2026-11-08', 'soon', 'Europe/Bucharest')).toBeNull();
+  });
+});
+
+describe('timestampFromEpoch', () => {
+  test('formats whole seconds in the zone and round-trips with epochSeconds', () => {
+    const stamp = timestampFromEpoch(1_793_520_000.7, 'Europe/Bucharest');
+    expect(stamp).toBe('2026-11-01T10:00:00+02:00');
+    expect(epochSeconds(stamp)).toBe(1_793_520_000);
   });
 });

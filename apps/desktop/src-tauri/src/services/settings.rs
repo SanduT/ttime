@@ -5,7 +5,7 @@ use tauri::{AppHandle, Manager, Theme};
 use crate::AppError;
 use crate::services::menubar::TitleStyle;
 use crate::services::prefs::{self, Appearance, Prefs};
-use crate::services::quickbar;
+use crate::services::{monitor, quickbar};
 use crate::state::AppState;
 
 /// The title style the menu bar ticker uses.
@@ -59,6 +59,7 @@ pub fn update(app: &AppHandle, next: &Prefs) -> Result<Prefs, AppError> {
             "Record a shortcut for the quick bar.".into(),
         ));
     }
+    monitor::config_of(next)?;
     change_shortcut(app, &current.quickbar_shortcut, shortcut)?;
     let next = Prefs {
         quickbar_shortcut: shortcut.to_owned(),

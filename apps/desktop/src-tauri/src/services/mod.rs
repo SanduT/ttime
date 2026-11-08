@@ -2,6 +2,8 @@
 
 pub mod activation;
 pub mod menubar;
+pub mod monitor;
+pub mod monitors;
 pub mod panels;
 pub mod popover;
 pub mod prefs;

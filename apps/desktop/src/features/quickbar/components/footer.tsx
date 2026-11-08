@@ -28,12 +28,20 @@ const escLabel = (panel: QuickbarPanel, hasError: boolean): string =>
   hasError ? 'Dismiss' : panel === 'edit' || panel === 'actions' ? 'Back' : 'Close';
 
 /** Shortcut hints for the current panel. */
-export const Footer = ({ panel, noteMode, empty, hasError }: Props) => (
-  <footer className="flex items-center gap-4 border-t border-(--color-border) px-4 py-2 text-xs text-(--color-text-muted)">
-    <Hint keys="↵" label={enterLabel(panel, noteMode, empty)} />
-    {panel === 'edit' || noteMode ? null : <Hint keys="⌘↵" label="Note" />}
-    <span className="flex-1" />
-    <Hint keys="⌘K" label="Actions" />
-    <Hint keys="Esc" label={escLabel(panel, hasError)} />
-  </footer>
-);
+export const Footer = ({ panel, noteMode, empty, hasError }: Props) =>
+  panel === 'prompt' ? (
+    <footer className="flex items-center gap-4 border-t border-(--color-border) px-4 py-2 text-xs text-(--color-text-muted)">
+      <Hint keys="↵" label="Choose" />
+      <Hint keys="Tab" label="Next" />
+      <span className="flex-1" />
+      <Hint keys="Esc" label="Keep all" />
+    </footer>
+  ) : (
+    <footer className="flex items-center gap-4 border-t border-(--color-border) px-4 py-2 text-xs text-(--color-text-muted)">
+      <Hint keys="↵" label={enterLabel(panel, noteMode, empty)} />
+      {panel === 'edit' || noteMode ? null : <Hint keys="⌘↵" label="Note" />}
+      <span className="flex-1" />
+      <Hint keys="⌘K" label="Actions" />
+      <Hint keys="Esc" label={escLabel(panel, hasError)} />
+    </footer>
+  );

@@ -43,3 +43,32 @@ pub enum TrayActionKind {
 pub struct TrayAction {
     pub action: TrayActionKind,
 }
+
+/// The user is back after idle time while a timer ran. Times are seconds since the Unix epoch.
+#[derive(Debug, Clone, Serialize, Deserialize, specta::Type, tauri_specta::Event)]
+#[tauri_specta(event_name = "monitor:idle")]
+#[serde(rename_all = "camelCase")]
+pub struct MonitorIdle {
+    /// The last input before going idle (or the last activity before sleep).
+    pub since: f64,
+    /// The first input after coming back.
+    pub returned: f64,
+}
+
+/// The running timer passed the forgotten-timer limit again.
+#[derive(Debug, Clone, Serialize, Deserialize, specta::Type, tauri_specta::Event)]
+#[tauri_specta(event_name = "monitor:forgotten")]
+#[serde(rename_all = "camelCase")]
+pub struct MonitorForgotten {
+    pub hours: u32,
+    /// The last input, in seconds since the Unix epoch.
+    pub last_activity: f64,
+}
+
+/// The auto-stop time passed while the user was away: stop the timer at `at`.
+#[derive(Debug, Clone, Serialize, Deserialize, specta::Type, tauri_specta::Event)]
+#[tauri_specta(event_name = "monitor:auto-stop")]
+pub struct MonitorAutoStop {
+    /// Seconds since the Unix epoch.
+    pub at: f64,
+}

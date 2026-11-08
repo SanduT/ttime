@@ -121,7 +121,8 @@ pub fn show_running(
     Ok(())
 }
 
-fn now_epoch() -> f64 {
+/// Seconds since the Unix epoch.
+pub fn now_epoch() -> f64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_or(0.0, |since| since.as_secs_f64())

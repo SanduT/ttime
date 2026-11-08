@@ -158,3 +158,22 @@ Have a few entries this week, including one across midnight and two that overlap
 4. Click a project name: its days, entries and notes. ← All projects returns. Export CSV from
    there exports only that project.
 5. A period with no time says so.
+
+## Step 11: Monitors
+
+Settings, App: set Idle detection to 1 minute and Long timers to 0 for the first checks.
+
+1. Start a timer, leave the Mac untouched for 2 minutes, then move the mouse: within 30 seconds the
+   quick bar shows "You were away" with the times. Keep all has focus; Esc keeps everything.
+2. Repeat and choose Discard idle time: Today shows the entry ending at the last input and a new
+   one with the same project and description from the return. ⌘Z in the main window undoes it.
+3. Discard idle time and stop: nothing runs afterwards. Assign idle time with another project: the
+   away stretch becomes an entry for that project and the timer continues.
+4. Lock the screen (⌃⌘Q) for 2 minutes, unlock: the same prompt shows. Close the lid for 2 minutes,
+   open it: the prompt shows with the time the lid closed.
+5. A break shorter than the threshold asks nothing. Idle detection 0: never asks.
+6. Long timers 1, start a timer backdated `-61m`: within 30 seconds "Still working?" shows. Stop at
+   the last activity ends the entry at that time; Stop now ends it now.
+7. Auto-stop: enable it with a time a minute from now, start a timer, leave the Mac for 6 minutes:
+   the timer has stopped at your last input, and the menu bar shows the idle icon.
+8. Invalid values (`24:00`, `abc`) are not saved. Settings survive a restart.

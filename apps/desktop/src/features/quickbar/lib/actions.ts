@@ -45,7 +45,7 @@ export const actionForKey = (press: KeyPress): ActionId | null => {
 
 /** What the quick bar is showing, as far as keys care. */
 export type KeyState = {
-  readonly panel: 'list' | 'actions' | 'edit' | 'done';
+  readonly panel: 'list' | 'actions' | 'edit' | 'done' | 'prompt';
   readonly noteMode: boolean;
   /** The input holds only whitespace. */
   readonly empty: boolean;

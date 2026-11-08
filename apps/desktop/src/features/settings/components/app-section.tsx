@@ -2,6 +2,7 @@ import type { Appearance, MenuBarDisplay } from '../../../shared/bridge/settings
 import { Checkbox } from '../../../shared/ui/checkbox';
 import { Select } from '../../../shared/ui/field';
 import { usePrefs } from '../hooks/use-prefs';
+import { MonitorRows } from './monitor-rows';
 import { Row, Section } from './section';
 import { ShortcutRecorder } from './shortcut-recorder';
 
@@ -78,6 +79,7 @@ export const AppSection = () => {
           ))}
         </Select>
       </Row>
+      <MonitorRows prefs={prefs} save={save} />
       <Row label="Startup">
         <Checkbox
           label="Open ttime at login"

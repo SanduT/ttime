@@ -578,3 +578,36 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
   Periods longer than a month label months instead of days.
 - Export CSV opens the export sheet for the shown period, and for the drilled project when one
   is open.
+
+## Step 11: Monitors
+
+### DEC-77 How the monitors detect idle, sleep and lock
+
+- One Rust thread ticks every 30 seconds and feeds a pure state machine (`services/monitor.rs`,
+  tested with a fake clock). Idle time comes from `CGEventSourceSecondsSinceLastEventType`; the
+  local UTC offset (for the auto-stop time) from `localtime_r`. Both FFI calls live in
+  `platform/macos/idle.rs`, the only new `unsafe`. `libc` is now a direct dependency.
+- Sleep is detected as a gap of more than 90 seconds between ticks, not through `NSWorkspace`
+  notifications: the thread does not tick while the Mac sleeps, so the gap is exact and needs no
+  Objective-C observers. A screen lock has no input, so it counts as idle time from the last input.
+  This closes the idle part of DEC-72.
+- The return is noticed within one tick (up to 30 seconds after the first input). The idle
+  stretch runs from the last input to the first input after it.
+- Defaults: idle after 10 minutes, a reminder every 4 hours, auto-stop off. 0 turns idle or the
+  reminder off. They are app preferences (`prefs.json`), next to the other machine settings.
+
+### DEC-78 What the monitors do
+
+- Idle return and a forgotten timer open a prompt in the quick bar (ARCHITECTURE modes
+  `idle-resolution` and `forgotten-timer`, one `prompt` mode here). There is no system
+  notification and no notification plugin: the quick bar already gives choices with the keyboard,
+  and it needs no permission. Keep (the first button) has focus and Esc keeps, so time is only
+  removed by an explicit choice (PRD acceptance 6).
+- Idle choices are one locked, undoable transaction in core (`createIdleService`): Discard ends
+  the entry at the last input and continues the same entry at the return; Discard and stop only
+  ends it; Assign also adds the idle stretch as an entry for the chosen project.
+- Forgotten timer: Keep running, Stop at the last activity, or Stop now.
+- Auto-stop is opt-in and has no prompt: once the set time has passed and there has been no
+  input for 5 minutes (or the Mac slept through it), the timer stops at the last activity before
+  that, not at the auto-stop time. Only entries started before that time are stopped.
+- Tracking reminders (P1) remain for step 13.

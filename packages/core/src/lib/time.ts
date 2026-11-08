@@ -57,6 +57,14 @@ export const toInstant = (timestamp: Timestamp): Temporal.Instant => {
 export const epochSeconds = (timestamp: Timestamp): number =>
   Math.floor(toInstant(timestamp).epochMilliseconds / MS_PER_SECOND);
 
+/** The vault timestamp in `timeZone` for whole seconds since the Unix epoch (fractions dropped). */
+export const timestampFromEpoch = (seconds: number, timeZone: string): Timestamp =>
+  formatTimestamp(
+    Temporal.Instant.fromEpochMilliseconds(Math.floor(seconds) * MS_PER_SECOND).toZonedDateTimeISO(
+      timeZone,
+    ),
+  );
+
 /** Orders two timestamps by the instant they denote, regardless of offset. */
 export const compareTimestamps = (a: Timestamp, b: Timestamp): number =>
   Temporal.Instant.compare(toInstant(a), toInstant(b));
