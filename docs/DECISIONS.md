@@ -529,3 +529,29 @@ bypass the bridge. A broken file gives the defaults and is left alone until the 
 ### DEC-72 Settings that wait for the monitors
 
 Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the monitors of step 11. They join the Settings view with that step, so no setting exists without its behaviour.
+
+## Step 9: Calendar week view
+
+### DEC-73 Week layout
+
+- Core's `weekView` lays out seven calendar days from the week start (`weekStartsOn`). Columns
+  split at local midnight, not at `dayStartsAt`, because the grid shows wall-clock time; an
+  entry across midnight is two blocks with square inner corners. The running entry grows to now
+  and cannot be dragged.
+- Overlapping entries sit side by side (first free column within a chain of overlaps), get a red
+  ring and a ⚠, and the title says so (PRD: overlaps are visibly flagged).
+- The grid shows a working-hours band, an hour scale (48 px per hour), and a red now line; it
+  opens scrolled to an hour before the working day.
+
+### DEC-74 Gestures
+
+- Drag on empty space opens the entry dialog with the dragged times (choose a project, then Add).
+  Drag a block to move it, also to another day; drag its top or bottom edge to resize; ⌥ held at
+  the start of a block drag drops a copy. Snap is 5 minutes; holding ⌥ while dragging snaps to 1
+  minute (ARCHITECTURE 7.3). A press that moves less than 4 px is a click and opens the editor.
+- Every gesture ends in one core call (`create`, `move`, `update` with one edge, or `create` for
+  a copy), so each is logged and ⌘Z undoes it. Moves and copies keep the exact duration; the
+  edited edge snaps.
+- The editor reuses Today's entry form in a dialog: project (move to another project), times,
+  description, Delete. Blocks are buttons, so Tab and Enter open the editor without a pointer.
+- ← and → change the week, T returns to this week.

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
-/** Main window views (PRD 6.3). Calendar and Analytics come with later steps. */
-export type View = 'today' | 'projects' | 'issues' | 'settings';
+/** Main window views (PRD 6.3). Analytics comes with step 10. */
+export type View = 'today' | 'calendar' | 'projects' | 'issues' | 'settings';
 
 type NavState = {
   readonly view: View;

@@ -195,6 +195,15 @@ export {
 } from './domain/timer-service';
 export { type Batch, type UndoState } from './domain/undo-history';
 export { createUndoService, type UndoService, type UndoServiceDeps } from './domain/undo-service';
+export { type Lane, layoutLanes, type Span } from './domain/week-lanes';
+export {
+  DAY_MINUTES,
+  type WeekBlock,
+  type WeekDay,
+  type WeekView,
+  weekView,
+  type WeekViewInput,
+} from './domain/week-view';
 export { amountFor, decimalHours, formatMoney, parseAmount, sumMoney } from './lib/money';
 
 // testing

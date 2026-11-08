@@ -126,3 +126,22 @@ Open ttime from the tray. The vault should have a few entries today and on other
 10. Export defaults: set Semicolon. A new export sheet starts with Semicolon.
 11. Reveal in Finder selects the vault folder. Open another vault… switches the main window, and
     the quick bar and popover show the new vault's projects.
+
+## Step 9: Calendar
+
+Have a few entries this week, including one across midnight and two that overlap.
+
+1. Sidebar Calendar: this week from the configured week start, day names with dates and totals,
+   the week total, a shaded working-hours band, and a red line at the current time today.
+2. The grid opens scrolled to an hour before the working day. Hours are labelled on the left.
+3. The midnight entry shows as two blocks. Overlapping entries sit side by side with a red ring
+   and ⚠.
+4. Drag on empty space from 14:00 to 15:30: a dashed preview follows in 5 minute steps. Release:
+   the dialog shows 14:00 to 15:30. Pick a project, Add: the block appears.
+5. Drag a block down by 30 minutes and onto the next day: it moves, keeping its length.
+6. Drag a block's bottom edge: it resizes. Hold ⌥ while dragging: 1 minute steps.
+7. ⌥-drag a block: a copy appears, the original stays.
+8. Click a block: the editor opens. Change the project, Save: the color changes. Delete: gone,
+   ⌘Z brings it back. ⌘Z after a move puts the block back.
+9. ← and → change the week, This week and T return. The running entry grows and cannot be dragged.
+10. Change Week starts on in Settings: the calendar follows.
