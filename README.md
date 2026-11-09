@@ -5,6 +5,21 @@ without opening a window, see the running timer in the menu bar, and review your
 calendar. Your data is plain JSON in a folder you own, and Claude can read and log your time
 through a local MCP server.
 
+![Today: tracked time, untracked gaps to fill and the running timer](docs/images/today.png)
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/quick-bar.png" alt="Quick bar switching to a new task"></td>
+    <td width="50%"><img src="docs/images/calendar.png" alt="Week calendar"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/analytics.png" alt="Analytics with hours and amounts per project"></td>
+    <td><img src="docs/images/ai-setup.png" alt="Settings for the CLI, MCP server and Claude skill"></td>
+  </tr>
+</table>
+
+<p align="center"><img src="docs/images/menu-bar.png" width="300" alt="Menu bar popover"></p>
+
 - **Quick bar:** press the hotkey (default `⌥ ⇧ Space`), type `auth review @acme -20m`, press Enter.
   Starting a timer stops the running one at the same instant, so there are never gaps or overlaps.
 - **Menu bar:** the running project and time, with Stop, Note, Switch and Resume one click away.

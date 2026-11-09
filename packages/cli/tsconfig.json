@@ -5,6 +5,6 @@
     "outDir": "../../.tsbuild/cli",
     "rootDir": "."
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "include": ["src/**/*.ts", "test/**/*.ts", "scripts/**/*.ts"],
   "references": [{ "path": "../core/tsconfig.src.json" }]
 }

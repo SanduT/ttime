@@ -15,6 +15,7 @@ bun run dev          # the app in development mode
 bun run check        # everything CI runs; must pass before every commit
 bun run fix          # formatting and auto-fixable lint
 bun run build:app    # ttime.app with the CLI inside, in apps/desktop/src-tauri/target/release/bundle
+bun run demo:vault <new folder>  # a demo vault with two weeks of entries, for screenshots
 ```
 
 `bun run build:app` signs the app ad hoc, which is enough to run it on your own Mac. To sign with
