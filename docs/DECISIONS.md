@@ -698,8 +698,11 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
   marks focus, selection and the primary action. Ember is the default; Jade and Iris are themes in
   Settings > Theme. The accent is the `accent` pref; Rust emits `prefs:accent` on change and every
   window sets `data-accent` on its root, which switches the CSS variables.
-- Motion: `motion` 14.10.1 (14.11.x was released the same day; the newest older patch is used),
-  `@number-flow/react` 0.6.2 for rolling timer digits, `lucide-react` 1.70.0 for icons. Springs
+- Motion: `motion` 14.10.1 (14.11.x was released the same day; the newest older patch is used)
+  and `lucide-react` 1.70.0 for icons. Rolling timer digits are our own `ElapsedClock` (a clipped
+  0 to 9 strip moved by a transform, styled in `tokens.css`): `@number-flow/react` injects a
+  `<style>` element into its shadow DOM, which the production CSP (`style-src 'self'`) blocks, so
+  release builds showed every digit strip. The CSP stays strict. Springs
   and short CSS keyframes only; `MotionConfig reducedMotion="user"` and a `prefers-reduced-motion`
   rule turn animation off when macOS Reduce Motion is on.
 
