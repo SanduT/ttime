@@ -18,6 +18,20 @@ use tauri_plugin_log::{RotationStrategy, Target, TargetKind};
 const LOG_MAX_FILE_SIZE: u128 = 5_000_000;
 /// Rotated log files to keep.
 const LOG_FILES_KEPT: usize = 5;
+/// Argument the login item passes, so a launch at login stays in the menu bar.
+const AUTOSTART_ARG: &str = "--autostart";
+
+/// Opening the app again while it runs (Dock, Finder, Spotlight) shows the main window.
+fn on_run_event(app: &tauri::AppHandle, event: &tauri::RunEvent) {
+    #[cfg(target_os = "macos")]
+    if let tauri::RunEvent::Reopen { .. } = event
+        && let Err(err) = panels::show(app, WindowKind::Main)
+    {
+        log::error!("Could not show the main window: {err}");
+    }
+    #[cfg(not(target_os = "macos"))]
+    let _ = (app, event);
+}
 
 fn log_plugin() -> tauri::plugin::TauriPlugin<tauri::Wry> {
     let mut targets = vec![Target::new(TargetKind::LogDir { file_name: None })];
@@ -44,7 +58,7 @@ pub fn run() -> Result<(), AppError> {
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
-            None,
+            Some(vec![AUTOSTART_ARG]),
         ))
         .plugin(tauri_nspanel::init())
         .invoke_handler(specta.invoke_handler())
@@ -69,14 +83,17 @@ pub fn run() -> Result<(), AppError> {
             services::tray::create(app.handle())?;
             services::tray::start_ticker(app.handle().clone(), ticks)?;
             services::monitors::start(app.handle().clone())?;
-            if !has_vault {
-                // First run (or the saved vault is gone): the main window shows onboarding.
+            services::settings::refresh_login_item(app.handle());
+            let at_login = std::env::args().any(|arg| arg == AUTOSTART_ARG);
+            if !has_vault || !at_login {
+                // Opened by hand, or first run (onboarding): show the main window.
                 panels::show(app.handle(), WindowKind::Main)?;
             }
             log::info!("ttime started");
             Ok(())
         })
         .on_window_event(panels::on_window_event)
-        .run(tauri::generate_context!())?;
+        .build(tauri::generate_context!())?
+        .run(|app, event| on_run_event(app, &event));
     Ok(())
 }

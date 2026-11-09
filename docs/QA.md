@@ -20,8 +20,9 @@ Start with no `~/.config/ttime/config.json` (move it aside if it exists).
 1. Launch: the main window opens on "Welcome to ttime".
 2. Create vault…: pick an empty folder. The overview shows the vault name, the folder and zero
    counts. `~/.config/ttime/config.json` now names that folder.
-3. Quit and relaunch: the main window does not open by itself. Open ttime from the tray: the same
-   vault is shown.
+3. Quit and open ttime from Finder: the main window opens on the same vault. At login (Open
+   ttime at login on) it stays in the menu bar. With ttime running and the window closed, open it
+   again from Finder or Spotlight: the main window shows.
 4. With the window open, edit the vault from outside (for example add `projects/x.json` with
    invalid JSON). Within a second the overview shows the issue; deleting the file clears it.
 5. Open existing vault… on a folder without `ttime.json`: a message says it is not a vault, and

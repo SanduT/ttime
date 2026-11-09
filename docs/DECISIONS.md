@@ -671,3 +671,12 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
   that screen's scale) and finds the screen under the cursor itself. The quick bar uses it; the
   popover uses it at click time, when the cursor is on the icon, and converts the icon's rect with
   that screen's scale.
+
+### DEC-83 Opening the app by hand shows the main window
+
+- The app started hidden whenever a vault was set, so opening ttime from Finder, Spotlight or the
+  Dock only added the menu bar icon. Now the login item passes `--autostart` and only that launch
+  stays in the menu bar; any other launch, and reopening the running app (`RunEvent::Reopen`),
+  shows the main window.
+- An enabled login item is rewritten at startup, so items created before this change get the
+  argument.

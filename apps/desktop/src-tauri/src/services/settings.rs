@@ -36,6 +36,18 @@ pub fn apply_saved(app: &AppHandle, prefs: &Prefs) {
     apply_theme(app, prefs.appearance);
 }
 
+/// Rewrites an enabled login item so it carries the current launch arguments. Login items made
+/// before `--autostart` existed would otherwise open the main window at every login.
+pub fn refresh_login_item(app: &AppHandle) {
+    use tauri_plugin_autostart::ManagerExt;
+    let launcher = app.autolaunch();
+    if launcher.is_enabled().unwrap_or(false)
+        && let Err(err) = launcher.enable()
+    {
+        log::error!("Could not refresh the login item: {err}");
+    }
+}
+
 /// Moves the quick bar shortcut from `old` to `new`; on failure `old` stays registered.
 fn change_shortcut(app: &AppHandle, old: &str, new: &str) -> Result<(), AppError> {
     if old == new {
