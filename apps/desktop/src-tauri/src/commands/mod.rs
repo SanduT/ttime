@@ -1,5 +1,6 @@
 //! IPC handlers, registered with tauri-specta so the TypeScript bindings are generated.
 
+pub mod ai;
 pub mod quickbar;
 pub mod settings;
 pub mod vault;
@@ -44,6 +45,10 @@ pub fn specta_builder() -> Builder<tauri::Wry> {
             settings::prefs_set,
             settings::launch_at_login_get,
             settings::launch_at_login_set,
+            ai::ai_status,
+            ai::ai_install_cli,
+            ai::ai_register_claude,
+            ai::ai_install_skill,
         ])
         .events(collect_events![
             VaultChanged,

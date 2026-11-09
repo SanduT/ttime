@@ -41,6 +41,9 @@ pub enum AppError {
     /// Launch at login could not be read or changed.
     #[error("launch at login failed: {0}")]
     Autostart(String),
+    /// Setting up the CLI, the MCP server or the skill failed.
+    #[error("{0}")]
+    Integration(String),
 }
 
 impl AppError {
@@ -58,6 +61,7 @@ impl AppError {
             Self::Panel(_) => "platform.panel",
             Self::Shortcut(_) => "platform.shortcut",
             Self::Autostart(_) => "platform.autostart",
+            Self::Integration(_) => "platform.integration",
         }
     }
 

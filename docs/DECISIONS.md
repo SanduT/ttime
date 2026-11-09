@@ -720,3 +720,22 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
   Targets ("22h / 30h") from the mockup wait for P1 targets.
 - App icon: `src-tauri/icons/app-icon.svg` (source) rendered to `app-icon.png`, then
   `tauri icon`; only the macOS files are kept.
+
+### DEC-87 AI setup from Settings
+
+- `bun run build:app` first compiles the CLI (`build:sidecar`, `binaries/ttime-cli-<host tuple>`,
+  ignored by git) and bundles it through `tauri.bundle.conf.json` (`bundle.externalBin`). The
+  extra config is passed only to `tauri build`, so `tauri dev`, Clippy and `cargo test` do not
+  need the binary. knip lists `rustc` in `ignoreBinaries` (it names the host tuple and is part
+  of the Rust toolchain, not an npm package). The CLI adds about 90 MB (the Bun runtime) to the app.
+- Settings > AI and command line does each step on a click, never by itself:
+  - Command line: links `~/.local/bin/ttime` to the bundled CLI. An old link is replaced; a real
+    file there is never touched (the user removes it).
+  - Claude Code: runs `claude mcp add -s user ttime -- <cli> mcp` when `claude` is found in the
+    usual install folders (GUI apps do not get the shell PATH); otherwise the command is copied.
+  - Other MCP clients: the `mcpServers` JSON is copied. ttime does not edit other apps' config
+    files, so a merge can never corrupt them.
+  - Skill: writes the bundled `SKILL.md` to `~/.claude/skills/ttime/`. A linked folder (a
+    developer setup) is left alone.
+- These are the only writes outside the vault and the ttime config folder. Running `claude` is a
+  local process; the app still makes no network calls.

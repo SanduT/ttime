@@ -544,7 +544,7 @@ Test layout and rules: `docs/CONVENTIONS.md` sections 9 and 10.5.
   - `bun install`
   - `bun test` (core, CLI, UI) and `bun run test:rust`
   - `bun run dev` (`tauri dev`) and `bun run dev:web` (browser dev mode)
-  - `bun run build:app` (`tauri build`, producing `ttime.app`) and `bun run install:app` (copies it to /Applications)
+  - `bun run build:app` (`tauri build`, producing `ttime.app` with the CLI inside it as a sidecar, see DEC-87) and `bun run install:app` (copies it to /Applications)
   - `bun run build:cli` (compiles the CLI and MCP server to `~/.local/bin/ttime`)
 - Signing: a build made on this Mac runs on this Mac without notarization. Set `bundle.macOS.signingIdentity` to the owner's Apple Development identity (or `-` for ad hoc) through a git-ignored local config, never committed.
 - No network access: no http plugin, and a content security policy that only allows the app's own assets.

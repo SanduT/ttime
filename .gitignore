@@ -8,6 +8,8 @@ coverage/
 # Rust
 apps/desktop/src-tauri/target/
 apps/desktop/src-tauri/gen/
+# The CLI compiled for bundling (bun run build:sidecar)
+apps/desktop/src-tauri/binaries/
 
 # Local signing and machine config, never committed
 apps/desktop/src-tauri/tauri.local.conf.json

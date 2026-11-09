@@ -3,6 +3,7 @@ import type { SettingsPatch, VaultSettings } from '@ttime/core';
 import { csvControls, roundingSelects } from '../../export';
 import { usePrefs } from '../hooks/use-prefs';
 import { useVaultSettings } from '../hooks/use-vault-settings';
+import { AiSection } from './ai-section';
 import { AppSection } from './app-section';
 import { Row, Section } from './section';
 import { ThemeSection } from './theme-section';
@@ -54,6 +55,7 @@ export const SettingsView = () => {
       <AppSection state={prefs} />
       <ThemeSection state={prefs} />
       <VaultSection />
+      <AiSection />
       {settings === null ? null : (
         <>
           <TimeSection settings={settings} update={update} />

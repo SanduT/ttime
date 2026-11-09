@@ -60,6 +60,14 @@ export const commands = {
 	launchAtLoginGet: () => typedError<boolean, AppError>(__TAURI_INVOKE("launch_at_login_get")),
 	/**  Turns launch at login on or off. */
 	launchAtLoginSet: (enabled: boolean) => typedError<null, AppError>(__TAURI_INVOKE("launch_at_login_set", { enabled })),
+	/**  What is set up: the CLI link, the MCP server in Claude Code and the skill. */
+	aiStatus: () => typedError<AiStatus, AppError>(__TAURI_INVOKE("ai_status")),
+	/**  Links `~/.local/bin/ttime` to the CLI inside the app. */
+	aiInstallCli: () => typedError<AiStatus, AppError>(__TAURI_INVOKE("ai_install_cli")),
+	/**  Adds the ttime MCP server to Claude Code for every folder. */
+	aiRegisterClaude: () => typedError<AiStatus, AppError>(__TAURI_INVOKE("ai_register_claude")),
+	/**  Writes the skill to `~/.claude/skills/ttime/SKILL.md`. */
+	aiInstallSkill: () => typedError<AiStatus, AppError>(__TAURI_INVOKE("ai_install_skill")),
 };
 
 /** Events */
@@ -84,6 +92,13 @@ export type AccentChanged = {
 	accent: Accent,
 };
 
+/**  What is set up, for the Settings section. */
+export type AiStatus = {
+	cli: CliStatus,
+	mcp: McpStatus,
+	skill: SkillStatus,
+};
+
 /**  Where things live for the core's `EnvPort`. */
 export type AppEnv = {
 	platform: string,
@@ -101,6 +116,16 @@ export type AppError = {
 /**  Light or dark mode for every window. */
 export type Appearance = "system" | "light" | "dark";
 
+/**  The command line tool. */
+export type CliStatus = {
+	/**  This app has the CLI inside it (false in a dev build). */
+	bundled: boolean,
+	/**  `~/.local/bin/ttime`. */
+	link: string,
+	/**  Something is installed at `link`. */
+	installed: boolean,
+};
+
 /**  One entry of a directory listing. */
 export type DirEntry = {
 	name: string,
@@ -111,6 +136,18 @@ export type DirEntry = {
 export type FileStat = {
 	mtimeMs: number | null,
 	size: number | null,
+};
+
+/**  The MCP server. */
+export type McpStatus = {
+	/**  A CLI exists to run as the server. */
+	ready: boolean,
+	/**  What an MCP client runs with `mcp`: the link when installed, else the bundled CLI. */
+	command: string,
+	/**  The `claude` executable was found. */
+	claudeFound: boolean,
+	/**  Claude Code has a `ttime` server. */
+	registered: boolean,
 };
 
 /**  What the menu bar shows while tracking. */
@@ -203,6 +240,13 @@ export type RunningSummary = {
 	projectName: string,
 	/**  `#RRGGBB`. */
 	color: string,
+};
+
+/**  The Claude skill. */
+export type SkillStatus = {
+	/**  `~/.claude/skills/ttime/SKILL.md`. */
+	path: string,
+	installed: boolean,
 };
 
 /**  The tray menu asks the agent to act on the running entry. */

@@ -218,3 +218,16 @@ Settings, App: set Idle detection to 1 minute and Long timers to 0 for the first
    launch and Continue stays disabled on the vault step until one is created or opened.
 6. System Settings > Accessibility > Display > Reduce motion: animations stop, everything still works.
 7. The Dock and Finder show the new icon after `bun run build:app`.
+
+## AI setup (Settings > AI and command line)
+
+1. In `bun run dev`, Command line says it is available in the built app; Copy MCP config is
+   disabled until a CLI exists.
+2. In the built app (copied to /Applications first), Install creates `~/.local/bin/ttime` linking
+   into the app; `ttime status` in a new terminal works. With a real file already there, Install
+   explains and leaves it alone.
+3. Add to Claude Code adds the server; `claude mcp get ttime` shows the app's CLI. Without
+   `claude` installed, only Copy command shows and pastes a working command.
+4. Copy MCP config pastes valid JSON with the CLI path and `"args": ["mcp"]`.
+5. Claude skill: Install writes `~/.claude/skills/ttime/SKILL.md`; when that folder is a link,
+   it shows as installed and nothing is written.

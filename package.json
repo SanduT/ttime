@@ -9,7 +9,8 @@
   "scripts": {
     "postinstall": "lefthook install",
     "dev": "bun run --cwd apps/desktop tauri dev",
-    "build:app": "bun run --cwd apps/desktop tauri build",
+    "build:app": "bun run build:sidecar && bun run --cwd apps/desktop tauri build --config src-tauri/tauri.bundle.conf.json",
+    "build:sidecar": "bun build --compile packages/cli/src/index.ts --outfile apps/desktop/src-tauri/binaries/ttime-cli-$(rustc --print host-tuple)",
     "build:cli": "mkdir -p \"$HOME/.local/bin\" && bun build --compile packages/cli/src/index.ts --outfile \"$HOME/.local/bin/ttime\"",
     "check": "bun run check:format && bun run check:rust-format && bun run check:lint && bun run check:types && bun run check:clippy && bun run check:knip && bun run check:deps-rust && bun run test && bun run test:rust",
     "check:format": "prettier --check .",

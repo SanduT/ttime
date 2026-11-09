@@ -1,6 +1,7 @@
 //! Behaviour behind the commands and setup. No Tauri command attributes here.
 
 pub mod activation;
+pub mod ai;
 pub mod menubar;
 pub mod monitor;
 pub mod monitors;
