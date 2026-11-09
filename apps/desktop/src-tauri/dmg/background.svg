@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="400" viewBox="0 0 660 400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FBF8F3"/>
+      <stop offset="1" stop-color="#EFE8DE"/>
+    </linearGradient>
+    <radialGradient id="sheen" cx="0.5" cy="0.42" r="0.6">
+      <stop offset="0" stop-color="#FF8F4D" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#FF8F4D" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ember" gradientUnits="userSpaceOnUse" x1="268" y1="0" x2="390" y2="0">
+      <stop offset="0" stop-color="#C2541A" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#C2541A" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+  <rect width="660" height="400" fill="url(#bg)"/>
+  <rect width="660" height="400" fill="url(#sheen)"/>
+  <path d="M268 180 H388" stroke="url(#ember)" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 10"/>
+  <path d="M374 168 L392 180 L374 192" fill="none" stroke="#C2541A" stroke-opacity="0.9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="330" y="318" text-anchor="middle" font-family="SF Pro Text, Helvetica Neue, Helvetica" font-size="15" fill="#77726A">Drag ttime to Applications to install</text>
+</svg>

@@ -2,7 +2,13 @@
   "bundle": {
     "externalBin": ["binaries/ttime-cli"],
     "macOS": {
-      "entitlements": "entitlements.plist"
+      "entitlements": "entitlements.plist",
+      "dmg": {
+        "background": "dmg/background.tiff",
+        "windowSize": { "width": 660, "height": 400 },
+        "appPosition": { "x": 170, "y": 180 },
+        "applicationFolderPosition": { "x": 490, "y": 180 }
+      }
     }
   }
 }

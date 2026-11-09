@@ -762,3 +762,14 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
   new Clippy lint (`assert_is_empty`) failed the build. Bump it on purpose, with the lint fixes.
 - Every action is pinned to a full commit SHA (tag in a comment), because the release job holds
   the signing certificate and a moved tag could exfiltrate it. Dependabot bumps the SHAs monthly.
+
+### DEC-89 DMG install window
+
+- The DMG opens on the classic layout: ttime on the left, an arrow, Applications on the right, and
+  "Drag ttime to Applications to install". `bundle.macOS.dmg` in `tauri.bundle.conf.json` sets a
+  660x400 window, the icon positions and `dmg/background.tiff` (1x and 2x in one TIFF, rendered
+  from `dmg/background.svg`).
+- The background is light: Finder draws icon labels in black on a custom background even in dark
+  mode, so a dark background made them unreadable.
+- Tauri skips the Finder layout script when `CI` is set, so the release build step sets
+  `CI=false`. If the script fails, the DMG step fails rather than shipping a plain window.

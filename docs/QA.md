@@ -231,3 +231,10 @@ Settings, App: set Idle detection to 1 minute and Long timers to 0 for the first
 4. Copy MCP config pastes valid JSON with the CLI path and `"args": ["mcp"]`.
 5. Claude skill: Install writes `~/.claude/skills/ttime/SKILL.md`; when that folder is a link,
    it shows as installed and nothing is written.
+
+## Release DMG
+
+1. Download the DMG from the draft release and open it: no Gatekeeper warning.
+2. The window shows ttime on the left, an arrow, Applications on the right and the install hint,
+   with readable labels in light and dark mode.
+3. Dragging ttime onto Applications copies it; the app opens without a warning.
