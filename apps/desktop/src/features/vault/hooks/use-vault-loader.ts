@@ -19,11 +19,15 @@ const readOptions = async (days: number | undefined): Promise<{ readonly since?:
   return { since: clock.now().toPlainDate().subtract({ days }).toString() };
 };
 
-/** Loads the vault Rust has open, then reloads the snapshot whenever its files change. */
+/**
+ * Loads the vault Rust has open, and loads it again whenever another window opens a vault or
+ * the vault's files change. Reloading on file changes even while no vault is usable matters on
+ * first run: creating a vault opens the folder before `ttime.json` exists, so the first load
+ * finds no vault and only the files written afterwards make it usable.
+ */
 export const useVaultLoader = (options: VaultLoaderOptions = {}): VaultStatus => {
   const { days } = options;
   const status = useVaultStore((state) => state.status);
-  const vault = useVaultStore((state) => state.vault);
   const show = useVaultStore((state) => state.show);
 
   useEffect(() => {
@@ -38,44 +42,26 @@ export const useVaultLoader = (options: VaultLoaderOptions = {}): VaultStatus =>
       }
     };
     void load();
-    // Another window (Settings) may open a different vault: load it here too.
-    const unlisten = getAppContext().then((context) =>
-      context.onVaultOpened(() => {
-        void load();
-      }),
-    );
+    const reload = () => {
+      void load();
+    };
+    const unlisten = getAppContext().then(async (context) => {
+      const stops = await Promise.all([
+        context.onVaultOpened(reload),
+        context.onVaultChanged(reload),
+      ]);
+      return () => {
+        for (const stop of stops) {
+          stop();
+        }
+      };
+    });
     return () => {
       void unlisten.then((stop) => {
         stop();
       });
     };
   }, [show, days]);
-
-  useEffect(() => {
-    if (vault === null) {
-      return;
-    }
-    let active = true;
-    let unlisten: (() => void) | undefined;
-    void runAction('Watch vault', async () => {
-      const stop = await (
-        await getAppContext()
-      ).onVaultChanged(() => {
-        void runAction('Reload vault', async () => {
-          show(vault, await vault.read(await readOptions(days)));
-        });
-      });
-      if (active) {
-        unlisten = stop;
-      } else {
-        stop();
-      }
-    });
-    return () => {
-      active = false;
-      unlisten?.();
-    };
-  }, [vault, show, days]);
 
   return status;
 };
