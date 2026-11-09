@@ -739,3 +739,21 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
     developer setup) is left alone.
 - These are the only writes outside the vault and the ttime config folder. Running `claude` is a
   local process; the app still makes no network calls.
+
+### DEC-88 CI and signed releases
+
+- `.github/workflows/ci.yml` runs `bun run check` and an unsigned app build on `macos-26` for
+  pushes to main and pull requests. `release.yml` runs on `v*` tags: tests, the CLI sidecar, then
+  `tauri-apps/tauri-action@v1` signs with the Developer ID certificate, notarizes with the App
+  Store Connect API key, staples, and drafts a GitHub Release with the DMG. A last step fails the
+  run unless `stapler`, `spctl` and `codesign` accept the app, so a bad build stays a draft.
+- The tag must equal `v` plus the `tauri.conf.json` version.
+- Entitlements (`src-tauri/entitlements.plist`, only in `tauri.bundle.conf.json`): Tauri signs
+  the app and its sidecars with one entitlements file, and the Bun-compiled CLI needs
+  `allow-jit` and `allow-unsigned-executable-memory` under the hardened runtime. Bun's guide also
+  lists `disable-executable-page-protection`, `allow-dyld-environment-variables` and
+  `disable-library-validation`; they are left out because the signed CLI runs without them
+  (checked with a local Developer ID build).
+- Bun is pinned to 1.4.4 in both workflows; the Rust toolchain comes from `rust-toolchain.toml`.
+- Every action is pinned to a full commit SHA (tag in a comment), because the release job holds
+  the signing certificate and a moved tag could exfiltrate it. Dependabot bumps the SHAs monthly.

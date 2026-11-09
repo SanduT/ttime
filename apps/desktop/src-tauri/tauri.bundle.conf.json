@@ -1,5 +1,8 @@
 {
   "bundle": {
-    "externalBin": ["binaries/ttime-cli"]
+    "externalBin": ["binaries/ttime-cli"],
+    "macOS": {
+      "entitlements": "entitlements.plist"
+    }
   }
 }

@@ -119,7 +119,7 @@ ttime/
           platform/                capability traits; macos/ (idle, power, panel)
         tests/                     integration tests
   skills/ttime/SKILL.md            skill for AI clients (M3)
-  docs/                            PRD, ARCHITECTURE, CONVENTIONS, DECISIONS, QA, phase-2/
+  docs/                            PRD, ARCHITECTURE, FORMAT, CONVENTIONS, DECISIONS, QA
 ```
 
 What may import what, and how each layer is written, is defined in `docs/CONVENTIONS.md` (sections 5, 6 and 10).
@@ -408,13 +408,13 @@ Phase 2 starts once Phase 1 is in daily use. Everything here is additive.
 
 - Developer ID Application certificate. The Tauri bundler signs and notarizes during `tauri build` when these environment variables are set: `APPLE_CERTIFICATE`, `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY`, and an App Store Connect API key as `APPLE_API_ISSUER`, `APPLE_API_KEY`, `APPLE_API_KEY_PATH`.
 - Why it matters: since macOS 15, an unnotarized app can only be opened through System Settings > Privacy & Security > Open Anyway.
-- The CLI ships inside the app as a sidecar: compiled with `bun build --compile` to `src-tauri/binaries/ttime-<target-triple>` and listed in `bundle.externalBin`. Verify it is signed with Hardened Runtime inside the notarized bundle.
+- The CLI ships inside the app as a sidecar: compiled with `bun build --compile` to `src-tauri/binaries/ttime-cli-<target-triple>` and listed in `bundle.externalBin` (DEC-87). Tauri signs it with the app's entitlements and the hardened runtime; Bun's JIT needs `allow-jit` and `allow-unsigned-executable-memory` (`src-tauri/entitlements.plist`, DEC-88).
 
 ### 14.2 Release pipeline
 
-- `tauri-apps/tauri-action` on a macOS runner, triggered by a `v*` tag: install, test, compile the CLI sidecar, build, sign, notarize, then attach the DMG and the updater files to a draft GitHub Release. Reference skeleton: `docs/phase-2/release.yml`.
-- Secrets: the certificate (`.p12`, base64) and its password, the signing identity name, a keychain password, the App Store Connect API key (`.p8` base64, key ID, issuer ID), and the Tauri updater signing key and password.
-- CI on every push: `bun test`, `cargo test`, and an unsigned build. Pull requests from forks only get unsigned builds.
+- `tauri-apps/tauri-action` on a macOS runner, triggered by a `v*` tag: install, test, compile the CLI sidecar, build, sign, notarize, then attach the DMG to a draft GitHub Release (`.github/workflows/release.yml`). The tag must match the version in `tauri.conf.json`.
+- Secrets: the certificate (`.p12`, base64) and its password, the signing identity name, a keychain password, and the App Store Connect API key (`.p8` base64, key ID, issuer ID). The updater signing key comes with 14.4.
+- CI on pushes to main and on pull requests: `bun run check` and an unsigned build (`.github/workflows/ci.yml`). Pull requests never see the signing secrets.
 
 ### 14.3 Homebrew
 
