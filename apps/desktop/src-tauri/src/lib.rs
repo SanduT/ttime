@@ -67,6 +67,7 @@ pub fn run() -> Result<(), AppError> {
             services::activation::set_accessory(app.handle());
             let home_dir = app.path().home_dir()?;
             let prefs_path = app.path().app_config_dir()?.join("prefs.json");
+            services::prefs::migrate_legacy(&prefs_path);
             let prefs = services::prefs::load(&prefs_path);
             let state = AppState::new(
                 home_dir.clone(),

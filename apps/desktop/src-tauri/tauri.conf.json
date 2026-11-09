@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "ttime",
   "version": "0.1.0",
-  "identifier": "com.sandut.ttime",
+  "identifier": "io.github.sandut.ttime",
   "build": {
     "beforeDevCommand": "bun run dev:vite",
     "devUrl": "http://localhost:1420",

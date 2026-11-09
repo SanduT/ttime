@@ -358,7 +358,7 @@ shortcut is taken, the error is logged and the tray menu still opens the quick b
 
 ### DEC-55 Quick bar panel details
 
-- The panel hides when it loses focus, like launchers, besides Esc.
+- The panel hides when it loses focus, like other launchers, besides Esc.
 - `tauri-nspanel` 2.1.1. Its macros generate no `unsafe` in our crate, so the panel code needs
   no `unsafe_code` exception; it lives in `platform/macos/panel.rs` with one
   `#[expect(clippy::unused_unit)]` the `panel_event!` grammar requires.
@@ -680,3 +680,12 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
   shows the main window.
 - An enabled login item is rewritten at startup, so items created before this change get the
   argument.
+
+### DEC-84 Bundle identifier and docs without product names
+
+- The bundle identifier is `io.github.sandut.ttime`, a namespace owned through the GitHub account,
+  so no domain is needed (open question 1 of ARCHITECTURE section 16 is settled for the ID).
+  macOS keeps app preferences under the identifier, so `prefs.json` is copied once from the old
+  `com.sandut.ttime` folder at startup.
+- The docs no longer name proprietary products. Design references read "launcher-style", and the
+  PRD's ideas table lists the ideas without where they were seen.

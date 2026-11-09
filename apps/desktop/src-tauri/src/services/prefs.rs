@@ -72,6 +72,31 @@ impl Default for Prefs {
     }
 }
 
+/// Bundle identifier used before DEC-84; its preferences are copied over once.
+const LEGACY_IDENTIFIER: &str = "com.sandut.ttime";
+
+/// Copies `prefs.json` from the old identifier's folder when `path` does not exist yet.
+pub fn migrate_legacy(path: &Path) {
+    let Some(legacy) = path
+        .parent()
+        .and_then(Path::parent)
+        .map(|dir| dir.join(LEGACY_IDENTIFIER).join("prefs.json"))
+    else {
+        return;
+    };
+    if path.exists() || !legacy.exists() {
+        return;
+    }
+    let copied = path
+        .parent()
+        .map_or(Ok(()), std::fs::create_dir_all)
+        .and_then(|()| std::fs::copy(&legacy, path));
+    match copied {
+        Ok(_) => log::info!("Copied preferences from {LEGACY_IDENTIFIER}"),
+        Err(err) => log::warn!("Could not copy preferences from {LEGACY_IDENTIFIER}: {err}"),
+    }
+}
+
 /// Reads `path`. A missing file gives the defaults; a broken one also gives the defaults (and a
 /// warning) and is left alone until the next save.
 #[must_use]
@@ -102,6 +127,20 @@ pub fn save(path: &Path, prefs: &Prefs) -> Result<(), AppError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn copies_prefs_from_the_legacy_identifier_once() {
+        let dir = tempfile::tempdir().unwrap();
+        let legacy = dir.path().join(LEGACY_IDENTIFIER).join("prefs.json");
+        std::fs::create_dir_all(legacy.parent().unwrap()).unwrap();
+        std::fs::write(&legacy, "old").unwrap();
+        let path = dir.path().join("io.github.sandut.ttime").join("prefs.json");
+        migrate_legacy(&path);
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), "old");
+        std::fs::write(&path, "new").unwrap();
+        migrate_legacy(&path);
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), "new");
+    }
 
     #[test]
     fn missing_or_broken_files_give_the_defaults() {

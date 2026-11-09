@@ -16,11 +16,11 @@ Daily use happens without opening a window:
 
 A **main window** is for review: projects, a calendar of what was done, analytics, and CSV exports per project and period for invoicing.
 
-All data lives as **plain files in a folder the user owns** (like an other apps vault or a Bruno collection). A **local MCP server and skill** let an AI model read and edit that data on request ("add 2 hours yesterday for the Acme auth review", "how do my hours look for Acme this week?").
+All data lives as **plain files in a folder the user owns** (like a Bruno collection). A **local MCP server and skill** let an AI model read and edit that data on request ("add 2 hours yesterday for the Acme auth review", "how do my hours look for Acme this week?").
 
 ## 2. Why
 
-- other apps 2.0 changed how API tokens work (expiring tokens, one active token, shown only once), which broke the third-party clients that made other apps pleasant on a Mac (the launchers extension and the desktop companion apps).
+- Hosted trackers can change their APIs at any time, and third-party Mac clients built on them break when they do.
 - Existing Mac-native alternatives are subscriptions, cloud-backed, or heavy on features this use case does not need.
 - Tracking only happens if it costs near zero effort. If starting or switching means opening an app, it will not be used.
 - Invoicing and client accountability need trustworthy, exportable records with notes about what was actually done.
@@ -42,13 +42,13 @@ All data lives as **plain files in a folder the user owns** (like an other apps 
 - Sync, multiple devices, mobile apps. (The user may put the vault in iCloud Drive or git; ttime does not manage that.)
 - Teams, roles, approvals.
 - Generating invoices. Exports feed the existing invoicing tool.
-- Automatic activity tracking or screen monitoring (other apps autotracking).
+- Automatic activity tracking or screen monitoring (autotracking).
 - Several timers running at once. One timer keeps billable time honest.
 - Windows or Linux in Phases 1 and 2. The stack allows them later (Phase 3).
 
 ## 4. User and core scenarios
 
-**User:** one person working on several client projects in parallel, billing by the hour, on macOS, keyboard-heavy, already used to launchers.
+**User:** one person working on several client projects in parallel, billing by the hour, on macOS, keyboard-heavy, already used to keyboard launchers.
 
 | #   | Scenario        | Expected behaviour                                                                                                                                                        |
 | --- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -106,7 +106,7 @@ The heart of the app: a floating, launcher-like panel that appears over any app.
   - Enter: start a new entry (switches if one is running).
   - ⌘Enter: add the text as a note to the running entry (starts one if nothing is running).
   - ⌘. stop, ⌘P pause / resume, ⌘E edit the running entry (project, description, start time), ⌘O open the main window.
-  - ⌘K: action panel listing every action with its shortcut (launchers pattern), with shortcut hints in the footer.
+  - ⌘K: action panel listing every action with its shortcut (launcher pattern), with shortcut hints in the footer.
 - **P0** Appears in under 150 ms and is fully usable from the keyboard.
 - **P1** Optional extra hotkeys: Add note (opens directly in note mode), Stop, Resume last.
 - **P1** Favorites: pin up to 9 entries and start them with ⌘1 to ⌘9.
@@ -196,7 +196,7 @@ Sidebar: Today, Calendar, Projects, Analytics. Settings open in their own view w
   - the app shows recent external changes and can undo them.
 - A **skill** (`SKILL.md`) in the repo explains the data model, conventions (project naming, rounding, billing periods) and example requests.
 - The app reflects external changes (MCP, CLI, hand edits, git pull) within about 1 second.
-- **P2** URL scheme (`ttime://start?project=acme&description=...`) and Shortcuts actions, which also allow launchers script commands.
+- **P2** URL scheme (`ttime://start?project=acme&description=...`) and Shortcuts actions for automation tools and launcher scripts.
 
 ### 6.7 Settings
 
@@ -231,7 +231,7 @@ MyTime/                             vault root
 
 ## 8. Design direction
 
-- launcher-inspired: keyboard first, one input with a list below, an action panel on ⌘K, shortcut hints in the footer.
+- Launcher-inspired: keyboard first, one input with a list below, an action panel on ⌘K, shortcut hints in the footer.
 - Quiet, monochrome interface where project colors are the only accent. Native translucent materials.
 - SF Pro for text; monospaced digits for every timer so numbers never jitter.
 - Light and dark mode follow the system.
@@ -246,30 +246,30 @@ MyTime/                             vault root
 - Distribution: Phase 1 is a local build signed with the owner's Apple Developer team. Phase 2 ships notarized Developer ID builds outside the App Store.
 - Data safety comes first: no operation may silently lose time data.
 
-## 10. Ideas borrowed from other tools
+## 10. Common ideas adopted
 
-| Idea                                                                 | Seen in                                      | Priority |
-| -------------------------------------------------------------------- | -------------------------------------------- | -------- |
-| Plain-text files in a user folder, git-friendly, local prefs ignored | Bruno, other apps                              | P0       |
-| Menu bar timer showing the current project                           | other apps Track desktop, other apps, other apps, other apps  | P0       |
-| Continue from recent unique entries                                  | other apps browser extension, other apps saved timers | P0       |
-| Inline `@project` and `#tag` while typing                            | other apps timer bar                              | P0       |
-| Idle detection with a choice of what to do with the time             | other apps desktop, other apps, other apps           | P0       |
-| Forgotten-timer alert and end-of-day auto-stop                       | other apps                                        | P0       |
-| Rounding only in reports (up, down, nearest; several intervals)      | other apps, other apps, other apps                     | P0       |
-| Late-night work counted toward the same day                          | other apps                                     | P0       |
-| Time-zone-safe history                                               | other apps                                    | P0       |
-| Configurable CSV export                                              | other apps                                     | P0       |
-| Calendar view of past work with drag editing                         | other apps, other apps, other apps                   | P0       |
-| Tracking reminders during working hours                              | other apps desktop                                | P1       |
-| Favorites started by hotkey                                          | other apps, other apps                                 | P1       |
-| Targets and budgets per project                                      | other apps goals, other apps budgets                    | P1       |
-| Working-hours band and review reminders                              | other apps                                       | P1       |
-| Locking invoiced periods                                             | other apps                                     | P1       |
-| Turning calendar events into entries                                 | other apps, other apps                                | P2       |
-| Prompt to log time after a video call                                | other apps                                       | P2       |
+| Idea                                                                 | Priority |
+| -------------------------------------------------------------------- | -------- |
+| Plain-text files in a user folder, git-friendly, local prefs ignored | P0       |
+| Menu bar timer showing the current project                           | P0       |
+| Continue from recent unique entries                                  | P0       |
+| Inline `@project` and `#tag` while typing                            | P0       |
+| Idle detection with a choice of what to do with the time             | P0       |
+| Forgotten-timer alert and end-of-day auto-stop                       | P0       |
+| Rounding only in reports (up, down, nearest; several intervals)      | P0       |
+| Late-night work counted toward the same day                          | P0       |
+| Time-zone-safe history                                               | P0       |
+| Configurable CSV export                                              | P0       |
+| Calendar view of past work with drag editing                         | P0       |
+| Tracking reminders during working hours                              | P1       |
+| Favorites started by hotkey                                          | P1       |
+| Targets and budgets per project                                      | P1       |
+| Working-hours band and review reminders                              | P1       |
+| Locking invoiced periods                                             | P1       |
+| Turning calendar events into entries                                 | P2       |
+| Prompt to log time after a video call                                | P2       |
 
-Deliberately not copied: automatic activity tracking (other apps, other apps autotracker), simultaneous timers (other apps, other apps), team features, invoicing.
+Deliberately left out: automatic activity tracking, simultaneous timers, team features, invoicing.
 
 ## 11. Phases and milestones
 
