@@ -2,8 +2,8 @@
 
 A local-first time tracker for macOS. Start, switch and annotate work from a global hotkey
 without opening a window, see the running timer in the menu bar, and review your week in a
-calendar. Your data is plain JSON in a folder you own, and Claude can read and log your time
-through a local MCP server.
+calendar. Your data is plain JSON in a folder you own, and AI agents can read and log your
+time through a local MCP server.
 
 ![Today: tracked time, untracked gaps to fill and the running timer](docs/images/today.png)
 
