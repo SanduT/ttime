@@ -412,7 +412,7 @@ Phase 2 starts once Phase 1 is in daily use. Everything here is additive.
 
 ### 14.2 Release pipeline
 
-- `tauri-apps/tauri-action` on a macOS runner, triggered by a `v*` tag: install, test, compile the CLI sidecar, build, sign, notarize, then attach the DMG to a draft GitHub Release (`.github/workflows/release.yml`). The tag must match the version in `tauri.conf.json`.
+- A macOS runner, triggered by a `v*` tag: install, test, compile the CLI sidecar, build, sign and notarize the app, notarize and staple the DMG, verify both, then attach the DMG to a draft GitHub Release (`.github/workflows/release.yml`). The tag must match the version in `tauri.conf.json`.
 - Secrets: the certificate (`.p12`, base64) and its password, the signing identity name, a keychain password, and the App Store Connect API key (`.p8` base64, key ID, issuer ID). The updater signing key comes with 14.4.
 - CI on pushes to main and on pull requests: `bun run check` and an unsigned build (`.github/workflows/ci.yml`). Pull requests never see the signing secrets.
 

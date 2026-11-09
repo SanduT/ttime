@@ -744,9 +744,12 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
 
 - `.github/workflows/ci.yml` runs `bun run check` and an unsigned app build on `macos-26` for
   pushes to main and pull requests. `release.yml` runs on `v*` tags: tests, the CLI sidecar, then
-  `tauri-apps/tauri-action@v1` signs with the Developer ID certificate, notarizes with the App
-  Store Connect API key, staples, and drafts a GitHub Release with the DMG. A last step fails the
-  run unless `stapler`, `spctl` and `codesign` accept the app, so a bad build stays a draft.
+  `tauri build` signs with the Developer ID certificate and notarizes and staples the app. Tauri
+  leaves the DMG unnotarized (Gatekeeper rejected the first one as "Unnotarized Developer ID"), so
+  the workflow notarizes and staples the DMG with `notarytool`, checks both with `codesign`,
+  `stapler` and `spctl`, and only then drafts the GitHub Release with `gh`. `tauri-action` was
+  dropped: it uploads before the DMG can be notarized, and one fewer third-party action sees the
+  signing secrets.
 - The tag must equal `v` plus the `tauri.conf.json` version.
 - Entitlements (`src-tauri/entitlements.plist`, only in `tauri.bundle.conf.json`): Tauri signs
   the app and its sidecars with one entitlements file, and the Bun-compiled CLI needs
