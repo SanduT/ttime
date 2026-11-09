@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { useVaultAction } from '../../../shared/hooks/use-vault-action';
 import { clockOf } from '../../../shared/lib/display';
+import { gapTimes } from '../lib/gap-draft';
 import { EntryForm, type EntryValues } from './entry-form';
 
 /** An untracked stretch of working hours with a "Fill gap" action. */
@@ -16,12 +17,7 @@ export const GapRow = ({ gap, date }: { readonly gap: Gap; readonly date: string
       <li>
         <EntryForm
           date={date}
-          initial={{
-            description: '',
-            project: '',
-            start: clockOf(gap.start),
-            end: clockOf(gap.end),
-          }}
+          initial={{ description: '', project: '', ...gapTimes(gap) }}
           submitLabel="Add entry"
           onSubmit={save}
           onCancel={() => {
