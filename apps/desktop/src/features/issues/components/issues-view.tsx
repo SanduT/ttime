@@ -12,7 +12,7 @@ const location = (issue: VaultIssue): string =>
   issue.line === undefined ? issue.file : `${issue.file}:${String(issue.line)}`;
 
 /**
- * Vault problems by file, with line numbers (ARCHITECTURE 4.4). Broken files are never
+ * Vault problems by file, with line numbers (FORMAT 4). Broken files are never
  * rewritten; fixing them on disk clears the issue within a second.
  */
 export const IssuesView = () => {

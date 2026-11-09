@@ -215,7 +215,7 @@ Vault location (with Reveal in Finder), hotkeys, menu bar display, week start, d
 - **D9** App-only state (window layout, caches, locks) lives outside the vault, so the vault contains only user data.
 - **D10** The vault records a schema version to allow future migrations.
 
-Vault layout (JSON, schema 1; full specification in `ARCHITECTURE.md` section 4):
+Vault layout (JSON, schema 1; full specification in `FORMAT.md`):
 
 ```
 MyTime/                             vault root

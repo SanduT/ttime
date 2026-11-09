@@ -1,0 +1,33 @@
+name: Bug report
+description: Something does not work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the quick bar
+        2. Type ...
+  - type: input
+    id: versions
+    attributes:
+      label: ttime and macOS versions
+      placeholder: ttime 0.1.0, macOS 26.1
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log excerpt
+      description: >-
+        From ~/Library/Logs/io.github.sandut.ttime. Remove anything private; descriptions and
+        notes only appear at debug level.
+      render: text

@@ -7,7 +7,7 @@ export const DAY_FILE_PATTERN = /^(\d{4}-\d{2}-\d{2})\.json$/;
 /** File name of a client or project file, `<slug>.json`. */
 export const RECORD_FILE_PATTERN = /^([a-z0-9]+(?:-[a-z0-9]+)*)\.json$/;
 
-/** Every path in a vault. The only code that knows the on-disk layout (ARCHITECTURE 4.1). */
+/** Every path in a vault. The only code that knows the on-disk layout (FORMAT 1). */
 export type VaultPaths = {
   readonly root: string;
   readonly config: string;

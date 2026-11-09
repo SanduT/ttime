@@ -9,7 +9,7 @@ import { currentRecord, restoreRecord, sameRecord } from './undo-records';
 /** Dependencies of {@link createUndoService}. */
 export type UndoServiceDeps = { readonly vault: Vault; readonly logger: Logger };
 
-/** Undo and redo through changelog batches (ARCHITECTURE 4.3). */
+/** Undo and redo through changelog batches (FORMAT 3). */
 export type UndoService = {
   /** Batches of the newest `months` changelog files (default 2), newest first. */
   readonly history: (options?: { readonly months?: number }) => Promise<readonly Batch[]>;

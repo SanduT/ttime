@@ -149,7 +149,7 @@ export const isRunningAlreadyStopped = (
 ): boolean =>
   running !== null && days.some((d) => d.day.entries.some((entry) => entry.id === running.id));
 
-/** Cross-file checks on a loaded vault (ARCHITECTURE 4.4). Pure. */
+/** Cross-file checks on a loaded vault (FORMAT 4). Pure. */
 export const validateVault = (input: ValidationInput): VaultIssue[] => {
   const all = input.days.flatMap((loaded) =>
     loaded.day.entries.map((entry, index): Located => ({ entry, file: loaded.file, index })),

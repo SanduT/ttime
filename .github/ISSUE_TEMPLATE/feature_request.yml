@@ -1,0 +1,20 @@
+name: Feature request
+description: An idea for ttime
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What you are trying to do and what gets in the way today.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+  - type: markdown
+    attributes:
+      value: >-
+        ttime stays local-first and single-user: no accounts, no cloud sync service, no team
+        features and no automatic activity tracking (see docs/PRD.md).

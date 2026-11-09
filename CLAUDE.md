@@ -1,8 +1,8 @@
 # ttime
 
 Local-first macOS time tracker. Tauri 2, TypeScript core and React UI, thin Rust shell, Bun.
-Source of truth: `docs/PRD.md`, `docs/ARCHITECTURE.md` (vault format in section 4, build order in
-section 12), `docs/CONVENTIONS.md`. Deviations and exceptions are logged in `docs/DECISIONS.md`.
+Source of truth: `docs/PRD.md`, `docs/ARCHITECTURE.md` (build order in section 12),
+`docs/FORMAT.md` (the vault format), `docs/CONVENTIONS.md`. Deviations and exceptions are logged in `docs/DECISIONS.md`.
 
 ## Commands
 
