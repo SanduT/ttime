@@ -17,28 +17,62 @@ const LATEST_NOTES = 3;
 
 type Props = { readonly actions: PopoverActions };
 
-/** Discard with a second click to confirm. */
-const DiscardButton = ({ onDiscard }: { readonly onDiscard: () => void }) => {
+/** Stop, Note, Switch and Discard. Discard swaps the row for a confirmation that fits the card. */
+const RunningActions = ({ actions }: Props) => {
   const [confirming, setConfirming] = useState(false);
+  if (confirming) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative flex items-center gap-2"
+      >
+        <span className="flex-1 text-sm font-medium">Discard this timer?</span>
+        <Button
+          onClick={() => {
+            setConfirming(false);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          className="text-(--color-danger)"
+          onClick={() => {
+            setConfirming(false);
+            void actions.discard();
+          }}
+        >
+          <Trash2 size={13} />
+          Discard
+        </Button>
+      </motion.div>
+    );
+  }
   return (
-    <Button
-      variant="ghost"
-      aria-label={confirming ? 'Confirm discard' : 'Discard'}
-      title={confirming ? 'Click again to discard' : 'Discard'}
-      className={confirming ? 'px-2 text-(--color-danger)' : 'px-2'}
-      onBlur={() => {
-        setConfirming(false);
-      }}
-      onClick={() => {
-        if (confirming) {
-          onDiscard();
-        }
-        setConfirming(!confirming);
-      }}
-    >
-      <Trash2 size={14} />
-      {confirming ? 'Discard?' : null}
-    </Button>
+    <div className="relative flex gap-2">
+      <Button variant="primary" className="flex-[1.2]" onClick={() => void actions.stop()}>
+        <Square size={11} className="fill-current" />
+        Stop
+      </Button>
+      <Button className="flex-1" onClick={() => void actions.addNote()}>
+        <Pencil size={13} />
+        Note
+      </Button>
+      <Button className="flex-1" onClick={() => void actions.newEntry()}>
+        Switch
+      </Button>
+      <Button
+        variant="ghost"
+        aria-label="Discard"
+        title="Discard"
+        className="px-2"
+        onClick={() => {
+          setConfirming(true);
+        }}
+      >
+        <Trash2 size={14} />
+      </Button>
+    </div>
   );
 };
 
@@ -122,20 +156,7 @@ export const RunningSection = ({ actions }: Props) => {
           ))}
         </ol>
       )}
-      <div className="relative flex gap-2">
-        <Button variant="primary" className="flex-[1.2]" onClick={() => void actions.stop()}>
-          <Square size={11} className="fill-current" />
-          Stop
-        </Button>
-        <Button className="flex-1" onClick={() => void actions.addNote()}>
-          <Pencil size={13} />
-          Note
-        </Button>
-        <Button className="flex-1" onClick={() => void actions.newEntry()}>
-          Switch
-        </Button>
-        <DiscardButton onDiscard={() => void actions.discard()} />
-      </div>
+      <RunningActions actions={actions} />
     </Card>
   );
 };
