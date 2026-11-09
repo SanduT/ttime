@@ -5,7 +5,10 @@ use tauri::{AppHandle, LogicalPosition, Manager, Rect, WebviewWindow};
 
 use crate::{
     AppError,
-    services::panels::{self, Area, WindowKind},
+    services::{
+        panels::{self, Area, WindowKind},
+        screens,
+    },
 };
 
 /// Gap between the menu bar and the popover, in points.
@@ -38,18 +41,13 @@ fn ensure(app: &AppHandle) -> Result<WebviewWindow, AppError> {
 }
 
 fn place(app: &AppHandle, window: &WebviewWindow, icon: Rect) -> Result<(), AppError> {
-    let position = icon.position.to_physical::<f64>(1.0);
-    let Some(monitor) = app
-        .monitor_from_point(position.x, position.y)?
-        .or(app.primary_monitor()?)
-    else {
+    // The click just happened on the icon, so the cursor is on the icon's screen. The icon's
+    // rect comes scaled by that screen's scale.
+    let Some(screen) = screens::under_cursor(app)? else {
         return Ok(());
     };
-    let scale = monitor.scale_factor();
-    let icon_position = icon.position.to_logical::<f64>(scale);
-    let icon_size = icon.size.to_logical::<f64>(scale);
-    let screen_position = monitor.position().to_logical::<f64>(scale);
-    let screen_size = monitor.size().to_logical::<f64>(scale);
+    let icon_position = icon.position.to_logical::<f64>(screen.scale);
+    let icon_size = icon.size.to_logical::<f64>(screen.scale);
     let size = window
         .outer_size()?
         .to_logical::<f64>(window.scale_factor()?);
@@ -61,12 +59,7 @@ fn place(app: &AppHandle, window: &WebviewWindow, icon: Rect) -> Result<(), AppE
             height: icon_size.height,
         },
         (size.width, size.height),
-        Area {
-            x: screen_position.x,
-            y: screen_position.y,
-            width: screen_size.width,
-            height: screen_size.height,
-        },
+        screen.frame,
     );
     window.set_position(LogicalPosition::new(x, y))?;
     Ok(())

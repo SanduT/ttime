@@ -657,3 +657,17 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
 - `skills/ttime/SKILL.md` covers the data model, conventions, which MCP tool or CLI command to use,
   and the four worked examples of ARCHITECTURE 8.3. It prefers MCP and falls back to the CLI with
   `--json`, so it works in Claude Code without the MCP server.
+
+## Fixes after step 12
+
+### DEC-82 Panels open on the screen in use
+
+- With several screens, the quick bar always opened on the main screen and the popover on the main
+  screen even with the menu bar icon on another one. Cause: on macOS, Tauri's `cursor_position`
+  scales the cursor by the main screen while `monitor_from_point` compares against screen bounds in
+  points, so with a Retina main screen a point on another screen matched none and we fell back to
+  the main screen.
+- `services/screens.rs` converts every screen to points (Tauri reports each value as points times
+  that screen's scale) and finds the screen under the cursor itself. The quick bar uses it; the
+  popover uses it at click time, when the cursor is on the icon, and converts the icon's rect with
+  that screen's scale.

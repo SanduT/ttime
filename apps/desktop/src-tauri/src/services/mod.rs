@@ -8,6 +8,7 @@ pub mod panels;
 pub mod popover;
 pub mod prefs;
 pub mod quickbar;
+pub mod screens;
 pub mod settings;
 pub mod tray;
 pub mod vault;

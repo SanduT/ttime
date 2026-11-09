@@ -9,7 +9,10 @@ use tauri_specta::Event;
 use crate::{
     AppError,
     events::QuickbarShown,
-    services::panels::{self, Area, WindowKind},
+    services::{
+        panels::{self, Area, WindowKind},
+        screens,
+    },
 };
 
 /// Fraction of the screen height above the panel's top edge.
@@ -80,26 +83,13 @@ pub fn unregister_shortcut(app: &AppHandle, shortcut: &str) {
 }
 
 fn place(app: &AppHandle, window: &WebviewWindow) -> Result<(), AppError> {
-    let cursor = app.cursor_position()?;
-    let Some(monitor) = app
-        .monitor_from_point(cursor.x, cursor.y)?
-        .or(app.primary_monitor()?)
-    else {
+    let Some(screen) = screens::under_cursor(app)? else {
         return Ok(());
     };
-    let scale = monitor.scale_factor();
-    let position = monitor.work_area().position.to_logical::<f64>(scale);
-    let size = monitor.work_area().size.to_logical::<f64>(scale);
     let panel = window
         .outer_size()?
         .to_logical::<f64>(window.scale_factor()?);
-    let area = Area {
-        x: position.x,
-        y: position.y,
-        width: size.width,
-        height: size.height,
-    };
-    let (x, y) = origin(area, (panel.width, panel.height));
+    let (x, y) = origin(screen.work_area, (panel.width, panel.height));
     window.set_position(LogicalPosition::new(x, y))?;
     Ok(())
 }

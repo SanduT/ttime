@@ -47,6 +47,8 @@ Start with no `~/.config/ttime/config.json` (move it aside if it exists).
 10. ⌘. stops: the confirmation shows what was logged; the tray title returns to `ttime`.
 11. ⌘O opens the main window.
 12. Click another app while the quick bar is open: it hides.
+13. With two screens, put the pointer on the secondary one and press the shortcut: the quick bar
+    opens there. Click the menu bar icon on the secondary screen: the popover opens under it.
 
 ## Step 6: Menu bar
 
