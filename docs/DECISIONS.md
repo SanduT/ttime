@@ -773,3 +773,10 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
   mode, so a dark background made them unreadable.
 - Tauri skips the Finder layout script when `CI` is set, so the release build step sets
   `CI=false`. If the script fails, the DMG step fails rather than shipping a plain window.
+
+### DEC-90 Minimum macOS 15
+
+- `minimumSystemVersion` is 15.0 instead of 26.0 (the Phase 2 evaluation in PRD section 9). The
+  Rust shell uses only AppKit APIs that predate macOS 15 (NSPanel, NSVisualEffectView, IOKit idle
+  time), and the webview CSS needs Safari 17.5 (`light-dark()`), which macOS 15 ships.
+- Only macOS 26 has been tested. The README says so and asks for reports from older versions.

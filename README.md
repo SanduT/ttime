@@ -34,7 +34,8 @@ time through a local MCP server.
   be undone.
 - **Private:** no account, no telemetry, no network calls.
 
-Requires macOS 26 on Apple silicon.
+Requires macOS 15 or later on Apple silicon. So far it has only been tested on macOS 26; if you
+run it on an older version, please report how it went in an issue.
 
 ## Install
 
