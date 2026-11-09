@@ -702,3 +702,18 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
   `@number-flow/react` 0.6.2 for rolling timer digits, `lucide-react` 1.70.0 for icons. Springs
   and short CSS keyframes only; `MotionConfig reducedMotion="user"` and a `prefers-reduced-motion`
   rule turn animation off when macOS Reduce Motion is on.
+
+### DEC-86 Onboarding, main window and icon
+
+- Onboarding is four screens (welcome, vault, shortcut, menu bar) shown on first run and from
+  Settings > Vault > Welcome tour. ttime needs no macOS privacy permissions (the hotkey uses the
+  Carbon API, idle time needs none, no notifications), so the only system choice is the login
+  item. The shortcut step checks itself off when the quick bar opens: `quickbar:shown` is now
+  emitted to every window instead of only the quick bar.
+- The vault picker moved to `shared/hooks/use-vault-picker.ts` so Settings and onboarding share it
+  without a feature cycle; the tour state is `shared/store/onboarding-store.ts`.
+- Main window: sidebar icons, the running entry pinned above Settings, a relative day title, stat
+  cards (tracked, untracked in working hours, entries), a project split bar and staggered rows.
+  Targets ("22h / 30h") from the mockup wait for P1 targets.
+- App icon: `src-tauri/icons/app-icon.svg` (source) rendered to `app-icon.png`, then
+  `tauri icon`; only the macOS files are kept.

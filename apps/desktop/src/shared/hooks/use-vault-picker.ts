@@ -1,14 +1,14 @@
 import type { Vault } from '@ttime/core';
 import { useState } from 'react';
 
-import { pickFolder } from '../../../shared/adapters/dialog';
-import { getAppContext } from '../../../shared/lib/app-context';
-import { runAction } from '../../../shared/lib/run-action';
-import type { VaultSession } from '../../../shared/lib/vault-session';
-import { useVaultStore } from '../../../shared/store/vault-store';
+import { pickFolder } from '../adapters/dialog';
+import { getAppContext } from '../lib/app-context';
+import { runAction } from '../lib/run-action';
+import type { VaultSession } from '../lib/vault-session';
+import { useVaultStore } from '../store/vault-store';
 
 /** Creating a new vault or opening an existing one, each through the folder picker. */
-export const useOnboarding = () => {
+export const useVaultPicker = () => {
   const show = useVaultStore((state) => state.show);
   const [busy, setBusy] = useState(false);
 

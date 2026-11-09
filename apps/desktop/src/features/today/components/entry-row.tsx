@@ -12,7 +12,7 @@ import { EntryForm, type EntryValues } from './entry-form';
 import { Notes } from './notes';
 
 const ROW =
-  'flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-left text-sm hover:bg-(--color-control)';
+  'flex min-h-11 w-full items-center gap-3.5 rounded-[10px] px-3 py-2 text-left text-[13px] transition-colors hover:bg-(--color-hover)';
 
 /** A finished entry. Click or Enter edits it in place; the editor can delete it. */
 export const EntryRow = ({ entry, date }: { readonly entry: Entry; readonly date: string }) => {
@@ -57,11 +57,11 @@ export const EntryRow = ({ entry, date }: { readonly entry: Entry; readonly date
           setEditing(true);
         }}
       >
-        <span className="w-24 shrink-0 text-(--color-text-muted) tabular-nums">
+        <span className="w-24 shrink-0 text-xs text-(--color-text-muted) tabular-nums">
           {clockOf(entry.start)} – {clockOf(entry.end)}
         </span>
         <ProjectDot color={project?.color ?? FALLBACK_COLOR} />
-        <span className="min-w-0 flex-1 truncate">
+        <span className="min-w-0 flex-1 truncate font-medium">
           {entry.description === '' ? (
             <span className="text-(--color-text-muted)">(no description)</span>
           ) : (
@@ -69,7 +69,7 @@ export const EntryRow = ({ entry, date }: { readonly entry: Entry; readonly date
           )}
         </span>
         <span className="text-xs text-(--color-text-muted)">{project?.name ?? entry.project}</span>
-        <span className="w-12 text-right tabular-nums">
+        <span className="w-14 text-right font-medium tabular-nums">
           {formatElapsed(secondsBetween(entry.start, entry.end))}
         </span>
       </button>

@@ -79,7 +79,7 @@ export const ProjectDetail = ({ id }: { readonly id: string }) => {
           ← Projects
         </Button>
         <ProjectDot color={project.color} />
-        <h1 className="flex-1 text-lg font-semibold">{project.name}</h1>
+        <h1 className="flex-1 text-[28px] font-bold tracking-[-0.025em]">{project.name}</h1>
         <Button
           onClick={() => {
             setExporting(true);

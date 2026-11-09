@@ -50,7 +50,7 @@ export const SettingsView = () => {
   const prefs = usePrefs();
   return (
     <section className="flex max-w-3xl flex-col gap-6">
-      <h1 className="text-lg font-semibold">Settings</h1>
+      <h1 className="text-[28px] font-bold tracking-[-0.025em]">Settings</h1>
       <AppSection state={prefs} />
       <ThemeSection state={prefs} />
       <VaultSection />

@@ -100,9 +100,9 @@ const SYMBOLS: Readonly<Record<string, string>> = {
   Backquote: '`',
 };
 
+/** `Alt+Shift+Space` as the keys `⌥`, `⇧`, `Space`. */
+export const keysOf = (accelerator: string): readonly string[] =>
+  accelerator.split('+').map((part) => SYMBOLS[part] ?? part);
+
 /** `Alt+Shift+Space` as `⌥⇧Space`. */
-export const displayOf = (accelerator: string): string =>
-  accelerator
-    .split('+')
-    .map((part) => SYMBOLS[part] ?? part)
-    .join('');
+export const displayOf = (accelerator: string): string => keysOf(accelerator).join('');

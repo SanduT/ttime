@@ -16,16 +16,16 @@ export const RunningRow = ({ entry }: { readonly entry: RunningEntry }) => {
     <li>
       <button
         type="button"
-        className="flex w-full items-center gap-3 rounded-md bg-(--color-control) px-2 py-1.5 text-left text-sm"
+        className="flex min-h-11 w-full items-center gap-3.5 rounded-[10px] bg-(--color-accent-tint) px-3 py-2 text-left text-[13px] transition-transform active:scale-[0.99]"
         onClick={() =>
           void runAction('Edit running entry', () => windowApi.showQuickbar('edit-running'))
         }
       >
-        <span className="w-24 shrink-0 text-(--color-text-muted) tabular-nums">
+        <span className="w-24 shrink-0 text-xs text-(--color-text-muted) tabular-nums">
           {clockOf(entry.start)} – now
         </span>
-        <ProjectDot color={project?.color ?? FALLBACK_COLOR} />
-        <span className="min-w-0 flex-1 truncate">
+        <ProjectDot color={project?.color ?? FALLBACK_COLOR} running />
+        <span className="min-w-0 flex-1 truncate font-medium">
           {entry.description === '' ? (
             <span className="text-(--color-text-muted)">(no description)</span>
           ) : (
@@ -33,7 +33,7 @@ export const RunningRow = ({ entry }: { readonly entry: RunningEntry }) => {
           )}
         </span>
         <span className="text-xs text-(--color-text-muted)">{project?.name ?? entry.project}</span>
-        <span className="w-12 text-right font-medium tabular-nums">{formatElapsed(elapsed)}</span>
+        <span className="w-14 text-right font-semibold tabular-nums">{formatElapsed(elapsed)}</span>
       </button>
       <Notes notes={entry.notes} />
     </li>

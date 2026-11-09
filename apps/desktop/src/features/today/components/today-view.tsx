@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import { useVaultAction } from '../../../shared/hooks/use-vault-action';
-import { Button } from '../../../shared/ui/button';
 import { useDayKeys } from '../hooks/use-day-keys';
 import { useDayView } from '../hooks/use-day-view';
 import { DayHeader } from './day-header';
@@ -24,12 +23,17 @@ export const TodayView = () => {
   const add = async (values: EntryValues) =>
     (await act('Add entry', ({ entries }) => entries.create(values))) !== undefined;
   return (
-    <section className="flex flex-col gap-4">
-      <DayHeader view={view} />
+    <section className="flex flex-col gap-5">
+      <DayHeader
+        view={view}
+        onAdd={() => {
+          setAdding(true);
+        }}
+      />
       {view.rows.length === 0 ? (
         <p className="text-sm text-(--color-text-muted)">Nothing tracked on this day.</p>
       ) : (
-        <ul className="flex flex-col gap-1">
+        <ul className="stagger -mx-3 flex flex-col gap-1.5">
           {view.rows.map((row) => {
             if (row.kind === 'gap') {
               return <GapRow key={`gap-${row.gap.start}`} gap={row.gap} date={view.date} />;
@@ -52,17 +56,7 @@ export const TodayView = () => {
             setAdding(false);
           }}
         />
-      ) : (
-        <div>
-          <Button
-            onClick={() => {
-              setAdding(true);
-            }}
-          >
-            Add entry
-          </Button>
-        </div>
-      )}
+      ) : null}
     </section>
   );
 };

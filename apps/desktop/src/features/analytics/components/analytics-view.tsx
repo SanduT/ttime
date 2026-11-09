@@ -21,7 +21,7 @@ export const AnalyticsView = () => {
   return (
     <section className="flex max-w-5xl flex-col gap-4">
       <header className="flex flex-wrap items-center gap-3">
-        <h1 className="text-lg font-semibold">Analytics</h1>
+        <h1 className="text-[28px] font-bold tracking-[-0.025em]">Analytics</h1>
         <PeriodControls range={range} />
         <span className="flex-1" />
         <Button

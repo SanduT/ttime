@@ -17,7 +17,7 @@ export const ProjectsView = () => {
       {selected === null ? (
         <section className="flex flex-col gap-4">
           <header className="flex items-center gap-2">
-            <h1 className="flex-1 text-lg font-semibold">Projects</h1>
+            <h1 className="flex-1 text-[28px] font-bold tracking-[-0.025em]">Projects</h1>
             <label className="flex items-center gap-2 text-sm text-(--color-text-muted)">
               <input type="checkbox" checked={showArchived} onChange={toggleArchived} />
               Show archived

@@ -200,3 +200,21 @@ Settings, App: set Idle detection to 1 minute and Long timers to 0 for the first
 8. Ask Claude to move 4 or more entries: it shows a preview and asks before writing.
 9. Copy or link `skills/ttime` into `~/.claude/skills/`: Claude follows its conventions (confirms
    inferred times, mentions undo).
+
+## UI refresh
+
+1. Settings > Theme: Ember, Jade and Iris each restyle the main window, popover and quick bar at
+   once (buttons, selection, focus rings). The choice survives a restart.
+2. Popover: it scales in under the icon each time it opens. The running card has a soft glow in the
+   project color, a breathing dot and a timer whose digits roll. Today and This week show project
+   bars; clicking one lists the projects.
+3. Quick bar: it scales in on each show. The verb chip and caret use the accent; the selected row is
+   tinted; the footer shows keycaps.
+4. Main window: views cross-fade; the sidebar has icons and the running entry above Settings
+   (click edits it in the quick bar); Today shows the relative day, stat cards, a split bar that grows
+   in and rows that appear one after another. Moving a calendar block slides it into place.
+5. Settings > Vault > Welcome tour > Show again: the four screens slide; pressing the shortcut on
+   step 2 shows "It works"; Done returns to the main window. With no vault, the tour starts on
+   launch and Continue stays disabled on the vault step until one is created or opened.
+6. System Settings > Accessibility > Display > Reduce motion: animations stop, everything still works.
+7. The Dock and Finder show the new icon after `bun run build:app`.

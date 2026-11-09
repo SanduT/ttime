@@ -98,7 +98,8 @@ fn place(app: &AppHandle, window: &WebviewWindow) -> Result<(), AppError> {
 pub fn show(app: &AppHandle, mode: QuickbarMode) -> Result<(), AppError> {
     let window = window(app)?;
     place(app, &window)?;
-    QuickbarShown { mode }.emit_to(app, WindowKind::Quickbar.label())?;
+    // Every window hears it: the quick bar resets, onboarding checks off the shortcut step.
+    QuickbarShown { mode }.emit(app)?;
     panels::show_panel(app, WindowKind::Quickbar)
 }
 

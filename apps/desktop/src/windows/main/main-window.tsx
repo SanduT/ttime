@@ -1,9 +1,11 @@
-import { OnboardingScreen } from '../../features/onboarding';
+import { OnboardingFlow, OnboardingGate } from '../../features/onboarding';
 import { MainShell } from '../../features/shell';
 import { VaultGate } from '../../features/vault';
 
 export const MainWindow = () => (
-  <VaultGate onboarding={<OnboardingScreen />}>
-    <MainShell />
+  <VaultGate onboarding={<OnboardingFlow />}>
+    <OnboardingGate>
+      <MainShell />
+    </OnboardingGate>
   </VaultGate>
 );

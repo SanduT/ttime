@@ -1,2 +1,1 @@
-export { OnboardingScreen } from './components/onboarding-screen';
-export { useOnboarding } from './hooks/use-onboarding';
+export { OnboardingFlow, OnboardingGate } from './components/onboarding-flow';

@@ -232,7 +232,7 @@ MyTime/                             vault root
 ## 8. Design direction
 
 - Launcher-inspired: keyboard first, one input with a list below, an action panel on ⌘K, shortcut hints in the footer.
-- Quiet, monochrome interface where project colors are the only accent. Native translucent materials.
+- Quiet, warm neutral interface where project colors are the main color and one app accent marks focus and the primary action. Native translucent materials, short spring animations.
 - SF Pro for text; monospaced digits for every timer so numbers never jitter.
 - Light and dark mode follow the system.
 - Minimal by default, depth on demand: daily life is the quick bar and the menu bar; the main window is for review and fixes.

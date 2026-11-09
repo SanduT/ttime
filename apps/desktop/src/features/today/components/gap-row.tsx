@@ -32,14 +32,14 @@ export const GapRow = ({ gap, date }: { readonly gap: Gap; readonly date: string
     );
   }
   return (
-    <li className="flex items-center gap-3 rounded-md border border-dashed border-(--color-border) px-2 py-1 text-xs text-(--color-text-muted)">
+    <li className="flex min-h-10 items-center gap-3.5 rounded-[10px] border border-dashed border-(--color-border-strong) px-3 text-xs text-(--color-text-muted)">
       <span className="w-24 tabular-nums">
         {clockOf(gap.start)} – {clockOf(gap.end)}
       </span>
       <span className="flex-1">Untracked {formatElapsed(gap.seconds)}</span>
       <button
         type="button"
-        className="rounded px-2 py-0.5 font-medium text-(--color-accent) hover:bg-(--color-control)"
+        className="rounded-md px-2 py-1 font-semibold text-(--color-accent) transition-colors hover:bg-(--color-accent-tint)"
         onClick={() => {
           setFilling(true);
         }}

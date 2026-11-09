@@ -18,7 +18,9 @@ export const WeekHeader = ({
   return (
     <header className="flex flex-col gap-3">
       <div className="flex items-center gap-2">
-        <h1 className="flex-1 text-lg font-semibold">{weekTitle(first, last)}</h1>
+        <h1 className="flex-1 text-[28px] font-bold tracking-[-0.025em]">
+          {weekTitle(first, last)}
+        </h1>
         <span className="text-sm text-(--color-text-muted)">
           Total{' '}
           <span className="font-semibold text-(--color-text) tabular-nums">

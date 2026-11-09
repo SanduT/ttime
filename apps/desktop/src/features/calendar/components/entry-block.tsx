@@ -35,7 +35,7 @@ export const EntryBlock = ({ block, dragging, onOpen }: Props) => {
       data-block={editable ? block.entry.id : undefined}
       aria-label={text.title}
       title={text.title}
-      className={`absolute overflow-hidden border-l-[3px] px-1.5 py-0.5 text-left text-xs leading-tight ${blockClass(block, dragging)}`}
+      className={`absolute overflow-hidden rounded-md border-l-[3px] px-1.5 py-0.5 text-left text-xs leading-tight shadow-[0_1px_2px_rgb(0_0_0/0.12)] transition-[top,height,left,width,opacity] duration-200 ease-(--ease-out-soft) ${blockClass(block, dragging)}`}
       style={{
         top: block.startMinute * MINUTE_PX,
         height,

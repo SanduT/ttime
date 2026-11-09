@@ -453,7 +453,7 @@ Contents as in PRD 6.2: running entry with notes, Stop, Pause and Resume, Add no
 
 ### 7.5 Design
 
-- Launcher-inspired: the system font stack (`-apple-system`, so SF Pro on macOS), `font-variant-numeric: tabular-nums` on every time, a monochrome palette with project colors as the only accent, light and dark through `prefers-color-scheme`.
+- Launcher-inspired: the system font stack (`-apple-system`, so SF Pro on macOS), `font-variant-numeric: tabular-nums` on every time, warm neutral surfaces with project colors as the main color and one app accent (Ember, Jade or Iris; DEC-85), light and dark through `prefers-color-scheme`.
 - Transparent windows with a native vibrancy material behind the webview; the UI draws subtle translucent surfaces on top. Apple's Liquid Glass can't be rendered inside a webview, so the look is "native material behind a clean web UI".
 - Design tokens in one CSS file; shared components in `shared/`.
 
