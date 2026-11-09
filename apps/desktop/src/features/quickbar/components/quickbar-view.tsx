@@ -1,3 +1,4 @@
+import { useAnimate } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { useVaultStore } from '../../../shared/store/vault-store';
@@ -22,8 +23,17 @@ export const QuickbarView = () => {
   const context = useQuickContext();
   const actions = useQuickbarActions();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [scope, animate] = useAnimate<HTMLDivElement>();
   const focus = useCallback(() => inputRef.current?.focus(), []);
-  useQuickbarShown(focus);
+  const onShown = useCallback(() => {
+    focus();
+    void animate(
+      scope.current,
+      { opacity: [0, 1], scale: [0.97, 1] },
+      { duration: 0.2, ease: [0.2, 0.9, 0.25, 1] },
+    );
+  }, [focus, animate, scope]);
+  useQuickbarShown(onShown);
   const { items, value, select, run, onKeyDownCapture } = useQuickbarController(context, focus);
   const { running } = context;
 
@@ -40,6 +50,7 @@ export const QuickbarView = () => {
 
   return (
     <div
+      ref={scope}
       role="presentation"
       onKeyDownCapture={(event) => {
         if (panel !== 'prompt') {

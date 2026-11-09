@@ -68,6 +68,7 @@ export const events = {
 	monitorAutoStop: makeEvent<MonitorAutoStop, MonitorAutoStop>("monitor:auto-stop"),
 	monitorForgotten: makeEvent<MonitorForgotten, MonitorForgotten>("monitor:forgotten"),
 	monitorIdle: makeEvent<MonitorIdle, MonitorIdle>("monitor:idle"),
+	prefsAccent: makeEvent<AccentChanged, AccentChanged>("prefs:accent"),
 	quickbarShown: makeEvent<QuickbarShown, QuickbarShown>("quickbar:shown"),
 	trayAction: makeEvent<TrayAction, TrayAction>("tray:action"),
 	vaultChanged: makeEvent<VaultChanged, VaultChanged>("vault:changed"),
@@ -75,6 +76,14 @@ export const events = {
 };
 
 /* Types */
+/**  The app's accent color: Ember by default, Jade and Iris as themes. */
+export type Accent = "ember" | "jade" | "iris";
+
+/**  The accent color changed; every window restyles. */
+export type AccentChanged = {
+	accent: Accent,
+};
+
 /**  Where things live for the core's `EnvPort`. */
 export type AppEnv = {
 	platform: string,
@@ -148,6 +157,7 @@ export type Prefs_Deserialize = {
 	/**  Show seconds in the menu bar time. */
 	showSeconds?: boolean,
 	appearance?: Appearance,
+	accent?: Accent,
 	/**  Ask about idle time after this many minutes without input; 0 turns it off. */
 	idleMinutes?: number,
 	/**  Remind while a timer runs this many hours, repeating; 0 turns it off. */
@@ -164,6 +174,7 @@ export type Prefs_Serialize = {
 	/**  Show seconds in the menu bar time. */
 	showSeconds: boolean,
 	appearance: Appearance,
+	accent: Accent,
 	/**  Ask about idle time after this many minutes without input; 0 turns it off. */
 	idleMinutes: number,
 	/**  Remind while a timer runs this many hours, repeating; 0 turns it off. */

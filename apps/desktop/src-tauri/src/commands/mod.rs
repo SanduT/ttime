@@ -7,8 +7,8 @@ pub mod vault;
 use tauri_specta::{Builder, collect_commands, collect_events};
 
 use crate::events::{
-    MonitorAutoStop, MonitorForgotten, MonitorIdle, OpenSettings, QuickbarShown, TrayAction,
-    VaultChanged, VaultOpened,
+    AccentChanged, MonitorAutoStop, MonitorForgotten, MonitorIdle, OpenSettings, QuickbarShown,
+    TrayAction, VaultChanged, VaultOpened,
 };
 
 /// Where the generated TypeScript bindings live, relative to this crate.
@@ -53,7 +53,8 @@ pub fn specta_builder() -> Builder<tauri::Wry> {
             OpenSettings,
             MonitorIdle,
             MonitorForgotten,
-            MonitorAutoStop
+            MonitorAutoStop,
+            AccentChanged
         ])
 }
 

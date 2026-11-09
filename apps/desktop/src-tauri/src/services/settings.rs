@@ -1,8 +1,10 @@
 //! Applying app preferences: the quick bar shortcut, the window theme and the menu bar title.
 
 use tauri::{AppHandle, Manager, Theme};
+use tauri_specta::Event;
 
 use crate::AppError;
+use crate::events::AccentChanged;
 use crate::services::menubar::TitleStyle;
 use crate::services::prefs::{self, Appearance, Prefs};
 use crate::services::{monitor, quickbar};
@@ -79,6 +81,14 @@ pub fn update(app: &AppHandle, next: &Prefs) -> Result<Prefs, AppError> {
     };
     prefs::save(&state.prefs_path, &next)?;
     apply_theme(app, next.appearance);
+    if current.accent != next.accent
+        && let Err(err) = (AccentChanged {
+            accent: next.accent,
+        })
+        .emit(app)
+    {
+        log::error!("Could not announce the accent: {err}");
+    }
     current.clone_from(&next);
     drop(current);
     state.wake_ticker();

@@ -1,3 +1,6 @@
+import { motion } from 'motion/react';
+
+import { useShownCount } from '../../../shared/hooks/use-shown-count';
 import { useVaultLoader } from '../../vault';
 import { usePopoverActions } from '../hooks/use-popover-actions';
 import { RecentSection } from './recent-section';
@@ -8,18 +11,25 @@ import { TotalsSection } from './totals-section';
 const LOADED_DAYS = 8;
 
 const FOOTER_BUTTON =
-  'rounded-md px-2 py-1 text-xs text-(--color-text-muted) hover:bg-(--color-control) hover:text-(--color-text)';
+  'rounded-md px-2 py-1 text-xs text-(--color-text-muted) transition-colors hover:bg-(--color-hover) hover:text-(--color-text)';
 
 /** The menu bar popover (PRD 6.2). */
 export const PopoverRoot = () => {
   const status = useVaultLoader({ days: LOADED_DAYS });
   const actions = usePopoverActions();
+  const shown = useShownCount();
   if (status === 'loading') {
     return null;
   }
   return (
-    <main className="flex h-screen flex-col overflow-hidden rounded-xl border border-(--color-border) bg-(--color-surface)">
-      <div className="min-h-0 flex-1 overflow-y-auto">
+    <motion.main
+      key={shown}
+      initial={{ opacity: 0, y: -6, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: 'spring', stiffness: 520, damping: 36 }}
+      className="flex h-screen origin-top flex-col overflow-hidden rounded-xl border border-(--color-border) bg-(--color-surface)"
+    >
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-2">
         {status === 'ready' ? (
           <>
             <RunningSection actions={actions} />
@@ -41,6 +51,6 @@ export const PopoverRoot = () => {
           Quit
         </button>
       </footer>
-    </main>
+    </motion.main>
   );
 };

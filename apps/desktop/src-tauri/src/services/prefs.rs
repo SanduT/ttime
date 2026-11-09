@@ -32,6 +32,16 @@ pub enum Appearance {
     Dark,
 }
 
+/// The app's accent color: Ember by default, Jade and Iris as themes.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize, specta::Type)]
+#[serde(rename_all = "kebab-case")]
+pub enum Accent {
+    #[default]
+    Ember,
+    Jade,
+    Iris,
+}
+
 /// Default global shortcut for the quick bar (PRD 6.1).
 pub const DEFAULT_SHORTCUT: &str = "Alt+Shift+Space";
 
@@ -45,6 +55,7 @@ pub struct Prefs {
     /// Show seconds in the menu bar time.
     pub show_seconds: bool,
     pub appearance: Appearance,
+    pub accent: Accent,
     /// Ask about idle time after this many minutes without input; 0 turns it off.
     pub idle_minutes: u32,
     /// Remind while a timer runs this many hours, repeating; 0 turns it off.
@@ -65,6 +76,7 @@ impl Default for Prefs {
             menu_bar_display: MenuBarDisplay::default(),
             show_seconds: false,
             appearance: Appearance::default(),
+            accent: Accent::default(),
             idle_minutes: DEFAULT_IDLE_MINUTES,
             forgotten_hours: DEFAULT_FORGOTTEN_HOURS,
             auto_stop: None,
@@ -160,6 +172,7 @@ mod tests {
             menu_bar_display: MenuBarDisplay::ProjectAndTime,
             show_seconds: true,
             appearance: Appearance::Dark,
+            accent: Accent::Iris,
             idle_minutes: 15,
             forgotten_hours: 0,
             auto_stop: Some("18:00".into()),
@@ -169,5 +182,6 @@ mod tests {
         std::fs::write(&path, r#"{"appearance":"light"}"#).unwrap();
         assert_eq!(load(&path).quickbar_shortcut, DEFAULT_SHORTCUT);
         assert_eq!(load(&path).idle_minutes, DEFAULT_IDLE_MINUTES);
+        assert_eq!(load(&path).accent, Accent::Ember);
     }
 }

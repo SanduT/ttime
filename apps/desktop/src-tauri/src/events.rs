@@ -24,6 +24,13 @@ pub struct VaultOpened {
     pub root: String,
 }
 
+/// The accent color changed; every window restyles.
+#[derive(Debug, Clone, Serialize, Deserialize, specta::Type, tauri_specta::Event)]
+#[tauri_specta(event_name = "prefs:accent")]
+pub struct AccentChanged {
+    pub accent: crate::services::prefs::Accent,
+}
+
 /// The main window should show Settings (tray menu item).
 #[derive(Debug, Clone, Serialize, Deserialize, specta::Type, tauri_specta::Event)]
 #[tauri_specta(event_name = "main:open-settings")]

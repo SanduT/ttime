@@ -1,8 +1,7 @@
-import { formatElapsed } from '@ttime/core';
-
 import { useElapsed } from '../../../shared/hooks/use-elapsed';
 import { clockOf, FALLBACK_COLOR } from '../../../shared/lib/display';
 import { useVaultStore } from '../../../shared/store/vault-store';
+import { ElapsedClock } from '../../../shared/ui/elapsed-clock';
 import { ProjectDot } from '../../../shared/ui/project-dot';
 
 /** The running entry with its elapsed time, or "Not tracking". */
@@ -18,13 +17,13 @@ export const RunningHeader = () => {
   }
   return (
     <header className="flex items-center gap-2 px-4 pt-3 text-sm">
-      <ProjectDot color={project?.color ?? FALLBACK_COLOR} />
+      <ProjectDot color={project?.color ?? FALLBACK_COLOR} running />
       <span className="font-medium">{project?.name ?? running.project}</span>
       <span className="min-w-0 flex-1 truncate text-(--color-text-muted)">
         {running.description}
       </span>
       <span className="text-(--color-text-muted)">since {clockOf(running.start)}</span>
-      <span className="font-medium tabular-nums">{formatElapsed(elapsed, { seconds: true })}</span>
+      <ElapsedClock seconds={elapsed} className="font-medium" />
     </header>
   );
 };

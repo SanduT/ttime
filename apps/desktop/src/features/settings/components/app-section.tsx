@@ -1,7 +1,7 @@
-import type { Appearance, MenuBarDisplay } from '../../../shared/bridge/settings-api';
+import type { MenuBarDisplay } from '../../../shared/bridge/settings-api';
 import { Checkbox } from '../../../shared/ui/checkbox';
 import { Select } from '../../../shared/ui/field';
-import { usePrefs } from '../hooks/use-prefs';
+import type { PrefsState } from '../hooks/use-prefs';
 import { MonitorRows } from './monitor-rows';
 import { Row, Section } from './section';
 import { ShortcutRecorder } from './shortcut-recorder';
@@ -12,20 +12,12 @@ const DISPLAYS: readonly { readonly id: MenuBarDisplay; readonly label: string }
   { id: 'icon', label: 'Icon only' },
 ];
 
-const APPEARANCES: readonly { readonly id: Appearance; readonly label: string }[] = [
-  { id: 'system', label: 'System' },
-  { id: 'light', label: 'Light' },
-  { id: 'dark', label: 'Dark' },
-];
-
 const displayOf = (value: string): MenuBarDisplay =>
   DISPLAYS.find((display) => display.id === value)?.id ?? 'time';
-const appearanceOf = (value: string): Appearance =>
-  APPEARANCES.find((appearance) => appearance.id === value)?.id ?? 'system';
 
-/** App preferences: the quick bar shortcut, menu bar, appearance and launch at login. */
-export const AppSection = () => {
-  const { prefs, save, launchAtLogin, saveLaunchAtLogin } = usePrefs();
+/** App preferences: the quick bar shortcut, menu bar, monitors and launch at login. */
+export const AppSection = ({ state }: { readonly state: PrefsState }) => {
+  const { prefs, save, launchAtLogin, saveLaunchAtLogin } = state;
   if (prefs === null) {
     return null;
   }
@@ -62,22 +54,6 @@ export const AppSection = () => {
             save({ showSeconds });
           }}
         />
-      </Row>
-      <Row label="Appearance">
-        <Select
-          aria-label="Appearance"
-          className="w-44"
-          value={prefs.appearance}
-          onChange={(event) => {
-            save({ appearance: appearanceOf(event.target.value) });
-          }}
-        >
-          {APPEARANCES.map((appearance) => (
-            <option key={appearance.id} value={appearance.id}>
-              {appearance.label}
-            </option>
-          ))}
-        </Select>
       </Row>
       <MonitorRows prefs={prefs} save={save} />
       <Row label="Startup">

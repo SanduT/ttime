@@ -17,10 +17,10 @@ type Props = {
 const KIND_CLASS: Readonly<Record<Segment['kind'], string>> = {
   text: '',
   space: '',
-  project: 'rounded-sm',
-  tag: 'rounded-sm text-(--color-accent)',
-  time: 'rounded-sm bg-(--color-control) text-(--color-text-muted)',
-  billable: 'rounded-sm bg-(--color-control)',
+  project: 'rounded-md',
+  tag: 'rounded-md text-(--color-accent)',
+  time: 'rounded-md bg-(--color-control) text-(--color-text-muted)',
+  billable: 'rounded-md bg-(--color-control)',
 };
 
 /** Segments with their character offset, a stable key for each highlighted run. */
@@ -55,7 +55,7 @@ export const TokenInput = ({
   const text = 'px-2 py-3 text-lg leading-7';
   return (
     <div className="flex items-center pl-4">
-      <span className="shrink-0 rounded-md bg-(--color-control) px-2 py-0.5 text-xs font-medium text-(--color-text-muted)">
+      <span className="shrink-0 rounded-md bg-(--color-accent-tint) px-2 py-0.5 text-xs font-semibold text-(--color-accent)">
         {verb} ›
       </span>
       <div className="relative min-w-0 flex-1">
@@ -81,7 +81,7 @@ export const TokenInput = ({
           aria-label="What are you working on?"
           spellCheck={false}
           autoComplete="off"
-          className={`relative w-full bg-transparent text-transparent caret-(--color-text) outline-none placeholder:text-(--color-text-muted) ${text}`}
+          className={`relative w-full bg-transparent text-transparent caret-(--color-accent) outline-none placeholder:text-(--color-text-muted) ${text}`}
           onChange={(event) => {
             onChange(event.target.value);
           }}

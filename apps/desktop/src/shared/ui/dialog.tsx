@@ -22,7 +22,7 @@ export const Dialog = ({ title, onClose, children, wide = false }: Props) => {
     <dialog
       ref={dialogRef}
       aria-label={title}
-      className={`m-auto ${wide ? 'w-[540px]' : 'w-[420px]'} rounded-xl border border-(--color-border) bg-(--color-surface-solid) p-0 text-(--color-text) shadow-xl backdrop:bg-black/30`}
+      className={`m-auto ${wide ? 'w-[540px]' : 'w-[420px]'} animate-dialog rounded-2xl border border-(--color-border) bg-(--color-surface-solid) p-0 text-(--color-text) shadow-(--shadow-pop) backdrop:bg-black/30 backdrop:backdrop-blur-[2px]`}
       onCancel={(event) => {
         event.preventDefault();
         onClose();

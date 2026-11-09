@@ -689,3 +689,16 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
   `com.sandut.ttime` folder at startup.
 - The docs no longer name proprietary products. Design references read "launcher-style", and the
   PRD's ideas table lists the ideas without where they were seen.
+
+## UI refresh
+
+### DEC-85 Theme tokens, accents and motion
+
+- Warm neutral surfaces in three levels (surface, raised, solid) replace the pure grays; one accent
+  marks focus, selection and the primary action. Ember is the default; Jade and Iris are themes in
+  Settings > Theme. The accent is the `accent` pref; Rust emits `prefs:accent` on change and every
+  window sets `data-accent` on its root, which switches the CSS variables.
+- Motion: `motion` 14.10.1 (14.11.x was released the same day; the newest older patch is used),
+  `@number-flow/react` 0.6.2 for rolling timer digits, `lucide-react` 1.70.0 for icons. Springs
+  and short CSS keyframes only; `MotionConfig reducedMotion="user"` and a `prefers-reduced-motion`
+  rule turn animation off when macOS Reduce Motion is on.

@@ -1,3 +1,4 @@
+import { Keycaps } from '../../../shared/ui/keycap';
 import type { QuickbarPanel } from '../store/quickbar-store';
 
 type Props = {
@@ -7,10 +8,14 @@ type Props = {
   readonly hasError: boolean;
 };
 
+/** Splits `⌘↵` into `⌘` and `↵`; named keys like `Esc` and `Tab` stay whole. */
+const keysOf = (keys: string): readonly string[] =>
+  keys.length > 1 && keys.startsWith('⌘') ? ['⌘', keys.slice(1)] : [keys];
+
 const Hint = ({ keys, label }: { readonly keys: string; readonly label: string }) => (
-  <span className="flex items-center gap-1">
-    <kbd className="rounded bg-(--color-control) px-1.5 py-0.5 font-sans">{keys}</kbd>
+  <span className="flex items-center gap-1.5">
     {label}
+    <Keycaps keys={keysOf(keys)} />
   </span>
 );
 
@@ -30,14 +35,14 @@ const escLabel = (panel: QuickbarPanel, hasError: boolean): string =>
 /** Shortcut hints for the current panel. */
 export const Footer = ({ panel, noteMode, empty, hasError }: Props) =>
   panel === 'prompt' ? (
-    <footer className="flex items-center gap-4 border-t border-(--color-border) px-4 py-2 text-xs text-(--color-text-muted)">
+    <footer className="flex h-11 items-center gap-4 border-t border-(--color-border) bg-(--color-hover) px-4 text-xs text-(--color-text-muted)">
       <Hint keys="↵" label="Choose" />
       <Hint keys="Tab" label="Next" />
       <span className="flex-1" />
       <Hint keys="Esc" label="Keep all" />
     </footer>
   ) : (
-    <footer className="flex items-center gap-4 border-t border-(--color-border) px-4 py-2 text-xs text-(--color-text-muted)">
+    <footer className="flex h-11 items-center gap-4 border-t border-(--color-border) bg-(--color-hover) px-4 text-xs text-(--color-text-muted)">
       <Hint keys="↵" label={enterLabel(panel, noteMode, empty)} />
       {panel === 'edit' || noteMode ? null : <Hint keys="⌘↵" label="Note" />}
       <span className="flex-1" />

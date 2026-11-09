@@ -29,3 +29,6 @@ export const usePrefs = () => {
   };
   return { prefs, save, launchAtLogin, saveLaunchAtLogin };
 };
+
+/** What `usePrefs` returns, shared by the Settings sections so they save one copy. */
+export type PrefsState = ReturnType<typeof usePrefs>;

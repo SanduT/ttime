@@ -14,7 +14,7 @@ type Props = {
 };
 
 const ROW =
-  'flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm data-[selected=true]:bg-(--color-control)';
+  'flex h-10 cursor-default items-center gap-3 rounded-[10px] px-3 text-sm transition-colors duration-100 data-[selected=true]:bg-(--color-accent-tint) data-[selected=true]:font-medium';
 
 const startHint = (plan: QuickPlan): string | null => {
   const { start } = plan.input;

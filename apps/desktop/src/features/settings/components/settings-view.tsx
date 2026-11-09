@@ -1,9 +1,11 @@
 import type { SettingsPatch, VaultSettings } from '@ttime/core';
 
 import { csvControls, roundingSelects } from '../../export';
+import { usePrefs } from '../hooks/use-prefs';
 import { useVaultSettings } from '../hooks/use-vault-settings';
 import { AppSection } from './app-section';
 import { Row, Section } from './section';
+import { ThemeSection } from './theme-section';
 import { TimeSection } from './time-section';
 import { VaultSection } from './vault-section';
 
@@ -45,10 +47,12 @@ const ExportDefaults = ({ settings, update }: VaultProps) => {
 /** Settings (PRD 6.7): app preferences, then the vault's own settings in `ttime.json`. */
 export const SettingsView = () => {
   const { settings, update } = useVaultSettings();
+  const prefs = usePrefs();
   return (
     <section className="flex max-w-3xl flex-col gap-6">
       <h1 className="text-lg font-semibold">Settings</h1>
-      <AppSection />
+      <AppSection state={prefs} />
+      <ThemeSection state={prefs} />
       <VaultSection />
       {settings === null ? null : (
         <>

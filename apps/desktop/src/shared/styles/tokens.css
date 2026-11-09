@@ -1,21 +1,47 @@
 @import 'tailwindcss';
 
+/* Warm neutral surfaces in three levels, one accent (Ember by default, Jade and Iris as themes).
+   Project colors stay the main color on screen; the accent marks focus, selection and the
+   primary action. */
 @theme {
   --font-sans: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --color-surface: light-dark(rgb(255 255 255 / 0.72), rgb(30 30 32 / 0.72));
+  --color-surface: light-dark(rgb(251 250 247 / 0.74), rgb(28 27 25 / 0.74));
   /* Opaque surface for dialogs and other layers drawn over content. */
-  --color-surface-solid: light-dark(rgb(255 255 255), rgb(38 38 40));
-  --color-text: light-dark(rgb(28 28 30), rgb(242 242 247));
-  --color-text-muted: light-dark(rgb(99 99 102), rgb(152 152 157));
-  --color-border: light-dark(rgb(0 0 0 / 0.1), rgb(255 255 255 / 0.12));
-  --color-control: light-dark(rgb(0 0 0 / 0.05), rgb(255 255 255 / 0.08));
-  --color-accent: light-dark(rgb(0 122 255), rgb(10 132 255));
-  --color-on-accent: rgb(255 255 255);
-  --color-danger: light-dark(rgb(215 0 21), rgb(255 69 58));
+  --color-surface-solid: light-dark(rgb(255 255 255), rgb(36 34 32));
+  /* Cards on a surface: one step up. */
+  --color-raised: light-dark(rgb(255 255 255 / 0.9), rgb(255 245 230 / 0.045));
+  --color-text: light-dark(rgb(30 28 25), rgb(244 241 236));
+  --color-text-muted: light-dark(rgb(103 98 90), rgb(168 163 154));
+  --color-text-faint: light-dark(rgb(119 114 106), rgb(140 135 126));
+  --color-border: light-dark(rgb(40 30 20 / 0.09), rgb(255 240 220 / 0.08));
+  --color-border-strong: light-dark(rgb(40 30 20 / 0.18), rgb(255 240 220 / 0.16));
+  --color-control: light-dark(rgb(40 30 20 / 0.05), rgb(255 240 220 / 0.07));
+  --color-hover: light-dark(rgb(40 30 20 / 0.045), rgb(255 240 220 / 0.05));
+  --color-accent: var(--accent);
+  --color-accent-tint: var(--accent-tint);
+  --color-on-accent: light-dark(rgb(255 255 255), rgb(20 13 8));
+  --color-danger: light-dark(rgb(196 32 32), rgb(255 105 90));
+  --shadow-card:
+    0 1px 0 light-dark(rgb(255 255 255 / 0.6), rgb(255 255 255 / 0.04)) inset,
+    0 8px 24px light-dark(rgb(40 30 20 / 0.08), rgb(0 0 0 / 0.3));
+  --shadow-pop: 0 18px 48px light-dark(rgb(40 30 20 / 0.18), rgb(0 0 0 / 0.5));
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 :root {
   color-scheme: light dark;
+  --accent: light-dark(rgb(194 84 26), rgb(255 143 77));
+  --accent-tint: light-dark(rgb(194 84 26 / 0.12), rgb(255 143 77 / 0.16));
+}
+
+:root[data-accent='jade'] {
+  --accent: light-dark(rgb(11 127 91), rgb(61 214 163));
+  --accent-tint: light-dark(rgb(11 127 91 / 0.12), rgb(61 214 163 / 0.16));
+}
+
+:root[data-accent='iris'] {
+  --accent: light-dark(rgb(106 85 240), rgb(155 140 255));
+  --accent-tint: light-dark(rgb(106 85 240 / 0.12), rgb(155 140 255 / 0.16));
 }
 
 body {
@@ -23,10 +49,76 @@ body {
   font-family: var(--font-sans);
   color: var(--color-text);
   background: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Panels sit on a native vibrancy material; the page itself stays transparent. */
 body.panel {
   background: transparent;
   overflow: hidden;
+}
+
+::selection {
+  background: var(--color-accent-tint);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.72);
+    opacity: 0.55;
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+}
+
+.animate-dialog {
+  animation: dialog-in 0.22s var(--ease-out-soft);
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--color-accent);
+}
+
+.animate-breathe {
+  animation: breathe 2.8s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
