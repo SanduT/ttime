@@ -49,7 +49,7 @@ const INSTRUCTIONS = `ttime is a local time tracker whose data is plain JSON fil
 
 /** The ttime MCP server with every tool registered. */
 export const createMcpServer = (deps: ToolDeps): McpServer => {
-  const server = new McpServer({ name: 'ttime', version: '0.1.0' }, { instructions: INSTRUCTIONS });
+  const server = new McpServer({ name: 'ttime', version: '0.2.0' }, { instructions: INSTRUCTIONS });
   for (const tool of TOOLS) {
     tool.register(server, deps);
   }

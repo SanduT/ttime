@@ -6,6 +6,11 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.2.0]
+
+- Fixed: after creating a vault in the welcome tour, the quick bar and menu bar said no vault was
+  open until ttime was restarted.
+
 ## [0.1.0]
 
 First public version.
