@@ -3,6 +3,8 @@ use super::*;
 const START: f64 = 1_000_000.0;
 const MIN: f64 = 60.0;
 const HOUR: f64 = 3600.0;
+/// What a quiet tick returns (compared with `assert_eq!` so a failure shows the events).
+const NO_EVENTS: [MonitorEvent; 0] = [];
 
 const IDLE_10: MonitorConfig = MonitorConfig {
     idle_after: Some(10.0 * MIN),
@@ -22,12 +24,11 @@ fn tick(now: f64, idle: f64) -> Tick {
 #[test]
 fn asks_on_return_after_idle_past_the_threshold() {
     let mut monitor = Monitor::default();
-    assert!(monitor.tick(IDLE_10, tick(START + 60.0, 5.0)).is_empty());
+    assert_eq!(monitor.tick(IDLE_10, tick(START + 60.0, 5.0)), NO_EVENTS);
     // Last input at START + 55, idle for 12 minutes: nothing yet, the user is away.
-    assert!(
-        monitor
-            .tick(IDLE_10, tick(START + 55.0 + 12.0 * MIN, 12.0 * MIN))
-            .is_empty()
+    assert_eq!(
+        monitor.tick(IDLE_10, tick(START + 55.0 + 12.0 * MIN, 12.0 * MIN)),
+        NO_EVENTS
     );
     let back = monitor.tick(IDLE_10, tick(START + 40.0 * MIN, 3.0));
     assert_eq!(
@@ -37,33 +38,29 @@ fn asks_on_return_after_idle_past_the_threshold() {
             returned: START + 40.0 * MIN - 3.0
         }]
     );
-    assert!(
-        monitor
-            .tick(IDLE_10, tick(START + 41.0 * MIN, 3.0))
-            .is_empty()
+    assert_eq!(
+        monitor.tick(IDLE_10, tick(START + 41.0 * MIN, 3.0)),
+        NO_EVENTS
     );
 }
 
 #[test]
 fn short_breaks_and_disabled_idle_never_ask() {
     let mut monitor = Monitor::default();
-    assert!(
-        monitor
-            .tick(IDLE_10, tick(START + 5.0 * MIN, 4.0 * MIN))
-            .is_empty()
+    assert_eq!(
+        monitor.tick(IDLE_10, tick(START + 5.0 * MIN, 4.0 * MIN)),
+        NO_EVENTS
     );
-    assert!(
-        monitor
-            .tick(IDLE_10, tick(START + 6.0 * MIN, 1.0))
-            .is_empty()
+    assert_eq!(
+        monitor.tick(IDLE_10, tick(START + 6.0 * MIN, 1.0)),
+        NO_EVENTS
     );
     let off = MonitorConfig::default();
-    assert!(
-        monitor
-            .tick(off, tick(START + 60.0 * MIN, 50.0 * MIN))
-            .is_empty()
+    assert_eq!(
+        monitor.tick(off, tick(START + 60.0 * MIN, 50.0 * MIN)),
+        NO_EVENTS
     );
-    assert!(monitor.tick(off, tick(START + 61.0 * MIN, 1.0)).is_empty());
+    assert_eq!(monitor.tick(off, tick(START + 61.0 * MIN, 1.0)), NO_EVENTS);
 }
 
 #[test]
@@ -88,10 +85,9 @@ fn reminds_every_period_of_forgotten_hours() {
         ..MonitorConfig::default()
     };
     let mut monitor = Monitor::default();
-    assert!(
-        monitor
-            .tick(config, tick(START + 3.9 * HOUR, 1.0))
-            .is_empty()
+    assert_eq!(
+        monitor.tick(config, tick(START + 3.9 * HOUR, 1.0)),
+        NO_EVENTS
     );
     assert_eq!(
         monitor.tick(config, tick(START + 4.0 * HOUR, 1.0)),
@@ -100,10 +96,9 @@ fn reminds_every_period_of_forgotten_hours() {
             last_activity: START + 4.0 * HOUR - 1.0
         }]
     );
-    assert!(
-        monitor
-            .tick(config, tick(START + 5.0 * HOUR, 1.0))
-            .is_empty()
+    assert_eq!(
+        monitor.tick(config, tick(START + 5.0 * HOUR, 1.0)),
+        NO_EVENTS
     );
     assert_eq!(
         monitor.tick(config, tick(START + 8.1 * HOUR, 1.0)),
@@ -124,10 +119,9 @@ fn auto_stops_at_the_last_activity_once_away_after_the_set_time() {
     let six_pm = 11.0 * 86_400.0 + 18.0 * HOUR;
     let mut monitor = Monitor::default();
     // Still working past 18:00: no stop.
-    assert!(
-        monitor
-            .tick(config, tick(six_pm + 10.0 * MIN, 1.0))
-            .is_empty()
+    assert_eq!(
+        monitor.tick(config, tick(six_pm + 10.0 * MIN, 1.0)),
+        NO_EVENTS
     );
     // Left at 18:30, away for 6 minutes: stop at 18:30.
     let last = six_pm + 30.0 * MIN;
@@ -136,10 +130,9 @@ fn auto_stops_at_the_last_activity_once_away_after_the_set_time() {
         monitor.tick(config, tick(last + 6.0 * MIN, 6.0 * MIN)),
         vec![MonitorEvent::AutoStop { at: last }]
     );
-    assert!(
-        monitor
-            .tick(config, tick(last + 7.0 * MIN, 7.0 * MIN))
-            .is_empty()
+    assert_eq!(
+        monitor.tick(config, tick(last + 7.0 * MIN, 7.0 * MIN)),
+        NO_EVENTS
     );
 }
 
@@ -168,12 +161,12 @@ fn a_new_running_entry_starts_fresh_and_idle_time_is_ignored() {
         running_start: Some(START + 30.0 * MIN),
         ..tick(START + 31.0 * MIN, 1.0)
     };
-    assert!(monitor.tick(IDLE_10, fresh).is_empty());
+    assert_eq!(monitor.tick(IDLE_10, fresh), NO_EVENTS);
     let stopped = Tick {
         running_start: None,
         ..tick(START + 32.0 * MIN, 1.0)
     };
-    assert!(monitor.tick(IDLE_10, stopped).is_empty());
+    assert_eq!(monitor.tick(IDLE_10, stopped), NO_EVENTS);
 }
 
 #[test]

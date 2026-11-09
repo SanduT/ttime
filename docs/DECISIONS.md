@@ -754,6 +754,8 @@ Idle threshold, forgotten-timer limit and auto-stop, and reminders configure the
   lists `disable-executable-page-protection`, `allow-dyld-environment-variables` and
   `disable-library-validation`; they are left out because the signed CLI runs without them
   (checked with a local Developer ID build).
-- Bun is pinned to 1.4.4 in both workflows; the Rust toolchain comes from `rust-toolchain.toml`.
+- Bun is pinned to 1.4.4 in both workflows. `rust-toolchain.toml` pins Rust to an exact version
+  (1.99.1) instead of `stable`: the first CI run got a newer stable than the local one, and its
+  new Clippy lint (`assert_is_empty`) failed the build. Bump it on purpose, with the lint fixes.
 - Every action is pinned to a full commit SHA (tag in a comment), because the release job holds
   the signing certificate and a moved tag could exfiltrate it. Dependabot bumps the SHAs monthly.
